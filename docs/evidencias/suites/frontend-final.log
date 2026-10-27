@@ -1,0 +1,16 @@
+
+> flow-programacao-guiada@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.5 /workspace/flow-programacao-guiada
+
+
+ Test Files  16 passed (16)
+      Tests  63 passed (63)
+   Start at  09:27:39
+   Duration  31.99s (tests 81%, environment 13%, import 6%)
+
+    Isolate  16 workers spawned · ~346ms startup each (spawn + environment, per file)
+             at least ~5.20s faster with isolate: false — reuses workers across files instead of one per file
+

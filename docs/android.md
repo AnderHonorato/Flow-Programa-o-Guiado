@@ -39,7 +39,7 @@ O conteúdo web fica no APK; IndexedDB persiste no armazenamento privado do WebV
 
 ## Rede e limites offline
 
-A única permissão de acesso do aplicativo é Internet, sem diálogo de permissão em tempo de execução. A biblioteca AndroidX declara também uma permissão interna para seus receptores. Tráfego HTTP simples e conteúdo misto estão desativados. A API nativa usa `https://flow-programacao-guiada.vercel.app/api`; o backend precisa aceitar a origem local HTTPS do Capacitor. Nenhuma credencial de IA acompanha o APK. Login remoto, GPT, sincronização e downloads novos dependem de rede; código, conteúdo e runtime Python previamente empacotados permanecem locais. Os arquivos de atribuição e licenças das dependências, fontes e runtime Python são distribuídos em `assets/public/licencas/` dentro do APK.
+A única permissão de acesso do aplicativo é Internet, sem diálogo de permissão em tempo de execução. A biblioteca AndroidX declara também uma permissão interna para seus receptores. Tráfego HTTP simples e conteúdo misto estão desativados. A API nativa usa `https://flow-programacao-guiada-anderhonoratos-projects.vercel.app/api`, no alias confirmado pela plataforma; o backend precisa aceitar a origem local HTTPS do Capacitor. Nenhuma credencial de IA acompanha o APK. Login remoto, GPT, sincronização e downloads novos dependem de rede; código, conteúdo e runtime Python previamente empacotados permanecem locais. Os arquivos de atribuição e licenças das dependências, fontes e runtime Python são distribuídos em `assets/public/licencas/` dentro do APK.
 
 O ícone e a abertura usam geometria original do Flow em terracota, vinho e fundo quente, sem os recursos de marca padrão do Capacitor.
 

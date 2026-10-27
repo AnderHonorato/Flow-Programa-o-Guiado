@@ -70,6 +70,34 @@ describe('laboratório React no Chromium', () => {
     expect(await ultimoResultado(pagina)).toBe(false);
     await pagina.close();
   }, 60000);
+  it('impede que Python recupere APIs de dados e novos contextos pela ponte JS ou pelos protótipos', async () => {
+    const codigo = `import js
+assert js.indexedDB is None
+print("indexedDB=" + js.eval("typeof indexedDB"))
+print(js.eval("""(() => {
+  const nomes = ['indexedDB', 'caches', 'navigator', 'cookieStore', 'sharedStorage', 'openDatabase', 'requestFileSystem', 'webkitRequestFileSystem', 'Worker', 'SharedWorker', 'BroadcastChannel', 'fetch', 'XMLHttpRequest', 'WebSocket', 'WebTransport', 'EventSource', 'importScripts'];
+  for (const nome of nomes) {
+    if (globalThis[nome] !== undefined) throw new Error('API acessível: ' + nome);
+    for (let alvo = globalThis; alvo; alvo = Object.getPrototypeOf(alvo)) {
+      const descritor = Object.getOwnPropertyDescriptor(alvo, nome);
+      if (descritor && (descritor.get || descritor.set || descritor.value !== undefined || descritor.configurable || descritor.writable)) {
+        throw new Error('API recuperável no protótipo: ' + nome);
+      }
+    }
+  }
+  return 'APIs bloqueadas';
+})()"""))
+print(sum([2, 3, 5]))`;
+    const pagina = await montar({ ...aula, linguagem: 'python', arquivos: { html: '', css: '', js: '', python: codigo }, testes: [{ id: 'privacidade', descricao: 'Sem acesso aos dados de outros perfis', tipo: 'python', esperado: 'APIs bloqueadas' }] });
+    await pagina.getByRole('button', { name: 'Testar código', exact: false }).click();
+    await expect.poll(() => pagina.locator('.lab-status').innerText(), { timeout: 45000 }).toContain('Execução Python concluída.');
+    const saida = await pagina.locator('.lab-console-saida').innerText();
+    expect(saida).toContain('indexedDB=undefined');
+    expect(saida).toContain('APIs bloqueadas');
+    expect(saida).toContain('10');
+    expect(await ultimoResultado(pagina)).toBe(true);
+    await pagina.close();
+  }, 60000);
   it('mantém contraste mínimo de 4.5 no realce do código nos dois temas', async () => {
     const pagina = await montar({ ...aula, arquivos: { ...aula.arquivos, html: '<!-- comentário -->\n<h1 class="titulo">Olá</h1>' } });
     for (const tema of ['claro', 'escuro']) {

@@ -1,12 +1,16 @@
 // @vitest-environment jsdom
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
+import { createServer, type Server } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { chromium, type Browser, type Page } from '@playwright/test';
 import { criarDocumento } from './sandbox';
 let navegador: Browser;
+let servidor: Server;
+let origem: string;
 async function abrir(codigo: string, html = '<h1 id="titulo">Minha biblioteca</h1>', testes = [{ id: 'titulo', tipo: 'texto', descricao: 'Título presente', seletor: 'h1', esperado: 'Minha biblioteca', propriedade: '' }]) {
   const pagina = await navegador.newPage();
-  await pagina.setContent('<iframe title="teste" sandbox="allow-scripts"></iframe>');
+  await pagina.goto(origem);
   await pagina.evaluate(() => { const destino = window as unknown as { mensagens: unknown[] }; destino.mensagens = []; addEventListener('message', evento => destino.mensagens.push(evento.data)); });
   const documento = criarDocumento({ html: `<!doctype html><html lang="pt-BR"><head><title>Biblioteca</title></head><body>${html}</body></html>`, css: 'h1{color:rgb(10, 20, 30)}', js: codigo }, 'segredo', testes);
   await pagina.locator('iframe').evaluate((quadro: HTMLIFrameElement, fonte) => { quadro.srcdoc = fonte; }, documento);
@@ -15,8 +19,12 @@ async function abrir(codigo: string, html = '<h1 id="titulo">Minha biblioteca</h
 }
 async function mensagens(pagina: Page, tipo: string) { return pagina.evaluate(alvo => (window as unknown as { mensagens: { tipo: string; texto?: string; dados?: unknown }[] }).mensagens.filter(item => item.tipo === alvo), tipo); }
 describe('execução real do iframe Chromium', () => {
-  beforeAll(async () => { navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'], headless: true }); });
-  afterAll(async () => { await navegador?.close(); });
+  beforeAll(async () => {
+    servidor = createServer((_, resposta) => { resposta.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); resposta.end('<!doctype html><html><head><title>Flow sandbox</title></head><body><iframe title="teste" sandbox="allow-scripts"></iframe></body></html>'); });
+    await new Promise<void>(resolver => servidor.listen(0, '127.0.0.1', resolver));
+    origem = `http://127.0.0.1:${(servidor.address() as AddressInfo).port}`;
+    navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'], headless: true }); });
+  afterAll(async () => { await navegador?.close(); if (servidor) await new Promise<void>(resolver => servidor.close(() => resolver())); });
   it('executa JS real, impede acesso ao pai e entrega testes do DOM', async () => {
     const pagina = await abrir('console.log(2+3);try{parent.document.body.innerHTML="ataque"}catch(e){console.log("origem isolada")}');
     expect((await mensagens(pagina, 'console')).map(item => item.texto)).toEqual(['5', 'origem isolada']);
