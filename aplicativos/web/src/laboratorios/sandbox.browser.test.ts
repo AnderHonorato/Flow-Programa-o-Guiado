@@ -15,7 +15,7 @@ async function abrir(codigo: string, html = '<h1 id="titulo">Minha biblioteca</h
 }
 async function mensagens(pagina: Page, tipo: string) { return pagina.evaluate(alvo => (window as unknown as { mensagens: { tipo: string; texto?: string; dados?: unknown }[] }).mensagens.filter(item => item.tipo === alvo), tipo); }
 describe('execução real do iframe Chromium', () => {
-  beforeAll(async () => { navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox'], headless: true }); });
+  beforeAll(async () => { navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'], headless: true }); });
   afterAll(async () => { await navegador?.close(); });
   it('executa JS real, impede acesso ao pai e entrega testes do DOM', async () => {
     const pagina = await abrir('console.log(2+3);try{parent.document.body.innerHTML="ataque"}catch(e){console.log("origem isolada")}');

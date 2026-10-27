@@ -134,3 +134,45 @@ WARNING: Using flatDir should be avoided because it doesn't support any meta-dat
 > Task :capacitor-cordova-android-plugins:createFullJarDebug
 > Task :capacitor-cordova-android-plugins:writeDebugLintModelMetadata
 > Task :app:generateDebugAndroidTestLintModel
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:extractProguardFiles UP-TO-DATE
+> Task :capacitor-android:generateDebugLintModel UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:extractProguardFiles
+> Task :capacitor-cordova-android-plugins:generateDebugLintModel
+> Task :app:generateDebugLintReportModel
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel
+> Task :capacitor-android:lintAnalyzeDebug UP-TO-DATE
+> Task :app:lintAnalyzeDebugAndroidTest
+> Task :app:lintAnalyzeDebugUnitTest
+> Task :capacitor-android:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :capacitor-android:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-android:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :capacitor-android:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugAndroidTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestResValues
+> Task :capacitor-cordova-android-plugins:generateDebugAndroidTestLintModel
+> Task :capacitor-cordova-android-plugins:preDebugUnitTestBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:generateDebugUnitTestLintModel
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugAndroidTest
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebugUnitTest
+> Task :capacitor-android:generateDebugLintReportModel UP-TO-DATE
+> Task :capacitor-android:lintReportDebug UP-TO-DATE
+> Task :capacitor-android:lintDebug
+> Task :capacitor-cordova-android-plugins:generateDebugLintReportModel
+> Task :capacitor-cordova-android-plugins:lintAnalyzeDebug
+> Task :capacitor-cordova-android-plugins:lintReportDebug
+> Task :capacitor-cordova-android-plugins:lintDebug
+> Task :app:lintAnalyzeDebug
+
+> Task :app:lintReportDebug
+Wrote HTML report to file:///workspace/flow-programacao-guiada/aplicativos/android/app/build/reports/lint-results-debug.html
+
+> Task :app:lintDebug
+
+BUILD SUCCESSFUL in 3m 3s
+124 actionable tasks: 47 executed, 77 up-to-date
+15fe62d5939d938ab009a8a9b42a9042935414f1e3e4666d62a895eb903785a2  Flow-Programacao-Guiada-0.1.0-debug.apk

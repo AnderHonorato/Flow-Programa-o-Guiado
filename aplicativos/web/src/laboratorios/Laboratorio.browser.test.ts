@@ -32,7 +32,7 @@ describe('laboratório React no Chromium', () => {
       servidor = await createServer({ root: raiz, configFile: fileURLToPath(new URL('../../vite.config.ts', import.meta.url)), server: { host: '127.0.0.1', port: 0, open: false } });
       await servidor.listen(); origem = servidor.resolvedUrls!.local[0];
     }
-    navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox'] });
+    navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'] });
   }, 60000);
   afterAll(async () => { await navegador?.close(); await servidor?.close(); });
   it('preserva verificações após executar novamente e invalida ao editar ou restaurar', async () => {
