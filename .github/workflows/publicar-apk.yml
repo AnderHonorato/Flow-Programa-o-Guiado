@@ -1,0 +1,22 @@
+name: Publicar APK verificado
+on:
+  push:
+    branches: ['distribuicao/v0.1.0']
+permissions:
+  contents: read
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Conferir bytes do APK assinado
+        working-directory: distribuicao
+        run: sha256sum -c Flow-Programacao-Guiada-0.1.0-debug.apk.sha256
+      - name: Publicar APK e checksum na versão de teste
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.1.0-teste distribuicao/Flow-Programacao-Guiada-0.1.0-debug.apk distribuicao/Flow-Programacao-Guiada-0.1.0-debug.apk.sha256 --repo "$GITHUB_REPOSITORY"

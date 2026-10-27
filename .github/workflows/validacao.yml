@@ -2,6 +2,7 @@ name: Validar e compilar Flow
 
 on:
   push:
+    branches-ignore: ['distribuicao/**']
   pull_request:
   workflow_dispatch:
 
