@@ -1,0 +1,36 @@
+.jarvis{display:flex;align-items:center;gap:14px;position:relative;padding:18px 20px;border:1px solid var(--line,#ded4c8);border-radius:16px;background:var(--surface-2,#fffaf5);color:var(--text,#2f2522);isolation:isolate}
+.jarvis-palco{flex:0 0 108px;display:grid;place-items:center;overflow:hidden}
+.jarvis-pixels{display:block;width:108px;height:108px;image-rendering:pixelated;overflow:visible}
+.jarvis-corpo{transform-origin:32px 54px;animation:jarvis-respirar 4s steps(4,end) infinite,jarvis-chegar .45s steps(5,end) both}
+.jarvis-olhos{transform-origin:32px 33px;animation:jarvis-piscar 5.7s steps(1,end) infinite}
+.jarvis-braco{transform-box:fill-box;transform-origin:center top}
+.jarvis[data-estado=explicando] .jarvis-braco--direito{animation:jarvis-apontar 2s steps(4,end) infinite}
+.jarvis[data-estado=concentrado] .jarvis-olhos{transform:translateX(1px)}
+.jarvis[data-estado=curioso] .jarvis-antena{transform-origin:32px 18px;animation:jarvis-curioso 6s steps(3,end) infinite}
+.jarvis[data-estado=comemorando] .jarvis-corpo,.jarvis[data-estado=alegre] .jarvis-corpo{animation:jarvis-saltar .7s steps(6,end) 2,jarvis-respirar 4s 1.4s steps(4,end) infinite}
+.jarvis[data-estado=orgulhoso] .jarvis-braco--direito{transform:rotate(-35deg)}
+.jarvis[data-estado=apoiando] .jarvis-braco--esquerdo{animation:jarvis-apoiar 2.7s steps(4,end) 2}
+.jarvis[data-estado=surpreso] .jarvis-corpo{animation:jarvis-surpresa .6s steps(4,end),jarvis-respirar 4s .6s steps(4,end) infinite}
+.jarvis[data-estado=preocupado] .jarvis-corpo{animation:jarvis-inclinar .7s steps(4,end) both,jarvis-respirar 4s .7s steps(4,end) infinite}
+.jarvis[data-estado=pensando] .jarvis-braco--direito{transform:translate(-5px,-7px) rotate(-25deg)}
+.jarvis[data-estado=descansando] .jarvis-corpo{animation:jarvis-respirar 6s steps(3,end) infinite}
+.jarvis-confetes{animation:jarvis-confete 1s steps(5,end) 2}
+.jarvis-conversa{min-width:0;flex:1}.jarvis-cabecalho{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.jarvis-cabecalho strong{font-size:12px;letter-spacing:.06em;color:var(--wine,#8f2d4a)}.jarvis-cabecalho span{font-size:10px;color:var(--muted,#6e6059)}
+.jarvis-mensagem{font-size:13px;line-height:1.55;margin:7px 0}.jarvis-silenciado{font-size:12px;color:var(--muted,#6e6059)}
+.jarvis-controles{display:flex;gap:4px;align-items:center}.jarvis-controles button{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:6px;background:transparent;color:var(--muted,#6e6059);font:inherit;font-size:10px;min-height:32px;min-width:32px;padding:5px 7px;cursor:pointer}.jarvis-controles button:hover{background:var(--surface,#ede7df);color:var(--text,#2f2522)}
+.jarvis button:focus-visible,.jarvis-reabrir:focus-visible{outline:2px solid var(--wine,#8f2d4a);outline-offset:3px}
+.jarvis--compacto{padding:12px;gap:8px}.jarvis--compacto .jarvis-palco{flex-basis:72px}.jarvis--compacto .jarvis-pixels{width:72px;height:72px}.jarvis--compacto .jarvis-cabecalho span{display:none}
+.jarvis-reabrir{display:flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid var(--line,#ded4c8);border-radius:12px;background:var(--surface-2,#fffaf5);color:var(--text,#2f2522);font:inherit;font-size:12px;cursor:pointer;min-height:44px}.jarvis-mini{display:grid;place-items:center;width:28px;height:28px;background:#d97757;border:2px solid #653b32;color:#362723;font-size:11px;font-weight:700;box-shadow:inset 0 -4px #8f2d4a}
+.jarvis--pausado *{animation:none!important}
+@keyframes jarvis-respirar{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+@keyframes jarvis-piscar{0%,44%,47%,100%{scale:1 1}45%,46%{scale:1 .15}}
+@keyframes jarvis-chegar{from{translate:0 3px;opacity:0}to{translate:0 0;opacity:1}}
+@keyframes jarvis-saltar{0%,100%{transform:translateY(0)}35%{transform:translateY(-5px)}60%{transform:translateY(-4px)}85%{transform:translateY(1px)}}
+@keyframes jarvis-apontar{0%,100%{transform:rotate(0)}30%,70%{transform:translate(0,-5px) rotate(-65deg)}}
+@keyframes jarvis-apoiar{0%,100%{transform:rotate(0)}35%,65%{transform:rotate(35deg)}}
+@keyframes jarvis-curioso{0%,80%,100%{rotate:0deg}85%,95%{rotate:12deg}}
+@keyframes jarvis-surpresa{0%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}
+@keyframes jarvis-inclinar{to{rotate:-4deg}}
+@keyframes jarvis-confete{0%{translate:0 5px;opacity:0}30%{opacity:1}100%{translate:0 -4px;opacity:0}}
+@media(prefers-reduced-motion:reduce){.jarvis *{animation:none!important;transition:none!important}}
+@media(max-width:380px){.jarvis{gap:8px;padding:12px}.jarvis-palco{flex-basis:76px}.jarvis-pixels{width:76px;height:76px}.jarvis-cabecalho span{display:none}}

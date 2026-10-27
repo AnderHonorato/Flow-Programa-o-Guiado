@@ -1,0 +1,17 @@
+.git
+node_modules
+**/node_modules
+*.db
+*.db-*
+.env
+.env.*
+!.env.exemplo
+**/__pycache__
+**/.pytest_cache
+**/.gradle
+**/build
+aplicativos/android
+entregas
+artefatos
+test-results
+playwright-report

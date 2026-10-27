@@ -1,0 +1,261 @@
+{
+  "pacote": "Referências fornecidas pelo usuário em 25/10/2026",
+  "politica": "Marcas de terceiros apenas inspecionadas; nenhuma redistribuída como marca Flow.",
+  "arquivos": [
+    {
+      "arquivo": "MANIFEST.json",
+      "bytes": 936,
+      "sha256": "afc073692ec1ebc65ee6b1fa5d774ea6e46c19cd792f8ff649a757b56c26963f"
+    },
+    {
+      "arquivo": "PROMPT_MESTRE_FLOW_PROGRAMACAO_GUIADA.md",
+      "bytes": 31144,
+      "sha256": "d74f8f6c4ad476edb2e83d7f537481b8a3d0f13e28ba18a297398896de8986cc"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/favicon-192.png",
+      "bytes": 9659,
+      "sha256": "3eeb0d73265606462e56462a8b0a8e726222034a4d07154f2861b2bd14193472"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/favicon-32.png",
+      "bytes": 1108,
+      "sha256": "84c1b13b2c5940948afbd525d256505ff0e3303fe89c1137c450b1ce1ed7e21e"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/favicon-512.png",
+      "bytes": 42451,
+      "sha256": "b8bce50df77ca2f82f1609030aada04aafe212f41e3d513d57d4d7499d53cf60"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/favicon-64.png",
+      "bytes": 2561,
+      "sha256": "a6092ee49c80ce9f2fb2762f5169394f455db6562582828d4ec143e938479fed"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-horizontal-branco.png",
+      "bytes": 14794,
+      "sha256": "b558cc70a2908d121fb56ced5606bb5e78bcba2e922687c8ff01a5e932e40de6"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-horizontal-preto.png",
+      "bytes": 19139,
+      "sha256": "00b533f608364458b8d74f1b9abb93e5e5e5c40f92b3cadde242cbd0be3599d2"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-simbolo-branco.png",
+      "bytes": 6107,
+      "sha256": "5501f18a760ee4b0e3006f8963ac94d0bed24984e99db85696b3ccb5c2fcc81b"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-simbolo-preto.png",
+      "bytes": 6214,
+      "sha256": "a6f6f079d667678d81398b4f265f1fcdd54c10537389e5c115a86142b6c45d74"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-wordmark-branco.png",
+      "bytes": 7254,
+      "sha256": "476a4ff6f318397fd7f5cc39cf79d04be604b6cc5eb041cf1d13c3e5b7c00a19"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/01-logo/logo-wordmark-preto.png",
+      "bytes": 7483,
+      "sha256": "9cfaf3eed1c6b5188eca344dc7fb49d7553fe36f7ec4912daf4c5530d3251a98"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/02-cores/paleta.css",
+      "bytes": 333,
+      "sha256": "8c381f0a406ff6c2521d0576c19782420155984ac9f1512fda7fc7229b387c63"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/02-cores/paleta.json",
+      "bytes": 188,
+      "sha256": "d97e813f6fe591f0939eb8944d0c8a13a561da61b824afe24c1d6879b183ab1f"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/03-tipografia/FONTES-E-INSTALACAO.md",
+      "bytes": 1089,
+      "sha256": "dd8750d268e05db829b6cbd5fcbcbe92eb3a0fc88e9e99e04a3e05731d5b359c"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/03-tipografia/baixar-inter.ps1",
+      "bytes": 427,
+      "sha256": "956eece984f24cc29a599536f33dbc8636805bfcaa09392d4eb0c259e8d17f3f"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/03-tipografia/baixar-inter.sh",
+      "bytes": 280,
+      "sha256": "b63b90b08e2d757abacdec32b507610a2f59d4d0552093b82a6a0a8cda540557"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/03-tipografia/fonts.css",
+      "bytes": 739,
+      "sha256": "fa49ceb5050f6dc513b0a6494cdc2cf20cd4f6863b5573564b1179d47134fe23"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/04-design-tokens/tailwind.config.cjs",
+      "bytes": 336,
+      "sha256": "1b1d347ea0fe2b4ce5af7bb27eb33fc1f3802ce90a2c4703a730329b1094b2ab"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/04-design-tokens/theme.ts",
+      "bytes": 413,
+      "sha256": "11f455b223e18d07a8660bfb38564f2c35a2f76fa052ca0666f5f04c6b105cd8"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/04-design-tokens/tokens.json",
+      "bytes": 2450,
+      "sha256": "ebc6cccd2ec22f7402660dea0fd7ae6a581d484bf16265c10a5c71f7d1e02a41"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/05-ui-kit/componentes.html",
+      "bytes": 854,
+      "sha256": "98547cbe5a62df90c738b0adbb60c81efdaa426960d1803217383f2ce4d4eac1"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/05-ui-kit/ui-kit.css",
+      "bytes": 1036,
+      "sha256": "6bca13fe5e9e1fbc7b14d83ce66cf0cb09eaa1f017a97d069f202fe1bc3953a7"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/06-guidelines/LICENCAS-E-USO.md",
+      "bytes": 411,
+      "sha256": "2c80a7d622163a2bc50970a99694eaf7d14e4bebca718579b66f0a2ebc84a708"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/06-guidelines/MANUAL-DE-MARCA.md",
+      "bytes": 1853,
+      "sha256": "6e6f043d27bb62ec77adfa931364d06813922fcb6a2a7373e57c38160bbfc87a"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/07-apresentacao/brand-guideline-board.png",
+      "bytes": 2018830,
+      "sha256": "0de2c5f9cac94588ccde655cf57bd31be3ab056141d58015e2f0366f11841c61"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/07-apresentacao/referencia-enviada.jpg",
+      "bytes": 312934,
+      "sha256": "963416750294c829a05d13d45dfdcb1fae93e3a0e5347521ec8d816e65775c2d"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/08-web-demo/index.html",
+      "bytes": 3362,
+      "sha256": "ad8d874800eb5a901c4c40ca9a53155939773097d0e92cf64b07736cda87b4f8"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/MANIFEST.json",
+      "bytes": 1907,
+      "sha256": "72f87fa0121e1b65ad0b1744eb7b2c2ffea67f9da62010674c5513b80ff3fd56"
+    },
+    {
+      "arquivo": "extraidos/identidade_visual_completa/identidade_visual_completa/README.md",
+      "bytes": 942,
+      "sha256": "944904cb5c40517d77acd22f14465619f7d173654203b3773c4abd57cb1d86fb"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/README.md",
+      "bytes": 840,
+      "sha256": "1e6574a53dba9aa8fd42aa369faea49465f0f401c60168b60eed54073453df2f"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/favicon-192.png",
+      "bytes": 9659,
+      "sha256": "3eeb0d73265606462e56462a8b0a8e726222034a4d07154f2861b2bd14193472"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/favicon-32.png",
+      "bytes": 1108,
+      "sha256": "84c1b13b2c5940948afbd525d256505ff0e3303fe89c1137c450b1ce1ed7e21e"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/logo-horizontal-branco.png",
+      "bytes": 14794,
+      "sha256": "b558cc70a2908d121fb56ced5606bb5e78bcba2e922687c8ff01a5e932e40de6"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/logo-horizontal-preto.png",
+      "bytes": 19139,
+      "sha256": "00b533f608364458b8d74f1b9abb93e5e5e5c40f92b3cadde242cbd0be3599d2"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/logo-simbolo-branco.png",
+      "bytes": 6107,
+      "sha256": "5501f18a760ee4b0e3006f8963ac94d0bed24984e99db85696b3ccb5c2fcc81b"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/assets/logo-simbolo-preto.png",
+      "bytes": 6214,
+      "sha256": "a6f6f079d667678d81398b4f265f1fcdd54c10537389e5c115a86142b6c45d74"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/index.html",
+      "bytes": 9429,
+      "sha256": "c4aa5eadeb073e439a5c5788c2725e8921eb4f3dfe4c63bc5a9f90c326d16aa5"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/script.js",
+      "bytes": 1659,
+      "sha256": "cab738fee38116aa8b595e21d053ea8a32606841f4dbb82644742fcf11af87cf"
+    },
+    {
+      "arquivo": "extraidos/site-exemplo-identidade/site-exemplo-identidade/styles.css",
+      "bytes": 12524,
+      "sha256": "2fb67f9f5a1318ea3370bd312886770016e0ddf08a6dfd10c21f3de1b28c9cc8"
+    },
+    {
+      "arquivo": "referencias/Portal Ferramentas do Ander — com vitrine animada.html",
+      "bytes": 263450,
+      "sha256": "595f642c3c7ed2ed3283a07eeb4a59f1ca8029080ec74bfcbdc15eb16fd543ce"
+    },
+    {
+      "arquivo": "referencias/Portal Ferramentas do Ander — com vitrine animada.md",
+      "bytes": 2030,
+      "sha256": "028802d4b9e06037e767f4d8c7e6c50b094f79801a1750f4d2632909f22ed4bd"
+    },
+    {
+      "arquivo": "referencias/identidade_visual_completa.zip",
+      "bytes": 2441975,
+      "sha256": "fcb7f9f9f29562ff51f79f3c049af3b61783a92001e13d5931112d9ccb4e0f76"
+    },
+    {
+      "arquivo": "referencias/site-exemplo-identidade.zip",
+      "bytes": 65466,
+      "sha256": "0c56fc8e9fd63f44fafe77a5321c11820f03f2d136451e4c3394c8f7569ecc10"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-1",
+      "bytes": 20888,
+      "sha256": "b1969861df075a84958e7085a04de23f57a2fb6872be63d15dfaad0963c181e5"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-2",
+      "bytes": 11384,
+      "sha256": "8f98dd642986f1fa39c45b89665a57372897c235b36028e0e4a136e43dc5f8ab"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-3",
+      "bytes": 11544,
+      "sha256": "367d713287918784702563518f59239989da815c80d3c7337686b9816635a08b"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-4",
+      "bytes": 11376,
+      "sha256": "7ec4f08d09f91d349917dd6592f6aaae66d8fe1bbd58fa24707961e79236616e"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-5",
+      "bytes": 51020,
+      "sha256": "15f9638095ad5ec9816f93d66805ca1a87e71dc5a76b596bfce1c78d4704c405"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-6",
+      "bytes": 10504,
+      "sha256": "90e0895d2ff37959b1b81aef55cb2f994e2ca35a477760e0157ab0441f693c5a"
+    },
+    {
+      "arquivo": "Portal HTML::binario-embutido-7",
+      "bytes": 11732,
+      "sha256": "fccb5d3ba977771c01db7586533b0d725af9d8e12d9a73b1b333e9f4bfe800c7"
+    }
+  ]
+}

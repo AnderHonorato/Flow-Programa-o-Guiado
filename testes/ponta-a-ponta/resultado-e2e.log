@@ -1,0 +1,167 @@
+
+Running 8 tests using 2 workers
+
+(node:1475) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial (9.2s)
+  ✘  1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial (9.4s)
+(node:1848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1839) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (7.8s)
+(node:2209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:90:5 › catálogo explicita produção editorial e tema persiste após recarregar (4.3s)
+  -  6 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:101:5 › produção instala cache e reabre aula sem internet
+  ✘  3 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (16.9s)
+(node:2417) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  7 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:90:5 › catálogo explicita produção editorial e tema persiste após recarregar (3.8s)
+  -  8 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:101:5 › produção instala cache e reabre aula sem internet
+
+
+  1) [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'HTML 1: Minha primeira página' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'HTML 1: Minha primeira página' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'HTML 1: Minha primeira página' })
+
+
+      33 |   await iniciar(page);
+      34 |   await page.getByRole('button', { name: 'Continuar aprendendo' }).click();
+    > 35 |   await expect(page.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
+         |                                                                                      ^
+      36 | });
+      37 |
+      38 | test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso', async ({ page, context }) => {
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:35:86
+
+    Error Context: test-results/fluxo-início-recomenda-a-aula-HTML-inicial-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-início-recomenda-a-aula-HTML-inicial-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-início-recomenda-a-aula-HTML-inicial-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.lab-teste-ok')
+    Expected: 4
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('.lab-teste-ok') with timeout 5000ms
+      - waiting for locator('.lab-teste-ok')
+        13 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      62 |   await page.getByRole('button', { name: 'Ir para o laboratório' }).click();
+      63 |   await page.getByRole('button', { name: /Testar código/ }).click();
+    > 64 |   await expect(page.locator('.lab-teste-ok')).toHaveCount(4);
+         |                                               ^
+      65 |   await expect(page.locator('.lab-teste-revisar')).toHaveCount(0);
+      66 |   await page.getByRole('button', { name: 'Registrar competência' }).click();
+      67 |   await expect(page.getByRole('status').filter({ hasText: 'Competência registrada!' })).toBeVisible();
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:64:47
+
+    Error Context: test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [celular] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'HTML 1: Minha primeira página' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'HTML 1: Minha primeira página' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'HTML 1: Minha primeira página' })
+
+
+      33 |   await iniciar(page);
+      34 |   await page.getByRole('button', { name: 'Continuar aprendendo' }).click();
+    > 35 |   await expect(page.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
+         |                                                                                      ^
+      36 | });
+      37 |
+      38 | test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso', async ({ page, context }) => {
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:35:86
+
+    Error Context: test-results/fluxo-início-recomenda-a-aula-HTML-inicial-celular/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-início-recomenda-a-aula-HTML-inicial-celular/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-início-recomenda-a-aula-HTML-inicial-celular/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [celular] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator: locator('iframe').contentFrame().locator('h1')
+    Expected: "rgb(120, 30, 50)"
+    Error: strict mode violation: locator('h1') resolved to 2 elements:
+        1) <h1>Biblioteca da Ana</h1> aka getByRole('heading', { name: 'Biblioteca da Ana' })
+        2) <h1>Minha biblioteca</h1> aka getByRole('heading', { name: 'Minha biblioteca' })
+
+    Call log:
+      - Expect "toHaveCSS" locator('iframe').contentFrame().locator('h1') with timeout 5000ms
+      - waiting for locator('iframe').contentFrame().locator('h1')
+
+
+      49 |   await editar(page, 'CSS', 'h1 { color: rgb(120, 30, 50); }');
+      50 |   await visualizar(page);
+    > 51 |   await expect(previa.locator('h1')).toHaveCSS('color', 'rgb(120, 30, 50)');
+         |                                      ^
+      52 |   await editar(page, 'JS', 'document.body.dataset.executado = "sim"; console.log("JS executado de verdade");');
+      53 |   await expect(previa.locator('body')).toHaveAttribute('data-executado', 'sim');
+      54 |   await editar(page, 'HTML', documento('Minha biblioteca'));
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:51:38
+
+    Error Context: test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial ─────
+    [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+    [celular] › testes/ponta-a-ponta/fluxo.spec.ts:32:5 › início recomenda a aula HTML inicial ─────
+    [celular] › testes/ponta-a-ponta/fluxo.spec.ts:38:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+  2 skipped
+  2 passed (39.9s)

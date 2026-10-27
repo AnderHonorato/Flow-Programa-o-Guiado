@@ -1,0 +1,8 @@
+{
+  "inicio": "2026-10-27T02:18:03.114Z",
+  "pacote": "br.com.ander.flow",
+  "verificacoes": [],
+  "resultado": "falhou",
+  "erro": "Error: Command failed: /workspace/android-sdk/platform-tools/adb -e install -r /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk\nadb: failed to install /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk: cmd: Failure calling service package: Broken pipe (32)\n\n",
+  "fim": "2026-10-27T02:18:58.521Z"
+}

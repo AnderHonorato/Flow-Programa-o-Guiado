@@ -1,0 +1,12 @@
+.narracao { display: grid; gap: 1rem; }
+.narracao-controles, .narracao-ajustes { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+.narracao-ajustes label { display: flex; align-items: center; gap: .5rem; font-size: .85rem; }
+.narracao-ajustes select { max-width: min(22rem, 70vw); padding: .5rem; border: 1px solid currentColor; border-radius: .5rem; background: var(--surface, #fffaf5); color: inherit; }
+.narracao-ajustes input { accent-color: var(--accent, #8f2d4a); width: 7rem; }
+.narracao-disponibilidade { font-size: .82rem; margin: 0; line-height: 1.5; }
+.narracao-paragrafos { display: grid; gap: .75rem; }
+.narracao-paragrafo { border-left: 3px solid transparent; padding: .35rem .85rem; transition: border-color .2s; }
+.narracao-paragrafo p { margin: .25rem 0 .5rem; white-space: pre-line; line-height: 1.8; }
+.narracao-atual { border-left-color: var(--accent, #8f2d4a); background: color-mix(in srgb, var(--accent, #8f2d4a) 8%, transparent); }
+.narracao-ler-trecho { font-size: .78rem; padding: .35rem .5rem; }
+@media (prefers-reduced-motion: reduce) { .narracao-paragrafo { transition: none; } }

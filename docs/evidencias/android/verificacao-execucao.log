@@ -1,0 +1,29 @@
+Instalando APK no emulador conectado.
+adb: failed to install /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk: cmd: Failure calling service package: Broken pipe (32)
+
+Error: Command failed: /workspace/android-sdk/platform-tools/adb -e install -r /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk
+adb: failed to install /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk: cmd: Failure calling service package: Broken pipe (32)
+
+
+    at genericNodeError (node:internal/errors:985:15)
+    at wrappedFn (node:internal/errors:539:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at comando (file:///workspace/flow-programacao-guiada/scripts/android-verificar.mjs:16:36)
+    at file:///workspace/flow-programacao-guiada/scripts/android-verificar.mjs:41:27
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    'Performing Streamed Install\n',
+    'adb: failed to install /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk: cmd: Failure calling service package: Broken pipe (32)\n' +
+      '\n'
+  ],
+  pid: 8122,
+  stdout: 'Performing Streamed Install\n',
+  stderr: 'adb: failed to install /workspace/flow-programacao-guiada/artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk: cmd: Failure calling service package: Broken pipe (32)\n' +
+    '\n'
+}

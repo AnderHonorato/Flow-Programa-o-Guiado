@@ -1,0 +1,39 @@
+{
+  "executadoEm": "2026-10-27T02:19:29.221Z",
+  "endereco": "http://127.0.0.1:4184",
+  "ambiente": "Chromium headless · build produção · service worker real",
+  "verificacoes": [
+    "Trilha HTML baixada, removida e instalada novamente pela interface.",
+    "Runtime Python: seis arquivos reais instalados em CacheStorage e metadados IndexedDB.",
+    "Página fechada e reaberta sem rede após limpar cache HTTP; seis recursos Python recuperados pelo service worker.",
+    "Exercício Python real executado em Worker WebAssembly sem rede: teste objetivo de saldo aprovado."
+  ],
+  "pacotes": [
+    {
+      "id": "python-runtime-0.29.3",
+      "bytes": 12302220,
+      "arquivos": [
+        "http://127.0.0.1:4184/pyodide/pyodide.js",
+        "http://127.0.0.1:4184/pyodide/pyodide.mjs",
+        "http://127.0.0.1:4184/pyodide/pyodide.asm.js",
+        "http://127.0.0.1:4184/pyodide/pyodide.asm.wasm",
+        "http://127.0.0.1:4184/pyodide/python_stdlib.zip",
+        "http://127.0.0.1:4184/pyodide/pyodide-lock.json"
+      ]
+    },
+    {
+      "id": "trilha:html",
+      "bytes": 17937,
+      "arquivos": []
+    }
+  ],
+  "bytesOffline": [
+    18597,
+    17616,
+    1074322,
+    8647684,
+    2423989,
+    120010
+  ],
+  "resultado": "aprovado"
+}

@@ -1,0 +1,58 @@
+# Android — Flow Programação Guiada
+
+O APK usa os mesmos arquivos locais compilados da aplicação web, empacotados pelo Capacitor 7. Não carrega uma URL remota como tela inicial. Identificador `br.com.ander.flow`, versão `0.1.0`, código de versão `1`, Android mínimo 6.0/API 23 e alvo API 35. Para a interface e o Python, mantenha o Android System WebView atualizado (Chrome/WebView 107 ou mais recente).
+
+## Compilar um APK de teste
+
+Requisitos: Node.js 22, JDK 21 completo (com `javac`), SDK Android com `platform-tools`, `platforms;android-35`, `build-tools;34.0.0` (padrão do Android Gradle Plugin) e `build-tools;35.0.0`. Defina `ANDROID_HOME` para a instalação do SDK e aceite suas licenças pelo `sdkmanager --licenses`. O Gradle Wrapper versionado baixa a versão necessária; não é preciso instalar Gradle globalmente.
+
+```bash
+npm ci
+export ANDROID_HOME=/caminho/para/android-sdk
+bash scripts/android-compilar.sh
+```
+
+O script provisiona o runtime Python local, compila a web, sincroniza recursos e plugins, executa `assembleDebug` e `lintDebug` e grava:
+
+- `artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk`;
+- `artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk.sha256`;
+- `artefatos/android-build.log`.
+
+Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente.
+
+## Instalar e atualizar
+
+```bash
+adb install -r artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk
+adb shell am start -n br.com.ander.flow/.MainActivity
+```
+
+Também é possível abrir o APK no dispositivo e permitir a instalação para o aplicativo usado para baixá-lo. O APK entregue por este processo é uma compilação de depuração, assinada automaticamente com a chave local de testes do Android. Não é uma assinatura de produção nem é adequado à publicação na Play Store. Atualizações sem perda de dados exigem o mesmo identificador e a mesma chave. Desinstalar apaga os dados locais; use exportação antes disso.
+
+Uma versão de distribuição exige uma chave de produção administrada pelo titular, armazenamento seguro dos segredos de assinatura e novo build release. Nenhuma chave de produção é criada, armazenada no repositório ou substituída por uma chave debug neste projeto.
+
+## Armazenamento, teclado e voz
+
+O conteúdo web fica no APK; IndexedDB persiste no armazenamento privado do WebView, associado à origem local estável do Capacitor e isolado por perfil pela aplicação. A atividade preserva a WebView ao rotacionar e ajusta a janela ao teclado. Essas configurações não substituem o salvamento de rascunhos implementado na aplicação. Backup automático do Android está desativado para não copiar sessões e trabalhos a contas de sistema sem um fluxo de consentimento.
+
+`NarradorNativoPlugin.java` implementa TTS Android, registrado como `NarradorNativo`. Métodos: `vozes()`, `falar({texto,idioma,voz,velocidade,volume,id})` e `parar()`. Eventos: `inicio`, `fim` e `erro`, com `id`; uma interrupção informa `cancelado:true`. O plugin seleciona somente vozes que o mecanismo declara locais, prioriza `pt-BR` e rejeita ausência de voz local com instrução para instalar uma. A disponibilidade depende do aparelho e do mecanismo TTS. Não usa microfone. Como o Android TTS não oferece pausa universal, a interface interrompe e retoma o parágrafo.
+
+## Rede e limites offline
+
+A única permissão solicitada é Internet, sem diálogo de permissão em tempo de execução. Tráfego HTTP simples e conteúdo misto estão desativados. A API de produção precisa de HTTPS válido e de uma origem autorizada no backend. Nenhuma credencial de IA acompanha o APK. Login remoto, GPT, sincronização e downloads novos dependem de rede; código, conteúdo e runtime Python previamente empacotados permanecem locais.
+
+O ícone e a abertura usam geometria original do Flow em terracota, vinho e fundo quente, sem os recursos de marca padrão do Capacitor.
+
+## Verificação em emulador
+
+Com um único emulador já inicializado e visível em `adb devices`, execute:
+
+```bash
+ANDROID_HOME=/caminho/para/android-sdk node scripts/android-verificar.mjs
+```
+
+O teste usa o WebView depurável do APK debug, cria um perfil de teste se necessário e abre a aula inicial. Consulta a disponibilidade real de vozes, toca no editor e digita pelo Android, registra o estado do teclado e gira a tela para conferir a preservação do código. Depois desliga Wi-Fi e dados, fecha o processo e reabre a aula. Confere a persistência de perfil e rascunho e a ausência de rede. Gera capturas, estado do teclado e `verificacao-android.json` em `docs/evidencias/android/`. Uma voz detectada não comprova qualidade ou audibilidade: a audição ainda exige validação humana. O emulador permanece sem rede ao final; reative Wi-Fi/dados manualmente para testar funções online. O teste não deve ser executado em um perfil pessoal: use um emulador destinado à verificação.
+
+## Evidências desta execução
+
+As evidências reais de ambiente, compilação e emulador ficam em `docs/evidencias/android/`. O relatório de entrega registra o checksum do APK resultante e as verificações efetivamente executadas. O emulador deste ambiente não dispõe de `/dev/kvm`; qualquer execução usa emulação por software e pode ser significativamente mais lenta que um aparelho real.

@@ -1,0 +1,137 @@
+
+Running 2 tests using 2 workers
+
+(node:3558) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3559) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (30.7s)
+  ✘  2 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (30.7s)
+
+
+  1) [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('tab', { name: 'index.html', exact: true })
+        - waiting for "http://127.0.0.1:4173/" navigation to finish...
+        - navigated to "http://127.0.0.1:4173/"
+
+
+      21 |   const abas = page.getByRole('navigation', { name: 'Painéis do laboratório' });
+      22 |   if (await abas.isVisible()) await abas.getByRole('button', { name: 'Código', exact: true }).click();
+    > 23 |   await page.getByRole('tab', { name: { HTML: 'index.html', CSS: 'style.css', JS: 'script.js' }[arquivo], exact: true }).click();
+         |                                                                                                                          ^
+      24 |   const editor = page.getByRole('textbox', { name: `Editor ${arquivo}` });
+      25 |   await editor.click();
+      26 |   await editor.press('ControlOrMeta+A');
+        at editar (/workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:23:122)
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:48:3
+
+    Error Context: test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [celular] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Browser logs:
+
+    <launching> /home/agent/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-HK2qOG --remote-debugging-pipe --no-startup-window
+    <launched> pid=3651
+    [pid=3651][err] [1027/021234.348392:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+    [pid=3651][err] [1027/021234.348461:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+    [pid=3651][err] [1027/021234.348477:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+    [pid=3651][err] [1027/021234.348496:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+    [pid=3651][err] [1027/021234.391120:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+    [pid=3651][err] [1027/021234.393353:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+    [pid=3651][err] [1027/021234.393427:WARNING:device/bluetooth/dbus/bluez_dbus_manager.cc:209] Floss manager service not available, cannot set Floss enable/disable.
+    [pid=3651][err] [1027/021234.401252:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+    [pid=3651][err] [1027/021234.437844:WARNING:media/gpu/vaapi/vaapi_wrapper.cc:1655] drmGetDevices2() has not found any devices
+    [pid=3651][err] [1027/021234.442535:WARNING:sandbox/policy/linux/sandbox_linux.cc:405] InitializeSandbox() called with multiple threads in process gpu-process.
+    [pid=3651][err] [1027/021234.811178:INFO:CONSOLE:733] "[vite] connecting...", source: http://127.0.0.1:4173/@vite/client (733)
+    [pid=3651][err] [1027/021235.039313:INFO:CONSOLE:827] "[vite] connected.", source: http://127.0.0.1:4173/@vite/client (827)
+    [pid=3651][err] [1027/021235.340043:INFO:CONSOLE:22165] "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold", source: http://127.0.0.1:4173/node_modules/.vite/deps/react-dom_client.js?v=c7a38d8d (22165)
+    [pid=3651][err] [1027/021237.109210:INFO:CONSOLE:865] "[vite] server connection lost. Polling for restart...", source: http://127.0.0.1:4173/@vite/client (865)
+    [pid=3651][err] [1027/021237.895691:INFO:CONSOLE:733] "[vite] connecting...", source: http://127.0.0.1:4173/@vite/client (733)
+    [pid=3651][err] [1027/021238.149436:INFO:CONSOLE:827] "[vite] connected.", source: http://127.0.0.1:4173/@vite/client (827)
+    [pid=3651][err] [1027/021238.392940:INFO:CONSOLE:22165] "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold", source: http://127.0.0.1:4173/node_modules/.vite/deps/react-dom_client.js?v=c7a38d8d (22165)
+    [pid=3651][err] [1027/021255.498218:INFO:CONSOLE:810] "[vite] hot updated: /src/paginas/Conta.tsx", source: http://127.0.0.1:4173/@vite/client (810)
+    [pid=3651][err] [1027/021255.703486:INFO:CONSOLE:810] "[vite] hot updated: /src/App.tsx", source: http://127.0.0.1:4173/@vite/client (810)
+    [pid=3651] <gracefully close start>
+    Call log:
+      - waiting for getByRole('button', { name: 'Trilhas', exact: true })
+        - locator resolved to <button class="">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not stable
+        - retrying click action
+        - waiting 20ms
+        - waiting for element to be visible, enabled and stable
+        - element is not stable
+      - retrying click action
+        - waiting 100ms
+        - waiting for "http://127.0.0.1:4173/" navigation to finish...
+        - navigated to "http://127.0.0.1:4173/"
+        - waiting for element to be visible, enabled and stable
+      - element was detached from the DOM, retrying
+        - locator resolved to <button class="">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - element is outside of the viewport
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - element is outside of the viewport
+        - retrying click action
+          - waiting 100ms
+        47 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - element is outside of the viewport
+         - retrying click action
+           - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+
+
+      10 |   const menu = page.getByRole('button', { name: 'Abrir navegação' });
+      11 |   if (await menu.isVisible()) await menu.click();
+    > 12 |   await page.getByRole('button', { name: nome, exact: true }).click();
+         |                                                               ^
+      13 | }
+      14 | async function abrirHtml(page: Page) {
+      15 |   await navegar(page, 'Trilhas');
+        at navegar (/workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:12:63)
+        at abrirHtml (/workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:15:3)
+        at /workspace/flow-programacao-guiada/testes/ponta-a-ponta/fluxo.spec.ts:44:3
+
+    Error Context: test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/fluxo-perfil-local-edita-H-d72ae-va-fila-offline-e-progresso-celular/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 
+    [celular] › testes/ponta-a-ponta/fluxo.spec.ts:42:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso 

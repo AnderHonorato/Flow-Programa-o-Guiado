@@ -1,0 +1,73 @@
+{
+  "nome": "J.A.R.V.IS.",
+  "licenca": "Arte original criada para Flow Programação Guiada",
+  "grade": {
+    "largura": 64,
+    "altura": 64,
+    "colunas": 4,
+    "linhas": 11
+  },
+  "quadros": [
+    "repouso",
+    "piscar",
+    "respirar",
+    "reagir"
+  ],
+  "estados": {
+    "curioso": {
+      "x": 0,
+      "y": 0,
+      "quadros": 4
+    },
+    "alegre": {
+      "x": 0,
+      "y": 64,
+      "quadros": 4
+    },
+    "explicando": {
+      "x": 0,
+      "y": 128,
+      "quadros": 4
+    },
+    "pensando": {
+      "x": 0,
+      "y": 192,
+      "quadros": 4
+    },
+    "concentrado": {
+      "x": 0,
+      "y": 256,
+      "quadros": 4
+    },
+    "orgulhoso": {
+      "x": 0,
+      "y": 320,
+      "quadros": 4
+    },
+    "surpreso": {
+      "x": 0,
+      "y": 384,
+      "quadros": 4
+    },
+    "preocupado": {
+      "x": 0,
+      "y": 448,
+      "quadros": 4
+    },
+    "comemorando": {
+      "x": 0,
+      "y": 512,
+      "quadros": 4
+    },
+    "descansando": {
+      "x": 0,
+      "y": 576,
+      "quadros": 4
+    },
+    "apoiando": {
+      "x": 0,
+      "y": 640,
+      "quadros": 4
+    }
+  }
+}

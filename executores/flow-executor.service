@@ -1,0 +1,23 @@
+# Instalar somente no host dedicado ao executor. Ajustar caminhos e IP privado.
+[Unit]
+Description=Flow — controlador isolado de execuções
+After=docker.service network.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=flow-executor
+Group=flow-executor
+SupplementaryGroups=docker
+WorkingDirectory=/opt/flow-executor
+EnvironmentFile=/etc/flow-executor.env
+ExecStart=/opt/flow-executor/.venv/bin/python -m uvicorn executores.controlador:app --host 127.0.0.1 --port 8091 --workers 1 --limit-concurrency 8 --timeout-keep-alive 2
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

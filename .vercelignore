@@ -1,0 +1,10 @@
+aplicativos/android/
+artefatos/
+entregas/
+docs/evidencias/
+testes/
+recursos/
+node_modules/
+**/node_modules/
+*.db
+*.db-*
