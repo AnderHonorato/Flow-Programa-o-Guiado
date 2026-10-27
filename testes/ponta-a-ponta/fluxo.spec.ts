@@ -137,7 +137,7 @@ test('produção instala cache e reabre aula sem internet', async ({ page, conte
 test('conta real entra, sai, recupera sessão e recebe bloqueio administrativo', async ({ page }) => {
   test.setTimeout(60000);
   await iniciar(page, 'Conta QA');
-  const email = `qa-${crypto.randomUUID()}@example.test`;
+  const email = `qa-${crypto.randomUUID()}@example.com`;
   const senha = `Senha-QA-${crypto.randomUUID()}`;
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.getByRole('button', { name: 'Quero criar uma conta' }).click();

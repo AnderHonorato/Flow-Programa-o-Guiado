@@ -18,7 +18,7 @@ O script provisiona o runtime Python local, compila a web, sincroniza recursos e
 - `artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk.sha256`;
 - `artefatos/android-build.log`.
 
-Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente.
+Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, fluxos em navegador com API local e banco temporário, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente. Os exemplos de testes gerados pelo template do Capacitor foram removidos: não verificavam o produto e um deles ainda esperava o identificador padrão. A validação nativa automatizada disponível está no script de emulador abaixo.
 
 ## Instalar e atualizar
 
@@ -39,7 +39,7 @@ O conteúdo web fica no APK; IndexedDB persiste no armazenamento privado do WebV
 
 ## Rede e limites offline
 
-A única permissão solicitada é Internet, sem diálogo de permissão em tempo de execução. Tráfego HTTP simples e conteúdo misto estão desativados. A API de produção precisa de HTTPS válido e de uma origem autorizada no backend. Nenhuma credencial de IA acompanha o APK. Login remoto, GPT, sincronização e downloads novos dependem de rede; código, conteúdo e runtime Python previamente empacotados permanecem locais.
+A única permissão de acesso do aplicativo é Internet, sem diálogo de permissão em tempo de execução. A biblioteca AndroidX declara também uma permissão interna para seus receptores. Tráfego HTTP simples e conteúdo misto estão desativados. A API nativa usa `https://flow-programacao-guiada.vercel.app/api`; o backend precisa aceitar a origem local HTTPS do Capacitor. Nenhuma credencial de IA acompanha o APK. Login remoto, GPT, sincronização e downloads novos dependem de rede; código, conteúdo e runtime Python previamente empacotados permanecem locais. Os arquivos de atribuição e licenças das dependências, fontes e runtime Python são distribuídos em `assets/public/licencas/` dentro do APK.
 
 O ícone e a abertura usam geometria original do Flow em terracota, vinho e fundo quente, sem os recursos de marca padrão do Capacitor.
 
@@ -55,4 +55,6 @@ O teste usa o WebView depurável do APK debug, cria um perfil de teste se necess
 
 ## Evidências desta execução
 
-As evidências reais de ambiente, compilação e emulador ficam em `docs/evidencias/android/`. O relatório de entrega registra o checksum do APK resultante e as verificações efetivamente executadas. O emulador deste ambiente não dispõe de `/dev/kvm`; qualquer execução usa emulação por software e pode ser significativamente mais lenta que um aparelho real.
+As evidências reais de ambiente, compilação e emulador ficam em `docs/evidencias/android/`. O relatório de entrega registra o checksum do APK resultante e as verificações efetivamente executadas. O emulador deste ambiente não dispõe de `/dev/kvm`; as duas tentativas usaram emulação por software e não concluíram a validação do produto.
+
+Uma instalação do APK debug anterior retornou `Success` em `instalacao-apk.log`. Isso confirma somente a aceitação daquele pacote pelo gerenciador de instalação. A abertura falhou com serviço Android indisponível na primeira tentativa; na segunda, a chamada de abertura informou atividade inexistente e o roteiro de verificação encerrou por timeout do ADB. Os registros também mostram falhas de depuração de processos do sistema. Esses resultados não comprovam abertura da tela, teclado, rotação, voz nem persistência offline no Android. Não foi iniciada uma terceira tentativa pesada. O APK final recompilado deve ser instalado e validado em aparelho ou emulador com aceleração; os testes web de persistência offline não substituem essa validação nativa.

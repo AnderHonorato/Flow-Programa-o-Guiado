@@ -4,6 +4,7 @@ import EditorCodigo, { type Arquivo } from './EditorCodigo';
 import { carregarProjeto, salvarProjeto, type Snapshot } from './armazenamento';
 import { criarDocumento, testesDaAula, type MensagemLaboratorio } from './sandbox';
 import ClienteApi from './ClienteApi';
+import ClienteExecutor from './ClienteExecutor';
 import { verificarSaida } from './saida';
 import Icone from '../componentes/Icone';
 import './laboratorio.css';
@@ -89,12 +90,13 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
   function executarPython(testar = false) {
     pararPython(); setPythonAtivo(true); setConsoleItens([]); saidaPython.current = [];
     setEstado('Carregando Python local…');
+    const arquivosExecutados = codigoAtual.current;
     const executor = new Worker(new URL('./python.worker.ts', import.meta.url), { type: 'module' }); worker.current = executor;
     let carregou = false; let houveErro = false;
     const definirLimite = (ms: number) => { if (limitePython.current) clearTimeout(limitePython.current); limitePython.current = setTimeout(() => { pararPython(); adicionarConsole('error', carregou ? 'Tempo limite de 4 segundos. Revise laços e recursão.' : 'Python local indisponível ou carregamento excedeu 45 segundos. Verifique /pyodide/.'); }, ms); };
     definirLimite(45000);
     executor.onmessage = (evento: MessageEvent<{ tipo: string; texto?: string }>) => {
-      if (worker.current !== executor) return;
+      if (worker.current !== executor || codigoAtual.current !== arquivosExecutados) return;
       const { tipo, texto = '' } = evento.data;
       if (tipo === 'estado') { setEstado(texto); if (texto.includes('Executando')) { carregou = true; definirLimite(4000); } }
       if (tipo === 'erro') houveErro = true;
@@ -124,6 +126,6 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
       <section className="lab-previa" aria-label="Visualização do projeto"><div className="lab-previa-cabecalho"><strong>Visualização ao vivo</strong><label>Tela<select value={dimensao} onChange={evento => setDimensao(evento.target.value)}><option value="100%">Desktop</option><option value="768px">Tablet · 768</option><option value="375px">Celular · 375</option></select></label></div>{aula.linguagem === 'python' ? <div className="lab-python-info"><span aria-hidden="true">Py</span><h4>Python real, neste dispositivo</h4><p>Execute o arquivo main.py. A saída aparece no Console. O runtime WebAssembly local pode demorar na primeira execução.</p><p>Limite: 4 segundos de execução. Entrada interativa e instalação de pacotes não são suportadas.</p><button type="button" onClick={() => setPainel('console')}>Ver console</button></div> : <><div className="lab-previa-acoes"><label><input type="checkbox" checked={automatico} onChange={evento => setAutomatico(evento.target.checked)} /> Atualizar ao digitar</label><button type="button" aria-pressed={inspecionar} onClick={() => { const ativo = !inspecionar; setInspecionar(ativo); quadro.current?.contentWindow?.postMessage({ token: token.current, acao: 'inspecionar', ativo }, '*'); }}><Icone nome="alvo" tamanho={14} /> {inspecionar ? 'Inspeção ativa' : 'Inspecionar elemento'}</button></div><div className="lab-moldura"><iframe ref={quadro} title={`Prévia isolada de ${aula.titulo}`} sandbox="allow-scripts" referrerPolicy="no-referrer" srcDoc={documento} style={{ width: dimensao }} /></div><p className="lab-ajuda">HTML e CSS desenham esta prévia. JavaScript roda isolado; recursos externos são bloqueados pela política de conteúdo.</p>{inspecao && <details className="lab-inspecao" open><summary>{inspecao.seletor} · linha {linha}</summary><p>{inspecao.largura} × {inspecao.altura}px · display: {inspecao.display}<br />Margem: {inspecao.margem} · preenchimento: {inspecao.padding}</p><pre>{inspecao.arvore.map((item, indice) => `${'  '.repeat(item.profundidade)}${item.tag}${indice === 29 ? '\n…' : ''}`).join('\n')}</pre></details>}</>}</section>
       <section className="lab-console" aria-label="Console de execução"><div className="lab-painel-cabecalho"><h4>Console <span>{consoleItens.length}</span></h4><button type="button" onClick={() => setConsoleItens([])}>Limpar</button></div><div className="lab-console-saida" role="log" aria-live="polite">{consoleItens.length ? consoleItens.map((item, indice) => <pre key={indice} className={`lab-log-${item.nivel}`}><span aria-hidden="true">{item.nivel === 'error' ? '× ' : item.nivel === 'warn' ? '! ' : '› '}</span>{item.texto}</pre>) : <p>As mensagens de console.log e os erros aparecem aqui ao executar.</p>}</div></section>
       <section className="lab-testes" aria-label="Verificações objetivas"><div className="lab-painel-cabecalho"><h4>Verificações</h4><button type="button" onClick={testar} disabled={pythonAtivo}>Executar testes</button></div><p>Testes objetivos verificam o comportamento. O feedback pedagógico é uma etapa separada.</p>{resultados.length ? <ul>{resultados.map(item => <li key={item.id} className={item.aprovado ? 'lab-teste-ok' : 'lab-teste-revisar'}><strong><Icone nome={item.aprovado ? 'check' : 'revisao'} tamanho={14} /> {item.aprovado ? 'Aprovado: ' : 'Revise: '}{item.descricao}</strong>{item.detalhe && <small>{item.detalhe}</small>}</li>)}</ul> : <p className="lab-ajuda">Execute os testes para conferir seu código.</p>}<details><summary>Precisa de uma pista?</summary><ol>{aula.pistas.map((pista, indice) => <li key={indice}>{pista}</li>)}</ol></details></section>
-    </div>{aula.linguagem === 'api' && <ClienteApi />}
+    </div>{aula.linguagem === 'api' && <><ClienteApi /><ClienteExecutor perfilId={perfilId} codigo={arquivos.js} /></>}
   </section>;
 }

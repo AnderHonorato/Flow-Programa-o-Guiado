@@ -112,8 +112,8 @@ O exemplo de loopback acima serve para desenvolvimento; em produção o URL deve
 Com dependências de desenvolvimento da API instaladas:
 
 ```sh
-python -m pytest -q executores/testes
-FLOW_TESTE_DOCKER=1 python -m pytest -q executores/testes
+python -m pytest -c executores/pytest.ini executores/testes -q
+FLOW_TESTE_DOCKER=1 python -m pytest -c executores/pytest.ini executores/testes -q
 python -m pytest -c servidor/pytest.ini servidor/testes -q
 python -m compileall -q executores servidor/rotas
 ```
@@ -121,3 +121,5 @@ python -m compileall -q executores servidor/rotas
 Sem `FLOW_TESTE_DOCKER=1`, os testes que executam contêineres são explicitamente pulados. Os demais cobrem opt-in, autenticação interna, limite de corpo, entrada e proxy com servidor HTTP real local. Os testes Docker exercitam Python, Node, backend HTTP, UID, raiz protegida, ausência de segredo/socket, rede externa bloqueada, limites cgroup reais, timeout, excesso de saída, erro e cancelamento com remoção. Não executam código de aluno diretamente no host.
 
 O serviço é online e depende de autenticação/API/controlador disponíveis. Não substitui HTML/CSS/JS no iframe ou o runtime Python WebAssembly offline. A execução remota não foi publicada nesta etapa e não existe integração automática com correção GPT.
+
+Evidências locais de 27/10/2026: **26 testes aprovados com `FLOW_TESTE_DOCKER=1`**, sem contêineres de aluno restantes; inclui concorrência real e recusa da terceira execução. Regressão da API: **22 aprovados**. `compileall` passou. O pytest emitiu somente o aviso de depreciação já existente de Starlette/TestClient/httpx. Uma primeira execução concorrente com build Docker no storage-driver `vfs` excedeu prazos de create/rm; os contêineres residuais em estado Created foram removidos explicitamente e a suíte foi repetida após o build. Cancelamento durante create agora aguarda sua conclusão antes da limpeza. Manter o daemon do executor dedicado, sem builds concorrentes.

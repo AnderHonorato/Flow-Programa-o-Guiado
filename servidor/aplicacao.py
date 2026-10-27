@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import func, select, text, update
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from servidor.banco import criar_banco
 from servidor.configuracao import Configuracao
@@ -146,7 +146,18 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
 
     @app.get('/api/saude')
     def saude(db=Depends(banco)):
-        db.execute(text('SELECT 1'))
+        try:
+            db.execute(text('SELECT 1'))
+        except SQLAlchemyError as erro:
+            db.rollback()
+            detalhe = str(getattr(erro, 'orig', erro)).lower()
+            diagnostico = ('tenant_ou_usuario' if 'tenant or user' in detalhe else
+                           'autenticacao' if 'password' in detalhe or 'authentication' in detalhe else
+                           'dns' if 'resolve' in detalhe or 'translate host' in detalhe else
+                           'tempo_limite' if 'timeout' in detalhe else
+                           'permissao' if 'permission' in detalhe else 'conexao')
+            return JSONResponse({'status': 'indisponivel', 'versao': '0.1.0',
+                                 'banco': 'indisponivel', 'diagnostico': diagnostico}, status_code=503)
         return {'status': 'disponivel', 'versao': '0.1.0', 'gptConfigurado': bool(config.chave_openai)}
 
     @app.post('/api/contas', status_code=201)

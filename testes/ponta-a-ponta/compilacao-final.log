@@ -1,0 +1,46 @@
+
+> flow-programacao-guiada@0.1.0 build
+> npm run build --workspace aplicativos/web
+
+
+> @flow/web@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 87 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                                                0.13 kB
+dist/manifest.webmanifest                                         0.39 kB
+dist/index.html                                                   0.79 kB │ gzip:   0.47 kB
+dist/assets/python.worker-7soYt1GF.js                             1.08 kB
+dist/assets/jetbrains-mono-greek-400-normal-C190GLew.woff2        4.23 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-BEIGL1Tu.woff2     5.33 kB
+dist/assets/jetbrains-mono-vietnamese-400-normal-CqNFfHCs.woff    5.37 kB
+dist/assets/jetbrains-mono-greek-400-normal-B9oWc5Lo.woff         5.66 kB
+dist/assets/jetbrains-mono-cyrillic-400-normal-ugxPyKxw.woff      6.98 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-Bc8Ftmh3.woff2    7.34 kB
+dist/assets/jetbrains-mono-latin-ext-400-normal-fXTG6kC5.woff    10.13 kB
+dist/assets/inter-vietnamese-wght-normal-CBcvBZtf.woff2          10.25 kB
+dist/assets/inter-greek-ext-wght-normal-DlzME5K_.woff2           11.23 kB
+dist/assets/inter-cyrillic-wght-normal-DqGufNeO.woff2            18.75 kB
+dist/assets/inter-greek-wght-normal-CkhJZR-_.woff2               19.00 kB
+dist/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2       21.17 kB
+dist/assets/inter-cyrillic-ext-wght-normal-BOeWTOD4.woff2        25.96 kB
+dist/assets/jetbrains-mono-latin-400-normal-6-qcROiO.woff        27.50 kB
+dist/assets/inter-latin-wght-normal-Dx4kXJAl.woff2               48.26 kB
+dist/assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2           85.07 kB
+dist/assets/Laboratorio-q84wYSHD.css                              9.03 kB │ gzip:   2.34 kB
+dist/assets/index-CFtYeNBj.css                                   44.65 kB │ gzip:  15.65 kB
+dist/assets/Admin-BC4ojkDX.js                                     6.58 kB │ gzip:   2.54 kB
+dist/assets/index-zp3o5_Jf.js                                   454.29 kB │ gzip: 138.92 kB
+dist/assets/Laboratorio-CKI4nrHw.js                             702.48 kB │ gzip: 241.73 kB
+✓ built in 3.15s
+
+PWA v1.3.0
+mode      generateSW
+precache  28 entries (1458.02 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-2fbc6a65.js

@@ -2,6 +2,9 @@
 import os
 import subprocess
 import asyncio
+import socket
+import threading
+import time
 
 import pytest
 import httpx
@@ -115,6 +118,11 @@ def test_limites_e_erro_reais(cliente_docker, codigo, status):
 
 def test_servidor_http_real_em_loopback(cliente_docker):
     codigo = '''from http.server import BaseHTTPRequestHandler, HTTPServer
+import signal, sys
+def encerrar(*args):
+ print('Servidor encerrado', flush=True)
+ sys.exit(0)
+signal.signal(signal.SIGTERM, encerrar)
 class Rota(BaseHTTPRequestHandler):
  def do_GET(self):
   self.send_response(200 if self.path == '/saude' else 404)
@@ -129,6 +137,7 @@ HTTPServer(('127.0.0.1', 8000), Rota).serve_forever()
     assert dados['status'] == 'concluido', dados
     assert dados['respostaHttp']['status'] == 200
     assert dados['respostaHttp']['corpo'] == '{"total":10}'
+    assert 'Servidor encerrado' in dados['saida']
 
 
 def test_cancelamento_remove_container_real(cliente_docker):
@@ -166,6 +175,41 @@ def test_concorrencia_limitada_a_dois_containers(cliente_docker):
             assert all(resultado.json()['status'] == 'concluido' for resultado in resultados)
 
     asyncio.run(saturar())
+
+
+def test_api_autenticada_proxy_http_e_docker_reais(cliente_docker, monkeypatch, tmp_path):
+    import uvicorn
+    from servidor.aplicacao import criar_aplicacao
+    from servidor.configuracao import Configuracao
+
+    socket_local = socket.socket()
+    socket_local.bind(('127.0.0.1', 0))
+    porta = socket_local.getsockname()[1]
+    servidor = uvicorn.Server(uvicorn.Config(cliente_docker.app, log_level='error', lifespan='off'))
+    thread = threading.Thread(target=servidor.run, kwargs={'sockets': [socket_local]}, daemon=True)
+    thread.start()
+    try:
+        for _ in range(200):
+            if servidor.started:
+                break
+            time.sleep(0.01)
+        assert servidor.started
+        monkeypatch.setenv('EXECUTOR_URL', f'http://127.0.0.1:{porta}')
+        config = Configuracao(banco_url=f'sqlite:///{tmp_path}/api.db', chave_openai='')
+        with TestClient(criar_aplicacao(config)) as api:
+            entrada = {'linguagem': 'python', 'codigo': 'print(6 * 7)'}
+            assert api.post('/api/execucoes', json=entrada).status_code == 401
+            conta = api.post('/api/contas', json={'nome': 'Aluna', 'email': 'executor@exemplo.com', 'senha': 'senha-executor-123'})
+            assert conta.status_code == 201
+            resposta = api.post('/api/execucoes', json=entrada,
+                               headers={'Authorization': 'Bearer ' + conta.json()['token']})
+            assert resposta.status_code == 200, resposta.text
+            assert resposta.json()['status'] == 'concluido'
+            assert resposta.json()['saida'] == '42\n'
+    finally:
+        servidor.should_exit = True
+        thread.join(timeout=5)
+        socket_local.close()
 
 
 @pytest.mark.parametrize('dados', [

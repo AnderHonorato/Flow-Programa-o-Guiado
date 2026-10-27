@@ -1,6 +1,6 @@
 {
-  "data": "2026-10-27T02:11:03.264Z",
-  "base": "http://127.0.0.1:4173",
+  "data": "2026-10-27T09:08:14.747Z",
+  "base": "http://127.0.0.1:4175",
   "telas": [
     {
       "id": "desktop-claro-inicio",
@@ -9,23 +9,7 @@
         "documento": 1440,
         "elementos": []
       },
-      "violacoes": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "descricao": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".jarvis-home > .sobretitulo"
-              ],
-              "html": "<span class=\"sobretitulo\">UM COMPANHEIRO DE DESCOBERTAS</span>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 6.0pt (8px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
     },
     {
       "id": "desktop-claro-trilhas",
@@ -43,37 +27,15 @@
         "documento": 1440,
         "elementos": []
       },
-      "violacoes": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "descricao": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".resumo > p"
-              ],
-              "html": "<p>HTML organiza significado em uma árvore. title identifica a aba; h1 e p estruturam o conteúdo do body.</p>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "ul > li:nth-child(1)"
-              ],
-              "html": "<li>Distinguir title de h1.</li>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "ul > li:nth-child(2)"
-              ],
-              "html": "<li>Fechar elementos na ordem correta, sem colocar p dentro de head.</li>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
+    },
+    {
+      "id": "desktop-claro-laboratorio",
+      "overflow": {
+        "largura": 1440,
+        "documento": 1440
+      },
+      "violacoes": []
     },
     {
       "id": "desktop-claro-perfil",
@@ -82,23 +44,7 @@
         "documento": 1440,
         "elementos": []
       },
-      "violacoes": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "descricao": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".ativo > span:nth-child(2) > small"
-              ],
-              "html": "<small>Perfil local</small>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
     },
     {
       "id": "desktop-escuro-inicio",
@@ -124,6 +70,14 @@
         "largura": 1440,
         "documento": 1440,
         "elementos": []
+      },
+      "violacoes": []
+    },
+    {
+      "id": "desktop-escuro-laboratorio",
+      "overflow": {
+        "largura": 1440,
+        "documento": 1440
       },
       "violacoes": []
     },
@@ -284,52 +238,15 @@
           }
         ]
       },
-      "violacoes": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "descricao": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".resumo > p"
-              ],
-              "html": "<p>HTML organiza significado em uma árvore. title identifica a aba; h1 e p estruturam o conteúdo do body.</p>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "ul > li:nth-child(1)"
-              ],
-              "html": "<li>Distinguir title de h1.</li>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "ul > li:nth-child(2)"
-              ],
-              "html": "<li>Fechar elementos na ordem correta, sem colocar p dentro de head.</li>",
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        },
-        {
-          "id": "scrollable-region-focusable",
-          "impacto": "serious",
-          "descricao": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/scrollable-region-focusable?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".exemplo:nth-child(4) > pre"
-              ],
-              "html": "<pre>",
-              "resumo": "Fix any of the following:\n  Element should have focusable content\n  Element should be focusable"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
+    },
+    {
+      "id": "celular-claro-laboratorio",
+      "overflow": {
+        "largura": 390,
+        "documento": 390
+      },
+      "violacoes": []
     },
     {
       "id": "celular-claro-perfil",
@@ -529,23 +446,15 @@
           }
         ]
       },
-      "violacoes": [
-        {
-          "id": "scrollable-region-focusable",
-          "impacto": "serious",
-          "descricao": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
-          "ajuda": "https://dequeuniversity.com/rules/axe/4.14/scrollable-region-focusable?application=playwright",
-          "nos": [
-            {
-              "alvo": [
-                ".exemplo:nth-child(4) > pre"
-              ],
-              "html": "<pre>",
-              "resumo": "Fix any of the following:\n  Element should have focusable content\n  Element should be focusable"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
+    },
+    {
+      "id": "celular-escuro-laboratorio",
+      "overflow": {
+        "largura": 390,
+        "documento": 390
+      },
+      "violacoes": []
     },
     {
       "id": "celular-escuro-perfil",
@@ -602,60 +511,30 @@
     {
       "id": "modal-conta-teclado",
       "focoInicial": {
-        "html": "<button class=\"botao pequeno secundario\">Entrar</button>",
-        "noModal": false
+        "html": "<button class=\"fechar-modal\" aria-label=\"Fechar conta\"><svg class=\"\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m5 5 14 14M19 5 5 19\"></path></svg></button>",
+        "noModal": true
       },
-      "escapeFecha": false,
+      "escapeFecha": true,
       "focos": [
         {
-          "texto": "Continuar aprendendo ",
-          "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "Ver todas as trilhas ",
-          "tag": "BUTTON",
-          "noModal": false
+          "texto": "",
+          "tag": "INPUT",
+          "noModal": true
         },
         {
           "texto": "",
-          "tag": "BUTTON",
-          "noModal": false
+          "tag": "INPUT",
+          "noModal": true
         },
         {
-          "texto": "02HTML: conteúdo com significado3 aulas publicadas",
+          "texto": "Entrar na minha conta",
           "tag": "BUTTON",
-          "noModal": false
+          "noModal": true
         },
         {
-          "texto": "03CSS: forma e layout3 aulas publicadas",
+          "texto": "Quero criar uma conta",
           "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "04JavaScript: lógica em ação4 aulas publicadas",
-          "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "Silenciar",
-          "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "",
-          "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "",
-          "tag": "BUTTON",
-          "noModal": false
-        },
-        {
-          "texto": "Vamos experimentar ",
-          "tag": "BUTTON",
-          "noModal": false
+          "noModal": true
         },
         {
           "texto": "",
@@ -681,199 +560,85 @@
           "texto": "Quero criar uma conta",
           "tag": "BUTTON",
           "noModal": true
+        },
+        {
+          "texto": "",
+          "tag": "BUTTON",
+          "noModal": true
+        },
+        {
+          "texto": "",
+          "tag": "INPUT",
+          "noModal": true
+        },
+        {
+          "texto": "",
+          "tag": "INPUT",
+          "noModal": true
+        },
+        {
+          "texto": "Entrar na minha conta",
+          "tag": "BUTTON",
+          "noModal": true
+        },
+        {
+          "texto": "Quero criar uma conta",
+          "tag": "BUTTON",
+          "noModal": true
+        },
+        {
+          "texto": "",
+          "tag": "BUTTON",
+          "noModal": true
         }
       ],
-      "axe": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "nos": [
-            {
-              "alvo": [
-                ".jarvis-home > .sobretitulo"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 6.0pt (8px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        }
-      ]
+      "axe": []
     },
     {
       "id": "menu-celular",
       "classeAntes": "barra-lateral aberta",
-      "classeDepoisEscape": "barra-lateral aberta",
+      "classeDepoisEscape": "barra-lateral ",
       "botao": {
-        "expanded": null,
-        "controls": null
+        "expanded": "false",
+        "controls": "navegacao-flow"
       }
     },
     {
       "id": "abas-aula",
       "aposSeta": {
-        "ativo": "Aprender",
+        "ativo": "Fixar",
         "selected": "true"
       },
       "atributos": [
         {
           "nome": "Aprender",
-          "tabindex": null,
-          "controls": null,
-          "id": ""
+          "tabindex": "-1",
+          "controls": "painel-aprender",
+          "id": "aba-aprender"
         },
         {
           "nome": "Fixar",
-          "tabindex": null,
-          "controls": null,
-          "id": ""
+          "tabindex": "0",
+          "controls": "painel-praticar",
+          "id": "aba-praticar"
         },
         {
           "nome": "Laboratório",
-          "tabindex": null,
-          "controls": null,
-          "id": ""
+          "tabindex": "-1",
+          "controls": "painel-laboratorio",
+          "id": "aba-laboratorio"
         }
       ],
-      "paineis": 0
+      "paineis": 1
     },
     {
       "id": "laboratorio-axe",
-      "violacoes": [
-        {
-          "id": "color-contrast",
-          "impacto": "serious",
-          "nos": [
-            {
-              "alvo": [
-                ".lab-desafio > p"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "button[aria-label=\"Desfazer alteração\"]"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                "button[aria-label=\"Refazer alteração\"]"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-editor-acoes > button[type=\"button\"]:nth-child(3)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(2) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(3) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(4) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(5) > .ͼi:nth-child(1)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(5) > .ͼi:nth-child(2)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(6) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(7) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(8) > .ͼi:nth-child(1)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(8) > .ͼi:nth-child(2)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(10) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".cm-line:nth-child(11) > .ͼi"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 3.67 (foreground color: #008855, background color: #ede7df, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-previa-cabecalho > label"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-previa > .lab-ajuda"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-console-saida > p"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-testes > p:nth-child(2)"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
-            },
-            {
-              "alvo": [
-                ".lab-testes > .lab-ajuda"
-              ],
-              "resumo": "Fix any of the following:\n  Element has insufficient color contrast of 4.23 (foreground color: #756b63, background color: #ede7df, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
-            }
-          ]
-        }
-      ]
+      "violacoes": []
     },
     {
       "id": "estado-offline",
-      "texto": "Pular para o conteúdo\nflow.\nPROGRAMAÇÃO GUIADA\nInício\nTrilhas\nAulas\nLaboratório\nRevisão\nProjetos\nSeu espaço de aprendizado\nSeu progresso fica salvo aqui\nR\nRevisão QA\nPerfil local\nSeu espaço\n/\nAulas\nSem internet · modo offline\nEntrar\nAguardando sincronização. Entre em uma conta quando tiver conexão para enviar ao professor.\nAPRENDER FAZENDO · HTML\nHTML 1: Minha primeira página\n\nCriar um documento HTML com idioma, título de aba, título visível e parágrafo, e explicar a árvore formada por esses elementos.\n\nNo seu ritmo\nAprender\nFixar\nLaboratório\nSEU MICRODESAFIO\n\nCrie a página da sua biblioteca: mantenha <!doctype html>, html com lang=\"pt-BR\", head com title, body com exatamente um h1 “Minha biblioteca” e um p não vazio apresentando uma atividade. Edite o título visível e observe a mudança real na prévia.\n\nPreciso de uma pista\nAPRENDER FAZENDO\nSeu laboratório\n\nEdite, observe e descubra o que muda.\n\n▶ Executar\n✓ Testar código\nEnviar desafio\nSeu desafio\n\nCrie a página da sua biblioteca: mantenha <!doctype html>, html com lang=\"pt-BR\", head com title, body com exatamente um h1 “Minha biblioteca” e um p não vazio apresentando uma atividade. Edite o título visível e observe a mudança real na prévia.\n\nAtualizando prévia…\n● Salvo neste dispositivo\nindex.html\nstyle.css\nscript.js\n↶ Desfazer\n↷ Refazer\nAutoindentar\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Minha biblioteca</title>\n</head>\n<body>\n  <h1>Minha biblioteca</h1>\n  <p>Escreva aqui a atividade da sua biblioteca.</p>\n</body>\n</html>\n＋ Salvar versão\nRestaurar versão\nNenhuma versão salva\nVoltar ao início\nVisualização ao vivo\nTela\nDesktop\nTablet · 768\nCelular · 375\nAtualizar ao digitar\n⌖ Inspecionar elemento\n\nHTML e CSS desenham esta prévia. JavaScript roda isolado; recursos externos são bloqueados pela política de conteúdo.\n\nConsole 0\nLimpar\n\nAs mensagens de console.log e os erros aparecem aqui ao executar.\n\nVerificações\nExecutar testes\n\nTestes objetivos verificam o comportamento. O feedback pedagógico é uma etapa separada.\n\nExecute os testes para conferir seu código.\n\nPrecisa de uma pista?\nUma nova maneira de praticar\n\nSem consultar o exemplo, transforme a página em “Meu clube de leitura”. Atualize também title e escreva outro parágrafo com horário. Explique qual nó mudou em cada região.\n\nCritérios de revisão: Documento com doctype, idioma, head e body coerentes. · title não vazio, um h1 com o texto solicitado e um p informativo dentro de body. · Explica a diferença entre metadado e conteúdo visível. · A variação modifica o assunto preservando a árvore.\n\nAs verificações automáticas orientam o exercício. A avaliação pedagógica final é feita separadamente pelo professor.\nRegistrar competência\n\nPara registrar: acerte as questões da etapa Fixar e passe nas verificações do laboratório.\n\nFlow Programação Guiada\nPequenos passos. Conhecimento que fica.\nv0.1.0"
+      "texto": "Pular para o conteúdo\nflow.\nPROGRAMAÇÃO GUIADA\nInício\nTrilhas\nAulas\nLaboratório\nRevisão\nProjetos\nSeu espaço de aprendizado\nSeu progresso fica salvo aqui\nR\nRevisão QA\nPerfil local\nSeu espaço\n/\nAulas\nEntrar\nSem internet · modo offline\nAguardando sincronização. Entre em uma conta quando tiver conexão para enviar ao professor.\nAPRENDER FAZENDO · HTML\nHTML 1: Minha primeira página\n\nCriar um documento HTML com idioma, título de aba, título visível e parágrafo, e explicar a árvore formada por esses elementos.\n\nNo seu ritmo\nAprender\nFixar\nLaboratório\nSEU MICRODESAFIO\n\nCrie a página da sua biblioteca: mantenha <!doctype html>, html com lang=\"pt-BR\", head com title, body com exatamente um h1 “Minha biblioteca” e um p não vazio apresentando uma atividade. Edite o título visível e observe a mudança real na prévia.\n\nPreciso de uma pista\nAPRENDER FAZENDO\nSeu laboratório\n\nEdite, observe e descubra o que muda.\n\n Executar\n Testar código\nEnviar desafio\nSeu desafio\n\nCrie a página da sua biblioteca: mantenha <!doctype html>, html com lang=\"pt-BR\", head com title, body com exatamente um h1 “Minha biblioteca” e um p não vazio apresentando uma atividade. Edite o título visível e observe a mudança real na prévia.\n\nPrévia atualizada.\nSalvo neste dispositivo\nindex.html\nstyle.css\nscript.js\n Desfazer\n Refazer\nAutoindentar\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Minha biblioteca</title>\n</head>\n<body>\n  <h1>Minha biblioteca</h1>\n  <p>Escreva aqui a atividade da sua biblioteca.</p>\n</body>\n</html>\n Salvar versão\nRestaurar versão\nNenhuma versão salva\nVoltar ao início\nVisualização ao vivo\nTela\nDesktop\nTablet · 768\nCelular · 375\nAtualizar ao digitar\n Inspecionar elemento\n\nHTML e CSS desenham esta prévia. JavaScript roda isolado; recursos externos são bloqueados pela política de conteúdo.\n\nConsole 0\nLimpar\n\nAs mensagens de console.log e os erros aparecem aqui ao executar.\n\nVerificações\nExecutar testes\n\nTestes objetivos verificam o comportamento. O feedback pedagógico é uma etapa separada.\n\nExecute os testes para conferir seu código.\n\nPrecisa de uma pista?\nUma nova maneira de praticar\n\nSem consultar o exemplo, transforme a página em “Meu clube de leitura”. Atualize também title e escreva outro parágrafo com horário. Explique qual nó mudou em cada região.\n\nCritérios de revisão: Documento com doctype, idioma, head e body coerentes. · title não vazio, um h1 com o texto solicitado e um p informativo dentro de body. · Explica a diferença entre metadado e conteúdo visível. · A variação modifica o assunto preservando a árvore.\n\nAs verificações automáticas orientam o exercício. A avaliação pedagógica final é feita separadamente pelo professor.\nRegistrar competência\n\nPara registrar: acerte as questões da etapa Fixar e passe nas verificações do laboratório.\n\nFlow Programação Guiada\nPequenos passos. Conhecimento que fica.\nv0.1.0"
     }
   ],
-  "erros": [
-    "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
-    "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
-    "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag."
-  ]
+  "erros": []
 }

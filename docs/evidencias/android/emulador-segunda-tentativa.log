@@ -109,3 +109,7 @@ USER_INFO    | Emulator is performing a full startup. This may take upto two min
 WARNING      | Failed to process .ini file /home/agent/.android/emu-update-last-check.ini for reading.
 WARNING      | UpdateCheck: Failure: Error
 WARNING      | UpdateCheck: failed to get the latest version, skipping check (current version '37.2.12-16428233')
+INFO         | Boot completed in 610546 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+ERROR        | Failed to find ColorBuffer: 71
+ERROR        | Failed to bind to texture: invalid color buffer.

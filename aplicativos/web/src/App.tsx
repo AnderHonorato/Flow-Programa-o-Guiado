@@ -264,12 +264,12 @@ export default function App() {
             </strong>
           </div>
           <div className="acoes-superior">
-            <span className={`conexao ${flow.online ? "" : "sem-rede"}`}>
-              <i />
-              {flow.online
-                ? "Disponível neste dispositivo"
-                : "Sem internet · modo offline"}
-            </span>
+            {flow.online && (
+              <span className="conexao">
+                <i />
+                Disponível neste dispositivo
+              </span>
+            )}
             <button
               className="botao-icone"
               aria-label={`Ativar tema ${tema === "claro" ? "escuro" : "claro"}`}
@@ -288,6 +288,11 @@ export default function App() {
           </div>
         </header>
         <main id="conteudo" tabIndex={-1}>
+          {!flow.online && (
+            <div className="aviso-global" role="status">
+              <span>Sem internet · modo offline</span>
+            </div>
+          )}
           {flow.sessaoExpirada && (
             <div className="aviso-global" role="alert">
               <span>Sua sessão expirou. Seu trabalho continua salvo.</span>

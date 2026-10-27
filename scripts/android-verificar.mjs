@@ -47,6 +47,10 @@ try {
     await pagina.locator('#nome').fill('Teste Android');
     await pagina.getByRole('button', { name: 'Começar no meu dispositivo' }).click();
   }
+  if (!(await pagina.getByRole('button', { name: 'Continuar aprendendo' }).count())) {
+    await pagina.evaluate(() => localStorage.setItem('flow-pagina', 'inicio'));
+    await pagina.reload();
+  }
   await pagina.getByRole('button', { name: 'Continuar aprendendo' }).click({ timeout: 120_000 });
   await pagina.getByRole('heading', { name: /Minha primeira página/i }).first().waitFor({ timeout: 120_000 });
   evidencias.verificacoes.push('APK instalado e aula inicial aberta no WebView Android real.');
@@ -65,6 +69,11 @@ try {
   }
   console.log('Verificando editor, teclado Android e rotacao.');
   await pagina.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  const previa = await pagina.locator('iframe').elementHandle();
+  const quadro = await previa.contentFrame();
+  assert(quadro, 'A previa precisa de um frame isolado.');
+  evidencias.ponteIsolada = await quadro.evaluate(() => typeof window.androidBridge === 'undefined');
+  assert(evidencias.ponteIsolada, 'Codigo do aluno nao pode acessar a ponte Android.');
   const editor = pagina.getByLabel('Editor HTML', { exact: true });
   await editor.scrollIntoViewIfNeeded();
   await editor.click();

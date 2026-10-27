@@ -1,11 +1,10 @@
 """Apenas este controlador tem acesso ao Docker; código via stdin, nunca shell."""
 import asyncio
-import json
 import logging
 import time
 import uuid
 
-from executores.contratos import EntradaExecucao, ResultadoExecucao
+from executores.contratos import EntradaExecucao, RespostaHttp, ResultadoExecucao
 
 
 IMAGEM_PYTHON = 'python:3.12.8-alpine3.21@sha256:ba13ef990f6e5d13014e9e8d04c02a8fdb0fe53d6dccf6e19147f316e6cc3a84'
@@ -161,9 +160,12 @@ class ExecutorDocker:
         resposta_http = None
         if entrada.linguagem == 'backend-python' and status == 'concluido':
             try:
-                texto, registro = texto.rsplit(MARCADOR_HTTP, 1)
-                resposta_http = json.loads(registro.strip())
-            except (ValueError, json.JSONDecodeError):
+                antes, registro = texto.rsplit(MARCADOR_HTTP, 1)
+                linha, _, depois = registro.partition('\n')
+                resposta_http = RespostaHttp.model_validate_json(linha)
+                # stdout/stderr multiplexados podem chegar após o registro HTTP.
+                texto = antes + depois
+            except ValueError:
                 status = 'erro'
         return ResultadoExecucao(status=status, codigoSaida=codigo, saida=texto,
             duracaoMs=round((time.monotonic() - inicio) * 1000), respostaHttp=resposta_http)
