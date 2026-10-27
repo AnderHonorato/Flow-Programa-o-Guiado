@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: validacao-${{ github.ref }}
+  group: validacao-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -64,6 +64,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - name: Instalar plataforma Android
         run: sdkmanager 'platforms;android-35' 'build-tools;34.0.0' 'build-tools;35.0.0'
       - name: Compilar e verificar Android

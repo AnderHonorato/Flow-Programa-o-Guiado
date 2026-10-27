@@ -1,8 +1,8 @@
 {
-  "verificadoEm": "2026-10-27T09:19:30.005495+00:00",
+  "verificadoEm": "2026-10-27T09:32:01.466855+00:00",
   "apk": "artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk",
-  "bytes": 10958877,
-  "sha256": "ea6533b4d6abd023402b3153153611a17722ab8e9b6217a78ed544fa43ab670c",
+  "bytes": 10793552,
+  "sha256": "8741f2b56e89572f014dfe9bea3a4d7ee4c2783a4ca7b24d5e5c64da4de2f65a",
   "compilacao": "assembleDebug e lintDebug: BUILD SUCCESSFUL",
   "lint": "0 errors, 8 warnings",
   "assinatura": "Android Debug; APK Signature Scheme v1 e v2 verificadas",
@@ -16,5 +16,7 @@
   "apiNativaIncluida": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app/api",
   "runtimePythonWasmIncluido": true,
   "execucaoDoApkFinal": "Não testada em dispositivo. Duas tentativas anteriores de emulação sem KVM não concluíram a abertura; consultar verificacao-android.json.",
-  "instalacaoAnterior": "Um APK debug anterior retornou Success; isso não valida a execução do APK final."
+  "instalacaoAnterior": "Um APK debug anterior retornou Success; isso não valida a execução do APK final.",
+  "workerPythonIncluido": "assets/public/assets/python.worker-DndEj9ks.js",
+  "restricoesPythonEmpacotadas": "Bloqueios de IndexedDB e APIs da origem, incluindo descritores herdados. Verificação estática do bundle; não caracteriza sandbox completo."
 }
