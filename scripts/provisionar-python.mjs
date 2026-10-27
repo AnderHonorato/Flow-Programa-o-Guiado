@@ -16,3 +16,10 @@ for(const nome of nomes){
  console.log(`Python local: ${nome} (${(await stat(caminho)).size} bytes)`);
 }
 await writeFile(new URL('runtime.json',destino),JSON.stringify({versao,origem:'https://cdn.jsdelivr.net/pyodide/',arquivos:inventario},null,2));
+// A distribuição acompanha as licenças, inclusive no APK local.
+const licencas = new URL('../aplicativos/web/public/licencas/', import.meta.url);
+await mkdir(licencas, {recursive:true});
+for (const [nome,origem] of [
+ ['Pyodide-MPL-2.0.txt',`https://raw.githubusercontent.com/pyodide/pyodide/${versao}/LICENSE`],
+ ['Python-3.13.2.txt','https://raw.githubusercontent.com/python/cpython/v3.13.2/LICENSE']
+]) execFileSync('curl',['--fail','--location','--silent','--show-error','--retry','2',origem,'--output',fileURLToPath(new URL(nome,licencas))],{stdio:'inherit'});

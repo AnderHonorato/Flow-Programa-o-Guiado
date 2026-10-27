@@ -1,4 +1,5 @@
-export const baseApi = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/,'');
+import { Capacitor } from '@capacitor/core';
+export const baseApi = (import.meta.env.VITE_API_URL || (Capacitor.isNativePlatform() ? 'https://flow-programacao-guiada.vercel.app/api' : '/api')).replace(/\/$/,'');
 export class ErroApi extends Error { constructor(mensagem:string,public status:number){super(mensagem);} }
 export async function requisitar<T>(caminho:string,token?:string,opcoes:RequestInit={}):Promise<T>{
  const resposta=await fetch(`${baseApi}${caminho}`,{...opcoes,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`} : {}),...opcoes.headers},signal:opcoes.signal||AbortSignal.timeout(25000)});
