@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from threading import Lock
 import json
+import logging
 import os
 import time
 
@@ -150,7 +151,9 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
             db.execute(text('SELECT 1'))
         except SQLAlchemyError as erro:
             db.rollback()
-            detalhe = str(getattr(erro, 'orig', erro)).lower()
+            original = getattr(erro, 'orig', erro)
+            logging.getLogger('flow.banco').error('Conexão do banco indisponível: %s', original)
+            detalhe = str(original).lower()
             diagnostico = ('tenant_ou_usuario' if 'tenant or user' in detalhe else
                            'autenticacao' if 'password' in detalhe or 'authentication' in detalhe else
                            'dns' if 'resolve' in detalhe or 'translate host' in detalhe else
