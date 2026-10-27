@@ -1,18 +1,11 @@
 {
   "buildCommand": "npm run provisionar:python && npm run build",
-  "outputDirectory": "aplicativos/web/dist",
   "functions": {
-    "api/index.py": {
+    "app.py": {
       "maxDuration": 60,
-      "includeFiles": "{servidor,conteudos,executores}/**"
+      "includeFiles": "{servidor,conteudos,executores,aplicativos/web/dist}/**"
     }
   },
-  "rewrites": [
-    {
-      "source": "/api/:caminho*",
-      "destination": "/api/index.py"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -40,5 +33,6 @@
         }
       ]
     }
-  ]
+  ],
+  "framework": "fastapi"
 }
