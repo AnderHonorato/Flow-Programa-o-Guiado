@@ -1,3 +1,4 @@
+import { escolher, analisar, combinarAvaliacoes, respostasDasAvaliacoes } from '../aprendizagem/avaliacao';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {Aula,ArquivosCodigo} from '../../../../contratos/tipos';
 import {catalogoIncluido,lerCatalogoLocal,atualizarCatalogo} from '../offline/catalogo';
@@ -37,16 +38,26 @@ export function useFlow(){
  },[perfilId,online]);
  useEffect(()=>{let ativo=true;pronto.current=null;setCarregando(true);void gravacao.current.then(()=>Promise.all([lerEstado(perfilId),listarFila(perfilId)])).then(([e,f])=>{if(ativo&&perfilAtual.current===perfilId){setEstado(e);setFila(f);pronto.current=perfilId;setCarregando(false);}}).catch(()=>{if(ativo){setCarregando(false);setAviso('O armazenamento local não está disponível. Verifique as permissões do navegador antes de editar.');}});return()=>{ativo=false;};},[perfilId]);
  useEffect(()=>{if(pronto.current===perfilId){gravacao.current=gravacao.current.then(()=>salvarEstado(perfilId,estado)).catch(()=>{if(perfilAtual.current===perfilId)setAviso('Não foi possível salvar o progresso. Exporte seus dados no perfil.');});}},[estado,perfilId]);
- const sincronizar=useCallback(async()=>{if(!sessao||!navigator.onLine||pronto.current!==perfilId)return;setSincronizando(true);try{
+ const sincronizar=useCallback(async(silencioso=false)=>{if(!sessao||!navigator.onLine||pronto.current!==perfilId)return;setSincronizando(true);try{
   await gravacao.current;
   const resultado=await sincronizarFila(perfilId,sessao.token,baseApi);
   const [remoto,filaAtual,situacao]=await Promise.all([lerEstado(perfilId),listarFila(perfilId),lerSincronizacao(perfilId)]);
   if(perfilAtual.current!==perfilId||sessaoAtual.current?.token!==sessao.token)return;
-  setEstado(combinarEstados(estadoAtual.current,remoto));setFila(filaAtual);
+  const combinado=combinarEstados(estadoAtual.current,remoto);
+  combinado.avaliacoes=combinarAvaliacoes(remoto.avaliacoes,estadoAtual.current.avaliacoes);
+  combinado.respostas=respostasDasAvaliacoes({...estadoAtual.current.respostas,...remoto.respostas},combinado.avaliacoes);
+  combinado.xp=combinado.aulasConcluidas.length*100+Object.values(combinado.respostas).filter(Boolean).length*10;
+  setEstado(combinado);setFila(filaAtual);
   setSessaoExpirada(Boolean(situacao.sessaoExpirada));
-  setAviso(situacao.erro|| (resultado.pendentes?`${resultado.pendentes} envio(s) aguardam nova tentativa. Seus dados estão preservados.`:'Seu progresso foi sincronizado.'));
+  if(!silencioso||situacao.erro||resultado.pendentes)setAviso(situacao.erro|| (resultado.pendentes?`${resultado.pendentes} envio(s) aguardam nova tentativa. Seus dados estão preservados.`:'Seu progresso foi sincronizado.'));
  }catch(e){if(perfilAtual.current===perfilId&&sessaoAtual.current?.token===sessao.token)setAviso(e instanceof Error?e.message:'Sem conexão com o servidor. Seu trabalho está salvo.');}finally{if(perfilAtual.current===perfilId&&sessaoAtual.current?.token===sessao.token)setSincronizando(false);}},[perfilId,sessao]);
  useEffect(()=>{if(sessao&&online&&!carregando)void sincronizar();},[sessao,online,carregando]);
+ const assinaturaAvaliacoes=JSON.stringify(estado.avaliacoes ?? {});
+ useEffect(()=>{
+  if(!sessao||!online||carregando||pronto.current!==perfilId||!Object.keys(estado.avaliacoes??{}).length)return;
+  const timer=setTimeout(()=>void sincronizar(true),800);
+  return()=>clearTimeout(timer);
+ },[assinaturaAvaliacoes,sessao,online,carregando,perfilId,sincronizar]);
  function iniciar(nomeNovo:string){const n=nomeNovo.trim().slice(0,60)||'Estudante';localStorage.setItem('flow-nome',n);setNome(n);}
  async function autenticar(nova:Sessao){
   await gravacao.current;
@@ -55,9 +66,28 @@ export function useFlow(){
   sessionStorage.setItem('flow-sessao',JSON.stringify(nova));setSessaoExpirada(false);setSessao(nova);iniciar(nova.usuario.nome);
  }
  async function sair(){await gravacao.current;if(sessaoAtual.current?.token!==sessao?.token)return;sessionStorage.removeItem('flow-sessao');setSessao(null);setSessaoExpirada(false);setSincronizando(false);setAviso('Sessão encerrada. Você voltou ao seu perfil local.');if(sessao)try{await requisitar('/sessao',sessao.token,{method:'DELETE'});}catch{/* sessão local termina mesmo sem rede */}}
- function registrarResposta(aula:Aula,questao:string,correta:boolean){if(pronto.current!==perfilId)return;setEstado(e=>({...e,respostas:{...e.respostas,[`${aula.id}:${questao}`]:correta},revisoes:{...e.revisoes,[aula.id]:atualizarRevisao(e.revisoes[aula.id],correta?'correta':'incorreta')}}));}
- function concluir(aula:Aula){if(pronto.current!==perfilId)return false;const aprovado=aula.questoes.every(q=>estado.respostas[`${aula.id}:${q.id}`]);if(!aprovado){setAviso('Responda corretamente às questões e passe nas verificações do laboratório para registrar a competência.');return false;}setEstado(e=>({...e,aulasConcluidas:[...new Set([...e.aulasConcluidas,aula.id])],xp:e.xp+(e.aulasConcluidas.includes(aula.id)?0:50),revisoes:{...e.revisoes,[aula.id]:{etapa:0,proxima:new Date(Date.now()+86400000).toISOString()}}}));return true;}
+ function escolherResposta(aula:Aula,questao:string,indice:number){
+  if(pronto.current!==perfilId)return;
+  setEstado(e=>{const atual=e.avaliacoes?.[aula.id];const nova=escolher(aula,atual,questao,indice);return nova===atual?e:{...e,avaliacoes:{...e.avaliacoes,[aula.id]:nova}};});
+ }
+ function enviarAvaliacao(aula:Aula){
+  if(pronto.current!==perfilId)return;
+  setEstado(e=>{
+   const prova=e.avaliacoes?.[aula.id];if(!prova||prova.enviadaEm)return e;
+   const resultado=analisar(aula,prova);if(!resultado.completa)return e;
+   const respostas={...e.respostas};for(const item of resultado.itens)respostas[`${aula.id}:${item.questao.id}`]=item.correta;
+   return {...e,respostas,xp:e.aulasConcluidas.length*100+Object.values(respostas).filter(Boolean).length*10,
+    avaliacoes:{...e.avaliacoes,[aula.id]:{...prova,enviadaEm:new Date().toISOString()}},
+    revisoes:{...e.revisoes,[aula.id]:atualizarRevisao(e.revisoes[aula.id],resultado.acertos===resultado.total?'correta':'incorreta')}};
+  });
+ }
+ function revisarAvaliacao(aula:Aula){if(pronto.current!==perfilId)return;setEstado(e=>{const prova=e.avaliacoes?.[aula.id];return prova?.enviadaEm?{...e,avaliacoes:{...e.avaliacoes,[aula.id]:{...prova,revisada:true}}}:e;});}
+ function concluir(aula:Aula){
+  if(pronto.current!==perfilId)return false;
+  if(!estado.avaliacoes?.[aula.id]?.revisada){setAviso('Envie a avaliação e leia a correção antes de registrar a competência.');return false;}
+  setEstado(e=>{const aulasConcluidas=[...new Set([...e.aulasConcluidas,aula.id])];return {...e,aulasConcluidas,xp:aulasConcluidas.length*100+Object.values(e.respostas).filter(Boolean).length*10,revisoes:{...e.revisoes,[aula.id]:{etapa:0,proxima:new Date(Date.now()+86400000).toISOString()}}};});return true;
+ }
  async function enviar(aula:Aula,arquivos:ArquivosCodigo){const tentativa:TentativaLocal={id:crypto.randomUUID(),aulaId:aula.id,arquivos,criadaEm:new Date().toISOString(),status:'aguardando_sincronizacao'};await enfileirarTentativa(perfilId,tentativa);const atualizada=await listarFila(perfilId);if(perfilAtual.current!==perfilId)return;setFila(atualizada);setAviso(sessao&&online?'Trabalho salvo. Enviando para a fila de validação…':'Aguardando sincronização. Entre em uma conta quando tiver conexão para enviar ao professor.');if(sessao&&online)await sincronizar();}
- return {catalogo:catalogoAtual,aulas:catalogoAtual.trilhas.flatMap(t=>t.modulos.flatMap(m=>m.aulas)),nome,iniciar,sessao,sessaoExpirada,autenticar,sair,perfilId,estado,setEstado,fila,carregando,online,aviso,setAviso,sincronizando,sincronizar,registrarResposta,concluir,enviar};
+ return {catalogo:catalogoAtual,aulas:catalogoAtual.trilhas.flatMap(t=>t.modulos.flatMap(m=>m.aulas)),nome,iniciar,sessao,sessaoExpirada,autenticar,sair,perfilId,estado:pronto.current===perfilId?estado:estadoInicial,setEstado,fila:pronto.current===perfilId?fila:[],carregando:carregando||pronto.current!==perfilId,online,aviso,setAviso,sincronizando,sincronizar,escolherResposta,enviarAvaliacao,revisarAvaliacao,concluir,enviar};
 }
 export type Flow=ReturnType<typeof useFlow>;

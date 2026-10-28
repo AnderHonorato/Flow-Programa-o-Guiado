@@ -1,7 +1,7 @@
 """Contratos de fronteira; entradas desconhecidas são recusadas."""
 from datetime import datetime
-from typing import Any, Literal
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from typing import Annotated, Any, Literal
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class Entrada(BaseModel):
@@ -35,9 +35,44 @@ class RevisaoEspacada(Entrada):
     proxima: datetime
 
 
+class AlternativaCorrecao(Entrada):
+    texto: str = Field(min_length=1, max_length=10000)
+    correta: bool
+    feedback: str = Field(min_length=1, max_length=10000)
+
+
+class QuestaoCorrecao(Entrada):
+    id: str = Field(min_length=1, max_length=100)
+    enunciado: str = Field(min_length=1, max_length=10000)
+    alternativas: list[AlternativaCorrecao] = Field(min_length=2, max_length=1000)
+
+
+class Avaliacao(Entrada):
+    escolhas: dict[str, Annotated[int, Field(strict=True, ge=0, le=1000)]] = Field(default_factory=dict, max_length=1000)
+    enviadaEm: AwareDatetime | None = None
+    revisada: bool = Field(default=False, strict=True)
+    # Aceita o round-trip offline, mas o serviço nunca usa este gabarito recebido.
+    correcao: list[QuestaoCorrecao] | None = Field(default=None, max_length=1000)
+
+    @field_validator('enviadaEm', mode='before')
+    @classmethod
+    def validar_data_iso(cls, valor):
+        if valor is not None and not isinstance(valor, (str, datetime)):
+            raise ValueError('O envio exige data ISO com fuso horário.')
+        return valor
+
+    @field_validator('escolhas')
+    @classmethod
+    def validar_identificadores(cls, valor):
+        if any(not chave.strip() or len(chave) > 100 for chave in valor):
+            raise ValueError('Identificador de questão inválido.')
+        return valor
+
+
 class Estado(Entrada):
     aulasConcluidas: list[str] = Field(default_factory=list, max_length=10000)
     respostas: dict[str, bool] = Field(default_factory=dict, max_length=10000)
+    avaliacoes: dict[str, Avaliacao] = Field(default_factory=dict, max_length=10000)
     revisoes: dict[str, RevisaoEspacada] = Field(default_factory=dict, max_length=10000)
     xp: int = Field(default=0, ge=0)
     ultimaAula: str = Field(default='', max_length=100)

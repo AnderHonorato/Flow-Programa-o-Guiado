@@ -52,7 +52,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         yield
         motor.dispose()
 
-    app = FastAPI(title='Flow Programação Guiada — API', version='0.1.0', lifespan=ciclo_vida)
+    app = FastAPI(title='Flow Programação Guiada — API', version='0.2.0', lifespan=ciclo_vida)
     app.state.motor = motor
     app.state.banco = fabrica
     app.state.corretor = corretor or CorretorGPT(config.chave_openai, config.modelo_openai)
@@ -142,7 +142,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         return progresso
 
     def saida_progresso(progresso, recebidos=None):
-        return {'estado': progresso.estado, 'versao': progresso.versao,
+        return {'estado': {chave: valor for chave, valor in progresso.estado.items() if not chave.startswith('_')}, 'versao': progresso.versao,
                 'conflitos': progresso.conflitos, 'eventosRecebidos': recebidos or []}
 
     @app.get('/api/saude')
@@ -159,9 +159,9 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
                            'dns' if 'resolve' in detalhe or 'translate host' in detalhe else
                            'tempo_limite' if 'timeout' in detalhe else
                            'permissao' if 'permission' in detalhe else 'conexao')
-            return JSONResponse({'status': 'indisponivel', 'versao': '0.1.0',
+            return JSONResponse({'status': 'indisponivel', 'versao': '0.2.0',
                                  'banco': 'indisponivel', 'diagnostico': diagnostico}, status_code=503)
-        return {'status': 'disponivel', 'versao': '0.1.0', 'gptConfigurado': bool(config.chave_openai)}
+        return {'status': 'disponivel', 'versao': '0.2.0', 'gptConfigurado': bool(config.chave_openai)}
 
     @app.post('/api/contas', status_code=201)
     def cadastrar(entrada: Cadastro, request: Request, db=Depends(banco)):
@@ -209,11 +209,18 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
 
     @app.put('/api/progresso')
     def sincronizar(entrada: Sincronizacao, usuario=Depends(autenticar), db=Depends(banco)):
+        # Serializa snapshots do mesmo perfil: duas abas não podem trocar a
+        # primeira resposta já confirmada pela outra transação.
+        db.scalar(select(Usuario).where(Usuario.id == usuario.id).with_for_update())
         registro = ler_progresso(db, usuario.id)
+        catalogo, _ = ler_catalogo(db, config.catalogo)
         anterior = (registro.estado, registro.conflitos)
         estado, conflitos = registro.estado, registro.conflitos
         if entrada.estado:
-            estado, conflitos = mesclar(estado, entrada.estado.model_dump(mode='json'), conflitos)
+            try:
+                estado, conflitos = mesclar(estado, entrada.estado.model_dump(mode='json', exclude_none=True), conflitos, catalogo)
+            except (ValueError, TypeError) as erro:
+                raise HTTPException(422, str(erro))
         recebidos = []
         novos = 0
         for evento in entrada.eventos:
@@ -224,7 +231,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
                     raise HTTPException(409, 'Identificador de evento já usado com outro conteúdo. Preserve os dois com IDs diferentes.')
             else:
                 try:
-                    estado, conflitos = aplicar_evento(estado, dados, conflitos)
+                    estado, conflitos = aplicar_evento(estado, dados, conflitos, catalogo)
                 except (ValueError, TypeError):
                     raise HTTPException(422, 'Conteúdo inválido para o tipo de evento.')
                 db.add(EventoProgresso(usuario_id=usuario.id, evento_id=evento.id, dados=dados))
@@ -289,7 +296,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
     def registrar_aprovacao(db, tentativa):
         db.scalar(select(Usuario).where(Usuario.id == tentativa.usuario_id).with_for_update())
         registro = ler_progresso(db, tentativa.usuario_id)
-        registro.estado, registro.conflitos = mesclar(registro.estado, {'aulasConcluidas': [tentativa.aula_id]}, registro.conflitos)
+        registro.estado, registro.conflitos = mesclar(registro.estado, {'aulasConcluidas': [tentativa.aula_id]}, registro.conflitos, ler_catalogo(db, config.catalogo)[0])
         registro.versao += 1
 
     @app.post('/api/admin/tentativas/{chave}/corrigir')

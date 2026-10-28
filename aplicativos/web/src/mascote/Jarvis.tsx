@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Icone } from '../componentes/Icone';
 import './Jarvis.css';
 
@@ -7,82 +8,117 @@ export type EstadoJarvis = 'curioso' | 'alegre' | 'explicando' | 'pensando' | 'c
 const falas: Record<EstadoJarvis, string> = {
   curioso: 'Uma ideia de cada vez. Vamos experimentar?',
   alegre: 'Boa! Você conectou a ideia ao resultado.',
-  explicando: 'Mude uma linha e observe o que acontece na prévia.',
-  pensando: 'O que esse código precisa fazer primeiro?',
+  explicando: 'Vamos entender o exemplo antes de construir sua solução.',
+  pensando: 'Analisando seu raciocínio. Cada resposta revela o próximo passo.',
   concentrado: 'Compare o resultado com o objetivo do desafio.',
-  orgulhoso: 'Mais um degrau construído por você.',
+  orgulhoso: 'Sua evolução ganha forma a cada descoberta.',
   surpreso: 'Um resultado novo! Vamos entender o que mudou?',
   preocupado: 'Vamos olhar a mensagem de erro com calma.',
-  comemorando: 'Funcionou! Agora tente explicar com suas palavras.',
+  comemorando: 'Missão cumprida! Uma nova conquista faz parte da sua jornada.',
   descansando: 'Seu trabalho está aqui. Volte no seu ritmo.',
-  apoiando: 'Errar traz uma pista. Revise uma parte de cada vez.',
+  apoiando: 'Um erro é uma pista. Veja a explicação e revise uma parte de cada vez.',
 };
+const descricoes: Record<EstadoJarvis, string> = {
+  curioso: 'Pronto para explorar', alegre: 'Conexão feita', explicando: 'Guia em ação', pensando: 'Analisando',
+  concentrado: 'Foco na missão', orgulhoso: 'Você está evoluindo', surpreso: 'Nova descoberta', preocupado: 'Vamos revisar',
+  comemorando: 'Conquista desbloqueada', descansando: 'No seu ritmo', apoiando: 'Vamos juntos',
+};
+type Fala = { id: string; estado: EstadoJarvis; mensagem: string };
+type Canal = { publicar: (fala: Fala) => void; remover: (id: string) => void };
+const CanalJarvis = createContext<Canal | null>(null);
 
-function lerPreferencia(chave: string) {
+/** Uma única presença visual, mesmo quando telas diferentes publicam orientações. */
+export function JarvisProvider({ children }: { children: ReactNode }) {
+  const [fontes, definirFontes] = useState<Fala[]>([]);
+  const publicar = useCallback((fala: Fala) => definirFontes(atuais => [...atuais.filter(item => item.id !== fala.id), fala]), []);
+  const remover = useCallback((id: string) => definirFontes(atuais => atuais.filter(item => item.id !== id)), []);
+  const canal = useMemo(() => ({ publicar, remover }), [publicar, remover]);
+  const fala = fontes.at(-1);
+  return <CanalJarvis.Provider value={canal}>{children}{createPortal(<AssistenteFlutuante fala={fala} />, document.body)}</CanalJarvis.Provider>;
+}
+
+/** Publica contexto pedagógico. O balão só é desenhado junto ao assistente global. */
+export function Jarvis({ estado = 'curioso', mensagem, ativo = true }: { estado?: EstadoJarvis; mensagem?: string; compacto?: boolean; ativo?: boolean }) {
+  const canal = useContext(CanalJarvis);
+  const id = useId();
+  useEffect(() => {
+    if (!canal || !ativo) return;
+    canal.publicar({ id, estado, mensagem: mensagem ?? falas[estado] });
+    return () => canal.remover(id);
+  }, [canal, id, estado, mensagem, ativo]);
+  return null;
+}
+function preferencia(chave: string) {
   try { return localStorage.getItem(`flow.jarvis.${chave}`) === 'sim'; } catch { return false; }
 }
+function salvarPreferencia(chave: string, valor: boolean) {
+  try { localStorage.setItem(`flow.jarvis.${chave}`, valor ? 'sim' : 'nao'); } catch { /* A preferência permanece válida nesta sessão. */ }
+}
 
-/** Companheiro original em grade de 64 pixels. Não toca áudio automaticamente. */
-export function Jarvis({ estado = 'curioso', mensagem, compacto = false }: { estado?: EstadoJarvis; mensagem?: string; compacto?: boolean }) {
-  const [minimizado, definirMinimizado] = useState(() => lerPreferencia('minimizado'));
-  const [silenciado, definirSilenciado] = useState(() => lerPreferencia('silenciado'));
-  const [pausado, definirPausado] = useState(() => lerPreferencia('pausado'));
-  useEffect(() => { try { localStorage.setItem('flow.jarvis.minimizado', minimizado ? 'sim' : 'nao'); } catch { /* Armazenamento indisponível: preferência vale nesta sessão. */ } }, [minimizado]);
-  useEffect(() => { try { localStorage.setItem('flow.jarvis.silenciado', silenciado ? 'sim' : 'nao'); } catch { /* A interface continua funcionando. */ } }, [silenciado]);
-  useEffect(() => { try { localStorage.setItem('flow.jarvis.pausado', pausado ? 'sim' : 'nao'); } catch { /* A interface continua funcionando. */ } }, [pausado]);
+function Nucleo({ estado }: { estado: EstadoJarvis }) {
+  const id = useId().replaceAll(':', '');
+  return <svg className="jarvis-nucleo" viewBox="0 0 120 120" fill="none" role="img" aria-label={`J.A.R.V.IS. ${estado}`}>
+    <defs><radialGradient id={`luz-${id}`}><stop stopColor="#e5ffff"/><stop offset=".38" stopColor="#74f1f5"/><stop offset="1" stopColor="#168da1"/></radialGradient><linearGradient id={`metal-${id}`} x1="28" y1="20" x2="92" y2="103" gradientUnits="userSpaceOnUse"><stop stopColor="#d2fbff"/><stop offset=".4" stopColor="#2e8a9c"/><stop offset="1" stopColor="#12394e"/></linearGradient></defs>
+    <ellipse className="jarvis-projecao" cx="60" cy="110" rx="30" ry="4" fill="#64e7ee" opacity=".2"/>
+    <g className="jarvis-holograma">
+      <circle cx="60" cy="56" r="49" fill="#071e2d" fillOpacity=".94"/>
+      <g className="jarvis-anel jarvis-anel--externo" stroke="#69e2ed"><circle cx="60" cy="56" r="47" strokeWidth="1" opacity=".35"/><path d="M60 9a47 47 0 0 1 44 31M107 56a47 47 0 0 1-47 47M13 56a47 47 0 0 1 17-36" strokeWidth="3"/><path d="M60 5v7M60 100v7M9 56h7M104 56h7" strokeWidth="2"/></g>
+      <g className="jarvis-anel jarvis-anel--interno" stroke="#a0edf2"><circle cx="60" cy="56" r="38" strokeDasharray="3 8" opacity=".5"/><path d="M29 36a37 37 0 0 1 55-9M91 77a37 37 0 0 1-55 8" strokeWidth="2"/></g>
+      <path d="m44 30 16-5 16 5 12 15-5 29-15 12H52L37 74l-5-29Z" fill={`url(#metal-${id})`} stroke="#79d8e4" strokeWidth="1.2"/>
+      <path d="m43 41 17-5 17 5 4 10-5 17-16 7-16-7-5-17Z" fill="#092c3d" stroke="#19566b"/>
+      <g className="jarvis-visor" stroke="#a8ffff" strokeWidth="2.5" strokeLinecap="round"><path d="m43 51 12 3m10 0 12-3"/></g>
+      <path className="jarvis-sinal" d="M48 64h5l3-5 5 11 4-8 3 2h4" stroke="#68eaf0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle className="jarvis-centelha" cx="60" cy="82" r="4" fill={`url(#luz-${id})`}/>
+      <g className="jarvis-particulas" fill="#c2ffff"><circle cx="15" cy="30" r="1.5"/><circle cx="103" cy="24" r="1"/><circle cx="100" cy="88" r="2"/><path d="m19 83 2 2-2 2-2-2Z"/></g>
+    </g>
+  </svg>;
+}
 
-  if (minimizado) return <button type="button" className="jarvis-reabrir" onClick={() => definirMinimizado(false)} aria-label="Mostrar J.A.R.V.IS."><span className="jarvis-mini" aria-hidden="true">J.</span><span>Mostrar J.A.R.V.IS.</span></button>;
-
-  const sorrindo = ['alegre', 'orgulhoso', 'comemorando', 'apoiando'].includes(estado);
-  const descansando = estado === 'descansando';
-  const emocionado = estado === 'comemorando';
-  const surpreendido = estado === 'surpreso';
-  const preocupado = estado === 'preocupado';
-  const olhando = estado === 'concentrado' || estado === 'explicando';
-  const pensando = estado === 'pensando';
-
-  return <aside className={`jarvis ${compacto ? 'jarvis--compacto' : ''} ${pausado ? 'jarvis--pausado' : ''}`} data-estado={estado} aria-label="Ajuda de J.A.R.V.IS.">
-    <div className="jarvis-palco">
-      <svg className="jarvis-pixels" viewBox="0 0 64 64" fill="none" shapeRendering="crispEdges" role="img" aria-label={`J.A.R.V.IS. ${estado}`}>
-        <ellipse className="jarvis-sombra" cx="32" cy="58" rx="17" ry="2" fill="#362723" opacity=".13"/>
-        <g className="jarvis-corpo" key={estado}>
-          <g className="jarvis-antena"><path d="M31 18V9h3v9" fill="#653B32"/><path d="M32 6h7v4h-7zM29 9h5v4h-5z" fill="#8F2D4A"/><path d="M34 6h3v2h-3z" fill="#EBA78B"/></g>
-          <g className="jarvis-braco jarvis-braco--esquerdo"><path d="M12 34h5v13h-5zM9 38h4v8H9z" fill="#7F4435"/><path d="M11 38h5v6h-5z" fill="#D97757"/></g>
-          <g className="jarvis-braco jarvis-braco--direito"><path d="M47 34h5v13h-5zM51 38h4v8h-4z" fill="#7F4435"/><path d="M48 38h5v6h-5z" fill="#D97757"/></g>
-          <path d="M19 48h9v8h-9zM36 48h9v8h-9z" fill="#653B32"/><path d="M17 53h11v4H17zM36 53h11v4H36z" fill="#8F2D4A"/>
-          <path d="M21 16h22v3h5v5h3v23h-3v5H17v-5h-3V24h3v-5h4z" fill="#653B32"/>
-          <path d="M21 19h22v3h5v24h-3v3H19v-3h-2V25h3v-3h1z" fill="#D97757"/>
-          <path d="M22 19h20v3H22zM19 23h3v6h-3z" fill="#F2AD87"/>
-          <path d="M22 25h20v2h4v14h-3v3H21v-3h-3V28h4z" fill="#FFEDD4"/>
-          <path d="M23 25h18v2H23zM20 28h3v2h-3z" fill="#FFFFFF" opacity=".7"/>
-          <g className="jarvis-olhos" fill="#362723">
-            {descansando ? <path d="M23 33h6v2h-6zM35 33h6v2h-6z"/> : sorrindo ? <path d="M23 31h2v-2h3v2h2v3h-2v-2h-3v2h-2zM34 31h2v-2h3v2h2v3h-2v-2h-3v2h-2z"/> : <><rect x={olhando ? 26 : 24} y={surpreendido ? 28 : 30} width="4" height={surpreendido ? 8 : 6}/><rect x={olhando ? 38 : 36} y={surpreendido ? 28 : 30} width="4" height={surpreendido ? 8 : 6}/><path d="M25 30h1v2h-1zM37 30h1v2h-1z" fill="#FFFAF5"/></>}
-          </g>
-          {sobrancelhas(preocupado, pensando)}
-          <path d="M21 37h4v2h-4zM39 37h4v2h-4z" fill="#E9A38A"/>
-          {surpreendido ? <path d="M30 37h4v5h-4z" fill="#653B32"/> : preocupado ? <path d="M29 40h2v-2h3v2h2v2h-2v-2h-3v2h-2z" fill="#653B32"/> : <path d="M29 38h2v2h3v-2h2v3h-2v1h-3v-1h-2z" fill="#653B32"/>}
-          <path d="M19 46h26v4H19zM37 49h6v6h-6z" fill="#8F2D4A"/>
-          <path d="M25 47h5v2h-5z" fill="#F7C7A4"/>
-          {emocionado && <g className="jarvis-confetes" fill="#8F2D4A"><path d="M6 14h3v4H6zM53 18h4v3h-4zM11 7h3v3h-3z"/><path d="M48 8h3v5h-3zM5 28h3v3H5zM56 30h3v4h-3z" fill="#D97757"/></g>}
-          {pensando && <g fill="#8F2D4A"><path d="M48 15h3v3h-3zM53 10h4v4h-4z"/></g>}
-          {descansando && <path d="M46 10h7v2h-3v2h3v2h-7v-2h3v-2h-3z" fill="#8F2D4A"/>}
-        </g>
-      </svg>
-    </div>
-    <div className="jarvis-conversa"><div className="jarvis-cabecalho"><strong>J.A.R.V.IS.</strong><span>Seu guia de estudos</span></div>
-      {!silenciado && <p className="jarvis-mensagem" role="status" aria-live="polite" aria-atomic="true">{mensagem ?? falas[estado]}</p>}
-      {silenciado && <p className="jarvis-silenciado">Dicas silenciadas</p>}
-      <div className="jarvis-controles">
-        <button type="button" onClick={() => definirSilenciado(!silenciado)} aria-pressed={silenciado} aria-label={silenciado ? 'Ativar dicas de J.A.R.V.IS.' : 'Silenciar dicas de J.A.R.V.IS.'}><Icone nome="som" tamanho={15}/><span>{silenciado ? 'Ativar dicas' : 'Silenciar'}</span></button>
-        <button type="button" onClick={() => definirPausado(!pausado)} aria-pressed={pausado} aria-label={pausado ? 'Ativar animações de J.A.R.V.IS.' : 'Pausar animações de J.A.R.V.IS.'}><Icone nome={pausado ? 'play' : 'pausa'} tamanho={14}/></button>
-        <button type="button" onClick={() => definirMinimizado(true)} aria-label="Minimizar J.A.R.V.IS."><Icone nome="fechar" tamanho={15}/></button>
-      </div>
-    </div>
+function AssistenteFlutuante({ fala }: { fala?: Fala }) {
+  const [minimizado, minimizar] = useState(() => preferencia('minimizado'));
+  const [silenciado, silenciar] = useState(() => preferencia('silenciado'));
+  const [pausado, pausar] = useState(() => preferencia('pausado'));
+  const [balao, abrirBalao] = useState(false);
+  const dock = useRef<HTMLElement>(null);
+  const idBalao = useId();
+  const estado = fala?.estado ?? 'curioso';
+  useEffect(() => salvarPreferencia('minimizado', minimizado), [minimizado]);
+  useEffect(() => salvarPreferencia('silenciado', silenciado), [silenciado]);
+  useEffect(() => salvarPreferencia('pausado', pausado), [pausado]);
+  useEffect(() => {
+    if (!fala || minimizado || silenciado) { abrirBalao(false); return; }
+    abrirBalao(true);
+    const tempo = window.setTimeout(() => {
+      if (!dock.current?.contains(document.activeElement)) abrirBalao(false);
+    }, 12000);
+    return () => window.clearTimeout(tempo);
+  }, [fala, minimizado, silenciado]);
+  useEffect(() => {
+    if (!balao) return;
+    const recolherAoEstudar = (evento: Event) => {
+      if (evento.target instanceof Node && !dock.current?.contains(evento.target)) abrirBalao(false);
+    };
+    document.addEventListener('pointerdown', recolherAoEstudar, true);
+    document.addEventListener('focusin', recolherAoEstudar, true);
+    return () => {
+      document.removeEventListener('pointerdown', recolherAoEstudar, true);
+      document.removeEventListener('focusin', recolherAoEstudar, true);
+    };
+  }, [balao]);
+  return <aside ref={dock} className={`jarvis-dock ${pausado ? 'jarvis-dock--pausado' : ''} ${minimizado ? 'jarvis-dock--minimizado' : ''}`} data-estado={estado} aria-label="Assistente J.A.R.V.IS." onKeyDown={e => { if (e.key === 'Escape' && balao) { abrirBalao(false); dock.current?.querySelector<HTMLButtonElement>('.jarvis-ativador')?.focus(); } }}>
+    {!minimizado && !silenciado && balao && fala && <div className="jarvis-balao" id={idBalao} key={`${fala.id}-${fala.mensagem}`}>
+      <div className="jarvis-identidade"><span className="jarvis-indicador" aria-hidden="true"/><strong>J.A.R.V.IS.</strong><span>SEU ASSISTENTE</span></div>
+      <p className="jarvis-mensagem" role="status" aria-live="polite" aria-atomic="true">{fala.mensagem}</p>
+      <div className="jarvis-controles"><button type="button" onClick={() => silenciar(true)} aria-label="Silenciar dicas de J.A.R.V.IS."><Icone nome="som" tamanho={15}/><span>Silenciar</span></button><button type="button" onClick={() => pausar(!pausado)} aria-pressed={pausado} aria-label={pausado ? 'Ativar animações de J.A.R.V.IS.' : 'Pausar animações de J.A.R.V.IS.'}><Icone nome={pausado ? 'play' : 'pausa'} tamanho={15}/></button><button type="button" onClick={() => minimizar(true)} aria-label="Minimizar J.A.R.V.IS."><Icone nome="fechar" tamanho={16}/></button></div>
+    </div>}
+    <button type="button" className="jarvis-ativador" aria-label={minimizado ? 'Mostrar J.A.R.V.IS.' : silenciado ? 'Ativar dicas de J.A.R.V.IS.' : balao ? 'Recolher balão de J.A.R.V.IS.' : 'Conversar com J.A.R.V.IS.'} aria-expanded={!minimizado && !silenciado && balao && Boolean(fala)} aria-controls={balao && !minimizado && !silenciado ? idBalao : undefined} onClick={() => {
+      if (minimizado) minimizar(false);
+      else if (silenciado) silenciar(false);
+      else abrirBalao(!balao);
+    }}>
+      <Nucleo estado={estado}/><span className="jarvis-nome-curto" aria-hidden="true">J.</span>
+    </button>
+    {!minimizado && <span className="jarvis-legenda" aria-hidden="true">{silenciado ? 'Dicas silenciadas' : descricoes[estado]}</span>}
   </aside>;
 }
-
-function sobrancelhas(preocupado: boolean, pensando: boolean) {
-  return preocupado ? <path d="M23 28h3v-2h3v2h-3v2h-3zM35 26h3v2h3v2h-3v-2h-3z" fill="#653B32"/> : pensando ? <path d="M23 27h7v2h-7zM35 26h6v2h-6z" fill="#653B32"/> : null;
-}
-
 export default Jarvis;

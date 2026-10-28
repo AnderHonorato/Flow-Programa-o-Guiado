@@ -9,7 +9,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const destino = join(raiz, 'docs/evidencias/android');
 const adb = process.env.ANDROID_HOME ? join(process.env.ANDROID_HOME, 'platform-tools/adb') : 'adb';
 const pacote = 'br.com.ander.flow';
-const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk'));
+const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.2.0-debug.apk'));
 const evidencias = { inicio: new Date().toISOString(), pacote, verificacoes: [] };
 const marcador = 'flowAndroidTeclado';
 mkdirSync(destino, { recursive: true });
@@ -69,6 +69,7 @@ try {
   }
   console.log('Verificando editor, teclado Android e rotacao.');
   await pagina.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  if(await pagina.getByRole('button',{name:/Próxima etapa/}).isVisible()){await pagina.getByRole('button',{name:/Próxima etapa/}).click();await pagina.getByRole('button',{name:/Próxima etapa/}).click();await pagina.getByLabel('Entendi o objetivo e sei qual resultado vou procurar.').check();await pagina.getByRole('button',{name:/Começar a construir/}).click();}
   const previa = await pagina.locator('iframe').elementHandle();
   const quadro = await previa.contentFrame();
   assert(quadro, 'A previa precisa de um frame isolado.');
@@ -108,6 +109,7 @@ try {
   await pagina.getByRole('heading', { name: /Minha primeira página/i }).first().waitFor({ timeout: 120_000 });
   assert.equal(await pagina.locator('#nome').count(), 0, 'O perfil deve persistir ao reiniciar.');
   await pagina.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  if(await pagina.getByRole('button',{name:/Próxima etapa/}).isVisible()){await pagina.getByRole('button',{name:/Próxima etapa/}).click();await pagina.getByRole('button',{name:/Próxima etapa/}).click();await pagina.getByLabel('Entendi o objetivo e sei qual resultado vou procurar.').check();await pagina.getByRole('button',{name:/Começar a construir/}).click();}
   await pagina.waitForFunction(texto => document.querySelector('.cm-content')?.textContent.includes(texto), marcador);
   evidencias.verificacoes.push('Rascunho do laboratorio persistiu apos encerrar e reabrir offline.');
   const semRede = await pagina.evaluate(() => !navigator.onLine);

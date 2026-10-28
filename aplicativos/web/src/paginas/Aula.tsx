@@ -2,6 +2,9 @@ import { Suspense, lazy, useState } from "react";
 import type { Aula as TipoAula } from "../../../../contratos/tipos";
 import Narracao from "../audio/Narracao";
 const Laboratorio = lazy(() => import("../laboratorios/Laboratorio"));
+import ExemplosGuiados from "../aprendizagem/ExemplosGuiados";
+import PreparacaoDesafio from "../aprendizagem/PreparacaoDesafio";
+import Questionario from "../aprendizagem/Questionario";
 import Jarvis from "../mascote/Jarvis";
 import Icone from "../componentes/Icone";
 import type { Flow } from "../componentes/useFlow";
@@ -17,17 +20,16 @@ export default function Aula({
   const [painel, setPainel] = useState(
     modoLaboratorio ? "laboratorio" : "aprender",
   );
-  const [respostas, setRespostas] = useState<Record<string, number>>({});
+  const [preparado, setPreparado] = useState(false);
   const [pista, setPista] = useState(-1);
   const [resultado, setResultado] = useState(false);
   const [reacao, setReacao] = useState<
     "curioso" | "alegre" | "explicando" | "apoiando" | "comemorando"
   >("curioso");
-  const completas = aula.questoes.every(
-    (q) => flow.estado.respostas[`${aula.id}:${q.id}`],
-  );
+  const completas = !!flow.estado.avaliacoes?.[aula.id]?.revisada;
   return (
     <section className="pagina-aula">
+      <Jarvis estado={reacao} mensagem={painel === "laboratorio" ? pista >= 0 ? aula.pistas[pista] : "Antes de programar, entenda o objetivo e o plano. Depois mude uma parte e observe o resultado." : painel === "praticar" ? "Sua escolha é definitiva. Pense no que aprendeu; vou explicar cada resultado depois do envio." : "Explore o exemplo passo a passo. Primeiro entenda, depois experimente."} />
       <div className="cabecalho-pagina">
         <div>
           <span className="sobretitulo">
@@ -99,22 +101,7 @@ export default function Aula({
               )}
             </div>
           </div>
-          {aula.exemplos.map((exemplo, i) => (
-            <section className="exemplo" key={i}>
-              <span className="sobretitulo">
-                EXEMPLO {String(i + 1).padStart(2, "0")}
-              </span>
-              <h2>{exemplo.titulo}</h2>
-              <pre tabIndex={0}>
-                <code>{exemplo.codigo}</code>
-              </pre>
-              <ol className="explicacao-linhas">
-                {exemplo.explicacao.map((linha, j) => (
-                  <li key={j}>{linha}</li>
-                ))}
-              </ol>
-            </section>
-          ))}
+          <ExemplosGuiados aula={aula}/>
           <div className="resumo">
             <h2>Guarde esta ideia</h2>
             <p>{aula.resumo}</p>
@@ -133,10 +120,6 @@ export default function Aula({
           </button>
         </article>
         <aside className="apoio-aula">
-          <Jarvis
-            estado={reacao}
-            mensagem="Uma linha de cada vez. Experimente mudar o código para entender o resultado."
-          />
           <div className="roteiro">
             <span className="sobretitulo">SEU PERCURSO</span>
             <ol>
@@ -161,55 +144,8 @@ export default function Aula({
           role="tabpanel"
           aria-labelledby="aba-praticar"
         >
-          <div className="texto-editorial">
-            <span className="sobretitulo">PENSE, EXPERIMENTE, DESCUBRA</span>
-            <h2>O que ficou com você?</h2>
-            <p>
-              Errar faz parte. Cada alternativa explica o raciocínio, e você
-              pode tentar quantas vezes precisar.
-            </p>
-          </div>
-          {aula.questoes.map((q, i) => (
-            <fieldset className="questao" key={q.id}>
-              <legend>
-                <span>0{i + 1}</span> {q.enunciado}
-              </legend>
-              {q.alternativas.map((a, j) => (
-                <button
-                  key={j}
-                  aria-pressed={respostas[q.id] === j}
-                  className={`alternativa ${respostas[q.id] === j ? (a.correta ? "correta" : "incorreta") : ""}`}
-                  onClick={() => {
-                    setRespostas((r) => ({ ...r, [q.id]: j }));
-                    flow.registrarResposta(aula, q.id, a.correta);
-                    setReacao(a.correta ? "alegre" : "apoiando");
-                  }}
-                >
-                  <span>{String.fromCharCode(65 + j)}</span>
-                  {a.texto}
-                </button>
-              ))}
-              {respostas[q.id] !== undefined && (
-                <p role="status" className="feedback">
-                  {q.alternativas[respostas[q.id]].feedback}
-                </p>
-              )}
-            </fieldset>
-          ))}
-          <button
-            className="botao primario"
-            onClick={() => setPainel("laboratorio")}
-          >
-            Ir para o laboratório <Icone nome="codigo" />
-          </button>
-          <Jarvis
-            estado={reacao}
-            mensagem={
-              completas
-                ? "Você compreendeu os conceitos. Agora, coloque em prática!"
-                : "Leia a explicação de cada resposta. O importante é entender o motivo."
-            }
-          />
+          <Questionario key={`${flow.perfilId}-${aula.id}`} aula={aula} flow={flow} aoRever={() => setPainel("aprender")} aoContinuar={() => setPainel("laboratorio")} />
+
         </div>
       )}
       {painel === "laboratorio" && (
@@ -218,6 +154,8 @@ export default function Aula({
           role="tabpanel"
           aria-labelledby="aba-laboratorio"
         >
+          {!preparado ? <PreparacaoDesafio aula={aula} aoRever={() => setPainel("aprender")} aoIniciar={() => setPreparado(true)}/> : <>
+            <button className="link-botao" onClick={() => setPreparado(false)}>Rever o plano do desafio</button>
           <div className="desafio-barra">
             <div>
               <span className="sobretitulo">SEU MICRODESAFIO</span>
@@ -233,11 +171,7 @@ export default function Aula({
               Preciso de uma pista
             </button>
           </div>
-          {pista >= 0 && (
-            <div className="aviso pista" role="status">
-              J.A.R.V.IS.: {aula.pistas[pista]}
-            </div>
-          )}
+
           <Suspense fallback={<p role="status">Abrindo o editor de código…</p>}>
             <Laboratorio
               aula={aula}
@@ -278,9 +212,10 @@ export default function Aula({
             </button>
           </div>
           <p className="texto-auxiliar">
-            Para registrar: acerte as questões da etapa Fixar e passe nas
+            Para registrar: envie a avaliação, leia a correção e passe nas
             verificações do laboratório.
           </p>
+          </>}
         </div>
       )}
     </section>

@@ -1,6 +1,6 @@
 # Flow Programação Guiada
 
-Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.1.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
+Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.2.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
 
 ## Executar
 
@@ -31,11 +31,12 @@ O provisionamento baixa **Pyodide0.29.3 oficial**, sem dependências opcionais; 
 ## O que está disponível
 
 - Perfil local sem cadastro; conta por e-mail/senha, sessão revogável, isolamento entre perfis e migração do trabalho local.
-- Aulas narráveis, exemplos explicados, questões com feedback, desafios, pistas e variações.
+- Aulas narráveis, exemplos guiados, 20 experimentos interativos e preparação por etapas antes do laboratório.
+- Avaliações definitivas: primeira escolha travada, correção e nota somente após envio completo, com explicação dos erros. Escolhas e versão da correção persistem por perfil.
 - HTML/CSS/JavaScript com CodeMirror, prévia real isolada, console, inspeção DOM, testes e versões. Python verdadeiro em worker WebAssembly.
-- Revisões espaçadas e XP por compreensão; projeto enviado distingue fila local e validação recebida pelo servidor.
+- 8 níveis, 6 emblemas SVG, 8 ícones de perfil desbloqueáveis e celebrações acessíveis. Revisões espaçadas e XP por compreensão; projeto enviado distingue fila local e validação recebida pelo servidor.
 - Painel administrativo com RBAC servidor, CMS versionado, revisão humana, auditoria e botão explícito de correção GPT. A credencial do modelo só existe no servidor.
-- J.A.R.V.IS. original em pixel art, temas claro/escuro, controles de movimento e dicas.
+- J.A.R.V.IS. holográfico original no canto, com balão inseparável, estados animados, temas claro/escuro e controles de movimento/dicas. Navegação móvel inferior e superfícies de aplicativo.
 
 **Inventário inicial:** 10 trilhas, 60 módulos catalogados, 20 aulas completas e80 atividades autorais. Os40 módulos sem aulas estão identificados como **em produção editorial**. A meta180aulas/450exercícios ainda requer expansão autoral; o inventário não conta planejamento como conteúdo entregue. Consulte [inventário](conteudos/inventario.json).
 

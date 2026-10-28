@@ -348,3 +348,160 @@ def test_cms_preserva_planejamento_e_testes_declarativos(ambiente):
     assert 'esperado' not in salvo['aulas'][0]['testes'][0]
     completo['chaveInesperada'] = 'recusar'
     assert cliente.put('/api/admin/catalogo', headers=admin, json={'versaoBase': 1, 'catalogo': completo}).status_code == 422
+
+
+# As escolhas são um registro definitivo, independente do snapshot de XP do cliente.
+def enviar_avaliacao(cliente, cabecalhos, escolhas, **campos):
+    return cliente.put('/api/progresso', headers=cabecalhos, json={
+        'estado': {'avaliacoes': {'html-1': {'escolhas': escolhas, **campos}}}})
+
+
+def test_avaliacao_indice_zero_definitivo_pontua_so_apos_envio_e_isola_perfis(ambiente):
+    cliente, _ = ambiente
+    _, a = conta(cliente)
+    _, b = conta(cliente, 'outra@exemplo.com')
+    inicial = enviar_avaliacao(cliente, a, {'q1': 0})
+    assert inicial.status_code == 200, inicial.text
+    assert inicial.json()['estado']['xp'] == 0
+    assert 'html-1:q1' not in inicial.json()['estado']['respostas']
+    tentativa_troca = enviar_avaliacao(cliente, a, {'q1': 1})
+    assert tentativa_troca.json()['estado']['avaliacoes']['html-1']['escolhas']['q1'] == 0
+    enviada = enviar_avaliacao(cliente, a, {'q1': 1}, enviadaEm='2026-10-28T12:00:00Z')
+    assert enviada.status_code == 200, enviada.text
+    assert enviada.json()['estado']['xp'] == 10
+    assert enviada.json()['estado']['respostas']['html-1:q1'] is True
+    assert cliente.get('/api/progresso', headers=b).json()['estado']['avaliacoes'] == {}
+    repetida = enviar_avaliacao(cliente, a, {'q1': 1}, enviadaEm='2026-10-29T12:00:00Z', revisada=True)
+    assert repetida.json()['estado']['xp'] == 10
+    assert repetida.json()['estado']['avaliacoes']['html-1'] == {
+        'escolhas': {'q1': 0}, 'enviadaEm': '2026-10-28T12:00:00Z', 'revisada': True, 'correcao': AULA['questoes']}
+
+
+def test_avaliacao_errada_nao_vira_acerto_por_snapshot_ou_evento_legado(ambiente):
+    cliente, _ = ambiente
+    _, cabecalhos = conta(cliente)
+    enviada = enviar_avaliacao(cliente, cabecalhos, {'q1': 1}, enviadaEm='2026-10-28T12:00:00Z')
+    assert enviada.status_code == 200
+    assert enviada.json()['estado']['respostas']['html-1:q1'] is False
+    adulterada = cliente.put('/api/progresso', headers=cabecalhos, json={
+        'estado': {'respostas': {'html-1:q1': True, 'html-1:questao-inventada': True}, 'xp': 99999,
+                   'avaliacoes': {'html-1': {'escolhas': {'q1': 0}, 'enviadaEm': '2026-10-29T12:00:00Z'}}},
+        'eventos': [{'id': 'trocar-acerto', 'tipo': 'resposta', 'alvo': 'html-1:q1',
+                     'valor': True, 'criadoEm': '2026-10-29T12:00:00Z'}]})
+    assert adulterada.status_code == 200, adulterada.text
+    estado = adulterada.json()['estado']
+    assert estado['avaliacoes']['html-1']['escolhas'] == {'q1': 1}
+    assert estado['respostas']['html-1:q1'] is False
+    assert estado['xp'] == 0
+
+
+@pytest.mark.parametrize('aula,avaliacao', [
+    ('html-1', {'escolhas': {}, 'enviadaEm': '2026-10-28T12:00:00Z'}),
+    ('nao-existe', {'escolhas': {'q1': 0}}),
+    ('html-1', {'escolhas': {'nao-existe': 0}}),
+    ('html-1', {'escolhas': {'q1': 2}}),
+    ('html-1', {'escolhas': {'q1': -1}}),
+    ('html-1', {'escolhas': {'q1': True}}),
+    ('html-1', {'escolhas': {'q1': '0'}}),
+    ('html-1', {'escolhas': {'q1': 0}, 'revisada': True}),
+    ('html-1', {'escolhas': {'q1': 0}, 'enviadaEm': 'data-invalida'}),
+    ('html-1', {'escolhas': {'q1': 0}, 'enviadaEm': '2026-10-28'}),
+    ('html-1', {'escolhas': {'q1': 0}, 'enviadaEm': 1780000000}),
+])
+def test_avaliacao_invalida_rejeita_sem_persistir(ambiente, aula, avaliacao):
+    cliente, _ = ambiente
+    _, cabecalhos = conta(cliente)
+    resposta = cliente.put('/api/progresso', headers=cabecalhos,
+                           json={'estado': {'avaliacoes': {aula: avaliacao}}})
+    assert resposta.status_code == 422, resposta.text
+    assert cliente.get('/api/progresso', headers=cabecalhos).json()['estado']['avaliacoes'] == {}
+
+
+def test_avaliacao_pendente_ignora_acertos_adiantados_e_revisao_nao_regride(ambiente):
+    cliente, _ = ambiente
+    _, cabecalhos = conta(cliente)
+    resposta = cliente.put('/api/progresso', headers=cabecalhos, json={'estado': {
+        'avaliacoes': {'html-1': {'escolhas': {'q1': 0}}}, 'respostas': {'html-1:q1': True}}})
+    assert resposta.status_code == 200
+    assert resposta.json()['estado']['xp'] == 0
+    assert 'html-1:q1' not in resposta.json()['estado']['respostas']
+    enviar_avaliacao(cliente, cabecalhos, {}, enviadaEm='2026-10-28T12:00:00Z', revisada=True)
+    retorno = enviar_avaliacao(cliente, cabecalhos, {}, revisada=False)
+    assert retorno.json()['estado']['avaliacoes']['html-1']['revisada'] is True
+
+
+
+def test_avaliacao_preserva_gabarito_do_primeiro_registro_apos_publicar_catalogo(ambiente):
+    cliente, app = ambiente
+    dados, aluno = conta(cliente)
+    _, admin = administrador(cliente, app)
+    assert enviar_avaliacao(cliente, aluno, {'q1': 0}).status_code == 200
+    atualizado = deepcopy(CATALOGO)
+    for questao in atualizado['trilhas'][0]['modulos'][0]['aulas'][0]['questoes']:
+        questao['alternativas'][0]['correta'] = False
+        questao['alternativas'][1]['correta'] = True
+        questao['enunciado'] = 'Enunciado da nova versão'
+        questao['alternativas'][0]['texto'] = 'Alternativa da nova versão'
+        questao['alternativas'][0]['feedback'] = 'Feedback da nova versão'
+    publicado = cliente.put('/api/admin/catalogo', headers=admin,
+                            json={'versaoBase': 0, 'catalogo': atualizado})
+    assert publicado.status_code == 200, publicado.text
+    enviado = enviar_avaliacao(cliente, aluno, {}, enviadaEm='2026-10-28T12:00:00Z')
+    assert enviado.status_code == 200, enviado.text
+    assert enviado.json()['estado']['respostas']['html-1:q1'] is True
+    assert enviado.json()['estado']['xp'] == 10
+    assert enviado.json()['estado']['avaliacoes']['html-1']['correcao'] == AULA['questoes']
+    assert not any(chave.startswith('_') for chave in enviado.json()['estado'])
+    assert not any(chave.startswith('_') for chave in cliente.get('/api/progresso', headers=aluno).json()['estado'])
+    from servidor.modelos import Progresso
+    with app.state.banco() as db:
+        interno = db.get(Progresso, dados['usuario']['id']).estado
+        assert interno['_gabaritosAvaliacoes']['html-1']['q1'] == [True, False]
+    forjar = cliente.put('/api/progresso', headers=aluno, json={'estado': {
+        '_gabaritosAvaliacoes': {'html-1': {'q1': [False, True]}}}})
+    assert forjar.status_code == 422
+
+
+
+def test_avaliacao_com_varias_questoes_exige_todas_sem_desfazer_primeira_escolha():
+    from servidor.servicos.progresso import estado_vazio, mesclar
+    catalogo = deepcopy(CATALOGO)
+    aula = catalogo['trilhas'][0]['modulos'][0]['aulas'][0]
+    aula['questoes'] = [deepcopy(aula['questoes'][0]), deepcopy(aula['questoes'][0])]
+    aula['questoes'][1]['id'] = 'q2'
+    inicial, _ = mesclar(estado_vazio(), {'avaliacoes': {'html-1': {'escolhas': {'q1': 0}}}}, [], catalogo)
+    with pytest.raises(ValueError, match='todas as questões'):
+        mesclar(inicial, {'avaliacoes': {'html-1': {'escolhas': {}, 'enviadaEm': '2026-10-28T12:00:00Z'}}}, [], catalogo)
+    assert inicial['avaliacoes']['html-1']['escolhas'] == {'q1': 0}
+    final, _ = mesclar(inicial, {'avaliacoes': {'html-1': {'escolhas': {'q1': 1, 'q2': 1}, 'enviadaEm': '2026-10-28T12:00:00Z'}}}, [], catalogo)
+    assert final['avaliacoes']['html-1']['escolhas'] == {'q1': 0, 'q2': 1}
+    assert final['respostas'] == {'html-1:q1': True, 'html-1:q2': False}
+    assert final['xp'] == 10
+
+
+
+def test_correcao_do_cliente_nao_antecipa_feedback_nem_falsifica_snapshot_servidor(ambiente):
+    cliente, _ = ambiente
+    _, cabecalhos = conta(cliente)
+    falsa = deepcopy(AULA['questoes'])
+    for questao in falsa:
+        questao['enunciado'] = 'Questão forjada'
+        questao['alternativas'][0]['correta'] = False
+        questao['alternativas'][1]['correta'] = True
+        questao['alternativas'][1]['feedback'] = 'Feedback forjado: acertou'
+    pendente = enviar_avaliacao(cliente, cabecalhos, {'q1': 1}, correcao=falsa)
+    assert pendente.status_code == 200, pendente.text
+    assert 'correcao' not in pendente.json()['estado']['avaliacoes']['html-1']
+    enviada = enviar_avaliacao(cliente, cabecalhos, {}, correcao=falsa,
+                              enviadaEm='2026-10-28T12:00:00Z')
+    assert enviada.status_code == 200, enviada.text
+    avaliacao = enviada.json()['estado']['avaliacoes']['html-1']
+    assert avaliacao['correcao'] == AULA['questoes']
+    assert enviada.json()['estado']['respostas']['html-1:q1'] is False
+    assert enviada.json()['estado']['xp'] == 0
+    # O Estado público completo pode retornar ao servidor sem perder o snapshot.
+    estado = enviada.json()['estado']
+    estado['avaliacoes']['html-1']['correcao'] = falsa
+    repetida = cliente.put('/api/progresso', headers=cabecalhos, json={'estado': estado})
+    assert repetida.status_code == 200, repetida.text
+    assert repetida.json()['estado']['avaliacoes']['html-1']['correcao'] == AULA['questoes']

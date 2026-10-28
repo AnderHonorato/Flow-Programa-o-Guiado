@@ -9,13 +9,21 @@ async function iniciar(page: Page, nome = 'Ana') {
 async function navegar(page: Page, nome: string) {
   const menu = page.getByRole('button', { name: 'Abrir navegação' });
   if (await menu.isVisible()) await menu.click();
-  await page.getByRole('button', { name: nome, exact: true }).click();
+  await page.getByRole('navigation',{name:'Navegação principal',exact:true}).getByRole('button', { name: nome, exact: true }).click();
 }
 async function abrirHtml(page: Page) {
   await navegar(page, 'Trilhas');
   await page.getByRole('button', { name: /HTML: conteúdo com significado/ }).click();
   await page.getByRole('button', { name: 'HTML 1: Minha primeira página' }).click();
   await expect(page.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
+}
+async function prepararLaboratorio(page: Page) {
+  const proxima = page.getByRole('button', { name: /Próxima etapa/ });
+  if (await proxima.isVisible()) {
+    await proxima.click(); await proxima.click();
+    await page.getByLabel('Entendi o objetivo e sei qual resultado vou procurar.').check();
+    await page.getByRole('button', { name: /Começar a construir/ }).click();
+  }
 }
 async function editar(page: Page, arquivo: 'HTML' | 'CSS' | 'JS', codigo: string) {
   const abas = page.getByRole('navigation', { name: 'Painéis do laboratório' });
@@ -45,12 +53,13 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await abrirHtml(page);
   await expect(page.getByRole('button', { name: /Ouvir aula/ })).toBeVisible();
   await page.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  await prepararLaboratorio(page);
   await expect(page.getByRole('button', { name: 'Registrar competência' })).toBeDisabled();
   await editar(page, 'HTML', documento('Biblioteca da Ana'));
   await visualizar(page);
-  const previa = page.frameLocator('iframe');
+  const previa = page.frameLocator('.laboratorio iframe');
   await expect(previa.getByRole('heading', { name: 'Biblioteca da Ana' })).toBeVisible();
-  await expect(page.locator('iframe')).toHaveAttribute('sandbox', 'allow-scripts');
+  await expect(page.locator('.laboratorio iframe')).toHaveAttribute('sandbox', 'allow-scripts');
   await editar(page, 'CSS', 'h1 { color: rgb(120, 30, 50); }');
   await visualizar(page);
   await expect(previa.locator('h1')).toHaveCSS('color', 'rgb(120, 30, 50)');
@@ -60,11 +69,12 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await expect(previa.locator('h1')).toHaveText('Minha biblioteca');
   await page.getByRole('tab', { name: 'Fixar', exact: true }).click();
   const questoes = page.locator('fieldset.questao');
-  await questoes.nth(0).getByRole('button', { name: 'B title', exact: true }).click();
-  await expect(questoes.nth(0).getByRole('status')).toContainText('title nomeia a aba');
   await questoes.nth(0).getByRole('button', { name: 'A h1', exact: true }).click();
   await questoes.nth(1).getByRole('button', { name: 'A h1 e p são filhos de body.', exact: true }).click();
-  await page.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  await page.getByRole('button', { name: 'Enviar avaliação', exact: true }).click();
+  await expect(page.locator('.avaliacao-nota')).toContainText('100');
+  await page.getByRole('button', { name: /Li a correção/ }).click();
+  await prepararLaboratorio(page);
   await expect(page.locator('.lab-status')).toContainText('Prévia atualizada.');
   await page.getByRole('button', { name: /Testar código/ }).click();
   await expect.poll(() => page.locator('.lab-teste-ok').count()).toBeGreaterThanOrEqual(4);
@@ -84,12 +94,13 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await expect(page.getByText('Aguardando sincronização', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Continuar trabalhando' }).click();
   await page.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  await prepararLaboratorio(page);
   await visualizar(page);
   await expect(previa.locator('h1')).toHaveText('Minha biblioteca');
   await expect(previa.locator('h1')).toHaveCSS('color', 'rgb(120, 30, 50)');
   await expect(previa.locator('body')).toHaveAttribute('data-executado', 'sim');
   await navegar(page, 'Início');
-  await expect(page.getByRole('region', { name: 'Seu progresso' }).getByText('50', { exact: false })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Seu progresso' }).getByText('120', { exact: false })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Seu progresso' }).getByText('1 aulas compreendidas')).toBeVisible();
 });
 
@@ -98,10 +109,10 @@ test('catálogo explicita produção editorial e tema persiste após recarregar'
   await navegar(page, 'Trilhas');
   await page.getByRole('button', { name: /HTML: conteúdo com significado/ }).click();
   await expect(page.getByText('Em produção editorial').first()).toBeVisible();
-  await page.getByRole('button', { name: 'Ativar tema escuro' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-tema', 'escuro');
+  await page.getByRole('button', { name: 'Ativar tema claro' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-tema', 'claro');
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-tema', 'escuro');
+  await expect(page.locator('html')).toHaveAttribute('data-tema', 'claro');
 });
 
 test('produção instala cache e reabre aula sem internet', async ({ page, context }) => {
@@ -118,9 +129,10 @@ test('produção instala cache e reabre aula sem internet', async ({ page, conte
   await expect(page.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
   await expect(page.getByText('Sem internet · modo offline')).toBeVisible();
   await page.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  await prepararLaboratorio(page);
   await editar(page, 'HTML', documento('Minha biblioteca offline'));
   await visualizar(page);
-  await expect(page.frameLocator('iframe').locator('h1')).toHaveText('Minha biblioteca offline');
+  await expect(page.frameLocator('.laboratorio iframe').locator('h1')).toHaveText('Minha biblioteca offline');
   await expect(page.locator('.lab-status')).toContainText('Salvo neste dispositivo');
   // Fecha a aba inteira e abre outra, preservando apenas os dados do navegador.
   await expect.poll(() => page.evaluate(() => Object.values(localStorage).some(valor => valor.includes('Minha biblioteca offline')))).toBe(true);
@@ -130,8 +142,9 @@ test('produção instala cache e reabre aula sem internet', async ({ page, conte
   await reaberta.goto(url);
   await expect(reaberta.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
   await reaberta.getByRole('button', { name: 'Ir para o laboratório' }).click();
+  await prepararLaboratorio(reaberta);
   await visualizar(reaberta);
-  await expect(reaberta.frameLocator('iframe').locator('h1')).toHaveText('Minha biblioteca offline');
+  await expect(reaberta.frameLocator('.laboratorio iframe').locator('h1')).toHaveText('Minha biblioteca offline');
 });
 
 test('conta real entra, sai, recupera sessão e recebe bloqueio administrativo', async ({ page }) => {
@@ -166,4 +179,37 @@ test('conta real entra, sai, recupera sessão e recebe bloqueio administrativo',
   await page.getByRole('button', { name: 'Meus certificados internos' }).click();
   await expect(page.getByText('Ainda não há aulas com aprovação administrativa registrada.', { exact: false })).toBeVisible();
   await expect(page.locator('.certificado')).toHaveCount(0);
+});
+
+
+test('avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar', async ({ page }) => {
+  await iniciar(page); await abrirHtml(page);
+  await page.getByRole('tab', { name: 'Fixar', exact: true }).click();
+  let questoes = page.locator('fieldset.questao');
+  await questoes.nth(0).getByRole('button', { name: 'B title', exact: true }).click();
+  for (const botao of await questoes.nth(0).getByRole('button').all()) await expect(botao).toBeDisabled();
+  await expect(page.locator('.avaliacao-resultado')).toHaveCount(0);
+  await expect(page.locator('.alternativa.correta,.alternativa.incorreta')).toHaveCount(0);
+  await expect(page.getByRole('button', {name:'Enviar avaliação',exact:true})).toBeDisabled();
+  await expect.poll(() => page.evaluate(async () => {
+    const request = indexedDB.open('flow-programacao-guiada');
+    const db = await new Promise<IDBDatabase>((resolve,reject)=>{request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const read = db.transaction('estados').objectStore('estados').get(localStorage.getItem('flow-id-local')!);
+    const estado = await new Promise<any>((resolve)=>{read.onsuccess=()=>resolve(read.result);});db.close();
+    return Object.values(estado?.avaliacoes?.['html-primeira-pagina']?.escolhas||{})[0];
+  })).toBe(1);
+  await page.reload(); await page.getByRole('tab',{name:'Fixar',exact:true}).click();
+  questoes = page.locator('fieldset.questao');
+  await expect(questoes.nth(0).getByRole('button',{name:'B title',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(questoes.nth(0).getByRole('button',{name:'A h1',exact:true})).toBeDisabled();
+  await questoes.nth(1).getByRole('button',{name:'A h1 e p são filhos de body.',exact:true}).click();
+  await page.getByRole('button',{name:'Enviar avaliação',exact:true}).click();
+  await expect(page.locator('.avaliacao-nota')).toContainText('50');
+  await expect(page.locator('.correcao-item.revisar')).toContainText('O que deveria ter feito');
+  await expect(page.locator('.correcao-item.revisar')).toContainText('Escolher: h1');
+  await expect(page.locator('.correcao-item.acerto')).toHaveCount(1);
+  await expect(page.getByRole('button',{name:'Enviar avaliação',exact:true})).toHaveCount(0);
+  await page.reload();await page.getByRole('tab',{name:'Fixar',exact:true}).click();
+  await expect(page.locator('.avaliacao-nota')).toContainText('50');
+  for(const botao of await page.locator('.alternativa').all())await expect(botao).toBeDisabled();
 });

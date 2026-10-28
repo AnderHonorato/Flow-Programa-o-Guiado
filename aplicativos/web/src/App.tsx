@@ -1,4 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
+import { AvatarEvolucao, ResumoEvolucao, CelebracaoEvolucao } from "./evolucao/Evolucao";
+import { experiencia } from "./evolucao/regras";
 import Icone from "./componentes/Icone";
 import Jarvis from "./mascote/Jarvis";
 import { useFlow } from "./componentes/useFlow";
@@ -28,6 +30,7 @@ export default function App() {
   const [aulaId, setAulaId] = useState(
     () => localStorage.getItem("flow-aula") || "",
   );
+  const [transicao, setTransicao] = useState(0);
   const [conta, setConta] = useState(false);
   const [menu, setMenu] = useState(false);
   const [mobile, setMobile] = useState(
@@ -53,7 +56,7 @@ export default function App() {
     return () => document.removeEventListener("keydown", fechar);
   }, [menu]);
   const [tema, setTema] = useState(
-    () => localStorage.getItem("flow-tema") || "claro",
+    () => localStorage.getItem("flow-tema") || "escuro",
   );
   const [busca, setBusca] = useState("");
   const [trilhaAberta, setTrilhaAberta] = useState<string | null>(null);
@@ -70,6 +73,7 @@ export default function App() {
   }, [pagina]);
   function navegar(p: string) {
     setPagina(p);
+    setTransicao(t => t + 1);
     setMenu(false);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
@@ -157,6 +161,7 @@ export default function App() {
     );
   return (
     <div className="aplicativo">
+      <CelebracaoEvolucao estado={flow.estado} perfilId={flow.perfilId} pronto={!flow.carregando}/>
       <a className="pular" href="#conteudo">
         Pular para o conteúdo
       </a>
@@ -198,6 +203,7 @@ export default function App() {
           ))}
         </nav>
         <div className="lateral-rodape">
+          <ResumoEvolucao estado={flow.estado} perfilId={flow.perfilId} compacto/>
           <div className="nota-local">
             <Icone nome={flow.sessao ? "rede" : "escudo"} />
             <span>
@@ -215,9 +221,7 @@ export default function App() {
             className={pagina === "perfil" ? "ativo" : ""}
             onClick={() => navegar("perfil")}
           >
-            <span className="avatar">
-              {flow.nome.slice(0, 1).toUpperCase()}
-            </span>
+            <AvatarEvolucao estado={flow.estado} perfilId={flow.perfilId} tamanho={34}/>
             <span>
               {flow.nome}
               <small>{flow.sessao ? "Conta conectada" : "Perfil local"}</small>
@@ -288,6 +292,7 @@ export default function App() {
           </div>
         </header>
         <main id="conteudo" tabIndex={-1}>
+          <div key={transicao} className="transicao-pagina" aria-hidden="true"/>
           {!flow.online && (
             <div className="aviso-global" role="status">
               <span>Sem internet · modo offline</span>
@@ -335,7 +340,7 @@ export default function App() {
                         <span className="ponto" /> SUA JORNADA JÁ COMEÇOU
                       </span>
                       <h1>
-                        Seu próximo passo
+                        Seu próximo passo{" "}
                         <br />
                         começa com uma <em>ideia.</em>
                       </h1>
@@ -390,6 +395,7 @@ export default function App() {
                       </div>
                     </div>
                   </section>
+                  <ResumoEvolucao estado={flow.estado} perfilId={flow.perfilId}/>
                   <section className="metricas" aria-label="Seu progresso">
                     <div>
                       <span className="metrica-icone">
@@ -409,7 +415,7 @@ export default function App() {
                       </span>
                       <div>
                         <strong>
-                          {flow.estado.xp}
+                          {experiencia(flow.estado)}
                           <small> pontos de experiência</small>
                         </strong>
                         <span>Aprendizado comprovado</span>
@@ -492,6 +498,8 @@ export default function App() {
                       <span className="sobretitulo">
                         UM COMPANHEIRO DE DESCOBERTAS
                       </span>
+                      <h2>Seu copiloto de aprendizagem</h2>
+                      <p>Entenda os conceitos, experimente e transforme descobertas em novas conquistas.</p>
                       <Jarvis
                         estado={flow.estado.xp > 0 ? "orgulhoso" : "curioso"}
                         mensagem={
@@ -616,7 +624,7 @@ export default function App() {
               )}
               {(pagina === "aula" || pagina === "codigo") && aula && (
                 <Aula
-                  key={`${aula.id}-${pagina}`}
+                  key={`${flow.perfilId}-${aula.id}-${pagina}`}
                   aula={aula}
                   flow={flow}
                   modoLaboratorio={pagina === "codigo"}
@@ -627,7 +635,7 @@ export default function App() {
                 <Projetos flow={flow} aoAbrir={abrir} />
               )}
               {pagina === "diagnostico" && (
-                <Diagnostico
+                <Diagnostico perfilId={flow.perfilId}
                   aoAbrir={abrir}
                   aoPular={() => navegar("inicio")}
                 />
@@ -658,9 +666,12 @@ export default function App() {
         <footer className="rodape-app">
           <span>Flow Programação Guiada</span>
           <span>Pequenos passos. Conhecimento que fica.</span>
-          <small>v0.1.0</small>
+          <small>v0.2.0</small>
         </footer>
       </div>
+      <nav className="navegacao-inferior" aria-label="Atalhos do aplicativo" inert={conta || menu}>
+        {[["inicio", "Início"], ["trilhas", "Trilhas"], ["codigo", "Praticar"], ["perfil", "Evolução"]].map(([id, nome]) => <button key={id} type="button" aria-current={pagina === id ? "page" : undefined} onClick={() => navegar(id)}><Icone nome={id === "perfil" ? "raio" : id}/><span>{nome}</span></button>)}
+      </nav>
       {conta && <Conta flow={flow} aoFechar={() => setConta(false)} />}
     </div>
   );

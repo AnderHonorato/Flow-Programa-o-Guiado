@@ -1,8 +1,10 @@
+import { combinarAvaliacoes, respostasDasAvaliacoes, type Avaliacao } from '../aprendizagem/avaliacao';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { ArquivosCodigo } from '../../../../contratos/tipos';
 import { exportarProjetos, importarProjetos, validarProjetos, type ProjetoExportado } from '../laboratorios/armazenamento';
 
 export interface EstadoLocal {
+  avaliacoes?: Record<string, Avaliacao>;
   aulasConcluidas: string[];
   respostas: Record<string, boolean>;
   revisoes: Record<string, { etapa: number; proxima: string }>;
@@ -67,10 +69,22 @@ export function estadoInicial(): EstadoLocal {
   return { aulasConcluidas: [], respostas: {}, revisoes: {}, xp: 0, ultimaAula: '' };
 }
 
+function avaliacaoValida(valor: unknown): boolean {
+  if (!objeto(valor) || !objeto(valor.escolhas)) return false;
+  if (!Object.values(valor.escolhas).every(i => Number.isInteger(i) && Number(i) >= 0 && Number(i) <= 100)) return false;
+  if (valor.enviadaEm !== undefined && !dataValida(valor.enviadaEm)) return false;
+  if (valor.revisada !== undefined && typeof valor.revisada !== 'boolean') return false;
+  if (valor.correcao === undefined) return true;
+  return Array.isArray(valor.correcao) && valor.correcao.length <= 100 && valor.correcao.every(q =>
+    objeto(q) && typeof q.id === 'string' && typeof q.enunciado === 'string' &&
+    Array.isArray(q.alternativas) && q.alternativas.length <= 100 && q.alternativas.every(a =>
+      objeto(a) && typeof a.texto === 'string' && typeof a.correta === 'boolean' && typeof a.feedback === 'string'));
+}
 function validarEstado(estado: unknown): asserts estado is EstadoLocal {
   if (!objeto(estado) || !Array.isArray(estado.aulasConcluidas) || !estado.aulasConcluidas.every(v => typeof v === 'string') ||
       !objeto(estado.respostas) || !Object.values(estado.respostas).every(v => typeof v === 'boolean') ||
       !objeto(estado.revisoes) || !Object.values(estado.revisoes).every(v => objeto(v) && Number.isInteger(v.etapa) && Number(v.etapa) >= 0 && Number(v.etapa) <= 4 && dataValida(v.proxima)) ||
+      (estado.avaliacoes !== undefined && (!objeto(estado.avaliacoes) || !Object.values(estado.avaliacoes).every(avaliacaoValida))) ||
       !Number.isFinite(estado.xp) || Number(estado.xp) < 0 || typeof estado.ultimaAula !== 'string') {
     throw new Error('Progresso inválido. Nenhum dado foi importado.');
   }
@@ -101,7 +115,9 @@ export function combinarEstados(local: EstadoLocal, remoto: EstadoLocal): Estado
     return [id, a && b ? { etapa: Math.max(a.etapa, b.etapa), proxima: Date.parse(a.proxima) <= Date.parse(b.proxima) ? a.proxima : b.proxima } : a || b];
   }));
   const aulasConcluidas = [...new Set([...local.aulasConcluidas, ...remoto.aulasConcluidas])];
-  return { aulasConcluidas, respostas, revisoes, xp: Math.max(local.xp, remoto.xp), ultimaAula: local.ultimaAula || remoto.ultimaAula };
+  const avaliacoes = combinarAvaliacoes(local.avaliacoes, remoto.avaliacoes);
+  const protegidas = respostasDasAvaliacoes(respostas, avaliacoes);
+  return { aulasConcluidas, respostas: protegidas, revisoes, xp: Object.keys(avaliacoes).length ? aulasConcluidas.length * 100 + Object.values(protegidas).filter(Boolean).length * 10 : Math.max(local.xp, remoto.xp), ultimaAula: local.ultimaAula || remoto.ultimaAula, ...(Object.keys(avaliacoes).length ? { avaliacoes } : {}) };
 }
 
 export async function lerEstado(perfilId: string): Promise<EstadoLocal> {
@@ -226,7 +242,11 @@ async function sincronizar(perfilId: string, token: string, api: string) {
     validarEstado(progresso.estado);
     const progressoTx = db.transaction('estados', 'readwrite');
     const maisRecente = (await progressoTx.store.get(perfilId)) ?? estadoInicial();
-    await progressoTx.store.put(combinarEstados(maisRecente, progresso.estado), perfilId);
+    const combinado = combinarEstados(maisRecente, progresso.estado);
+    combinado.avaliacoes = combinarAvaliacoes(progresso.estado.avaliacoes, maisRecente.avaliacoes);
+    combinado.respostas = respostasDasAvaliacoes({ ...maisRecente.respostas, ...progresso.estado.respostas }, combinado.avaliacoes);
+    combinado.xp = combinado.aulasConcluidas.length * 100 + Object.values(combinado.respostas).filter(Boolean).length * 10;
+    await progressoTx.store.put(combinado, perfilId);
     await progressoTx.done;
   } catch (erro) { falhas.push(erro instanceof Error ? erro.message : 'Não foi possível sincronizar agora.'); }
   const pendentes = (await listarFila(perfilId)).filter(t => t.status === 'aguardando_sincronizacao').length;

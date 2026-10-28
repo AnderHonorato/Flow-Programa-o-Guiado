@@ -1,32 +1,32 @@
 :root {
   font-family: "Inter Variable", Inter, system-ui, sans-serif;
   color-scheme: light;
-  --bg: #f5f2ed;
-  --surface: #ede7df;
-  --surface-2: #fffaf5;
-  --text: #2f2522;
-  --muted: #6c6057;
-  --accent: #a3442e;
-  --terracota: #d97757;
-  --wine: #8f2d4a;
-  --line: #dbd3c9;
+  --bg: #f3f5fc;
+  --surface: #e9edf8;
+  --surface-2: #ffffff;
+  --text: #1b2540;
+  --muted: #56627b;
+  --accent: #6046bd;
+  --terracota: #8068e5;
+  --wine: #6347b5;
+  --line: #d5dced;
   --sucesso: #286046;
   --erro: #a33735;
-  --sombra: 0 12px 38px #2f252209;
+  --sombra: 0 12px 38px #1b254009;
   --raio: 18px;
   --font-code: "JetBrains Mono", monospace;
 }
 :root[data-tema="escuro"] {
   color-scheme: dark;
-  --bg: #201e1c;
-  --surface: #2a2724;
-  --surface-2: #302c28;
-  --text: #f7eee5;
-  --muted: #c0b2a6;
-  --accent: #f0a58b;
-  --terracota: #d97757;
-  --wine: #e7a1b5;
-  --line: #51483f;
+  --bg: #0c1222;
+  --surface: #141e32;
+  --surface-2: #19253d;
+  --text: #edf2ff;
+  --muted: #b4c0d7;
+  --accent: #c3b1ff;
+  --terracota: #8068e5;
+  --wine: #b8adff;
+  --line: #35445f;
   --sucesso: #9dceb0;
   --erro: #ffb0a5;
   --sombra: 0 12px 38px #0002;
@@ -125,7 +125,7 @@ pre {
   padding: 24px;
   border-radius: 12px;
   background: #292622;
-  color: #f7eee5;
+  color: #edf2ff;
   font-size: 13px;
   line-height: 1.9;
 }
@@ -161,7 +161,7 @@ hr {
   margin: 32px 0;
 }
 ::selection {
-  background: #d9775740;
+  background: #8068e540;
 }
 .botao {
   display: inline-flex;

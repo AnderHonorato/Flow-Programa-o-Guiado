@@ -10,7 +10,7 @@ export default defineConfig({
     manifest: {
       name: 'Flow Programação Guiada', short_name: 'Flow', lang: 'pt-BR',
       description: 'Uma escola de programação no seu ritmo.',
-      theme_color: '#F5F2ED', background_color: '#F5F2ED', display: 'standalone',
+      theme_color: '#0c1222', background_color: '#0c1222', display: 'standalone',
       icons: [{src:'/icone-192.png',sizes:'192x192',type:'image/png'}, {src:'/icone-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]
     },
     workbox: {
