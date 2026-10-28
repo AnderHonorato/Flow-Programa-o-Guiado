@@ -17,8 +17,9 @@ export interface TentativaLocal {
   aulaId: string;
   arquivos: ArquivosCodigo;
   criadaEm: string;
-  status: 'aguardando_sincronizacao' | 'pendente_validacao' | 'aprovada' | 'revisar';
+  status: 'aguardando_sincronizacao' | 'rejeitada_local' | 'pendente_validacao' | 'aprovada' | 'revisar';
   feedback?: unknown;
+  erroSincronizacao?: string;
 }
 
 export interface EstadoSincronizacao {
@@ -38,7 +39,7 @@ interface BancoFlow extends DBSchema {
 
 let conexao: Promise<IDBPDatabase<BancoFlow>> | undefined;
 const sincronizacoes = new Map<string, {token:string;promessa:Promise<{ enviadas: number; pendentes: number }>}>();
-const estadosValidos = new Set(['aguardando_sincronizacao', 'pendente_validacao', 'aprovada', 'revisar']);
+const estadosValidos = new Set(['aguardando_sincronizacao', 'rejeitada_local', 'pendente_validacao', 'aprovada', 'revisar']);
 
 function banco() {
   if (typeof indexedDB === 'undefined') throw new Error('Este dispositivo não disponibiliza armazenamento IndexedDB. Exporte seu trabalho antes de fechar.');
@@ -97,6 +98,9 @@ function validarTentativa(tentativa: unknown): asserts tentativa is TentativaLoc
   if (!objeto(a) || !['html', 'css', 'js'].every(k => typeof a[k] === 'string') ||
       (a.python !== undefined && typeof a.python !== 'string') || !dataValida(tentativa.criadaEm) || !estadosValidos.has(String(tentativa.status))) {
     throw new Error('Tentativa com código, data ou estado inválido.');
+  }
+  if (['html', 'css', 'js', 'python'].some(chave => typeof a[chave] === 'string' && (a[chave] as string).length > 100_000)) {
+    throw new Error('Cada arquivo deve conter no máximo 100.000 caracteres.');
   }
 }
 
@@ -201,6 +205,7 @@ async function sincronizar(perfilId: string, token: string, api: string) {
     const resposta = await fetch(`${base}${caminho}`, { ...op, headers, cache: 'no-store' });
     if (!resposta.ok) {
       if (resposta.status === 401) sessaoExpirada = true;
+      if (resposta.status === 422) throw Object.assign(new Error('Atividade rejeitada por validação (HTTP 422). Corrija o código e crie uma nova tentativa.'), { permanente: true });
       throw new Error(resposta.status === 401 ? 'Sessão expirada. Entre novamente; seus envios continuam salvos.' : `Sincronização indisponível (HTTP ${resposta.status}).`);
     }
     return resposta.json();
@@ -217,13 +222,24 @@ async function sincronizar(perfilId: string, token: string, api: string) {
         enviadas++;
       } catch (erro) {
         falhas.push(erro instanceof Error ? erro.message : 'Não foi possível enviar a atividade.');
-        // Uma falha de autenticação/rede não descarta nem altera o próximo envio.
+        if (objeto(erro) && erro.permanente === true) {
+          // Mantém o conteúdo local recuperável sem bloquear os próximos envios.
+          await (await banco()).put('tentativas', { ...tentativa, perfilId, status: 'rejeitada_local', erroSincronizacao: String(erro.message) });
+          continue;
+        }
+        // Erros de autenticação e rede interrompem a fila para nova tentativa.
         break;
       }
     }
     // Uma resposta perdida no POST poderá ser recuperada aqui pelo mesmo id.
-    const resposta = await requisitar('/tentativas');
-    const remotas = Array.isArray(resposta) ? resposta : objeto(resposta) && Array.isArray(resposta.tentativas) ? resposta.tentativas : [];
+    const remotas: unknown[] = [];
+    const tamanhoPagina = 100;
+    for (let deslocamento = 0; ; deslocamento += tamanhoPagina) {
+      const resposta = await requisitar(`/tentativas?limite=${tamanhoPagina}&deslocamento=${deslocamento}`);
+      const pagina = Array.isArray(resposta) ? resposta : objeto(resposta) && Array.isArray(resposta.tentativas) ? resposta.tentativas : [];
+      remotas.push(...pagina);
+      if (pagina.length < tamanhoPagina) break;
+    }
     const db = await banco();
     const tx = db.transaction('tentativas', 'readwrite');
     for (const remota of remotas) {
