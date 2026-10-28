@@ -5,21 +5,21 @@
 
 Running 12 tests using 2 workers
 
-(node:25042) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:26920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:25043) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:26921) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-  ✓   1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:44:5 › início recomenda a aula HTML inicial (3.8s)
-  ✓   2 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:44:5 › início recomenda a aula HTML inicial (3.6s)
-  ✓   3 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:50:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (22.5s)
-  ✓   5 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:107:5 › catálogo explicita produção editorial e tema persiste após recarregar (3.2s)
-  ✓   4 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:50:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (32.5s)
-  ✓   7 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:107:5 › catálogo explicita produção editorial e tema persiste após recarregar (4.4s)
-  ✓   6 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:118:5 › produção instala cache e reabre aula sem internet (16.0s)
-  ✓   9 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:150:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (10.4s)
-  ✓   8 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:118:5 › produção instala cache e reabre aula sem internet (16.0s)
-  ✓  10 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:185:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (6.7s)
-  ✓  11 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:150:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (6.6s)
-  ✓  12 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:185:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (2.9s)
+  ✓   2 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:44:5 › início recomenda a aula HTML inicial (3.1s)
+  ✓   1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:44:5 › início recomenda a aula HTML inicial (3.4s)
+  ✓   4 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:50:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (28.1s)
+  ✓   5 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:107:5 › catálogo explicita produção editorial e tema persiste após recarregar (4.5s)
+  ✓   3 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:50:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (40.6s)
+  ✓   7 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:107:5 › catálogo explicita produção editorial e tema persiste após recarregar (5.2s)
+  ✓   6 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:118:5 › produção instala cache e reabre aula sem internet (18.8s)
+  ✓   9 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:150:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (9.9s)
+  ✓   8 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:118:5 › produção instala cache e reabre aula sem internet (18.0s)
+  ✓  10 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:185:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (11.5s)
+  ✓  11 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:150:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (9.9s)
+  ✓  12 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:185:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (5.2s)
 
-  12 passed (1.1m)
+  12 passed (1.4m)

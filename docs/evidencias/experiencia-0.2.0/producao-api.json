@@ -1,0 +1,19 @@
+{
+  "data": "2026-10-28T02:19:46.282883+00:00",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "versao": "0.2.0",
+  "testes": [
+    "saude200",
+    "escolha-definitiva-no-servidor",
+    "sem-XP-ou-correcao-antes-do-envio",
+    "booleanos-e-XP-forjados-ignorados",
+    "nota50-XP10",
+    "correcao-retornada-apos-envio",
+    "reenvio-idempotente",
+    "persistencia-Postgres",
+    "aluno-admin403",
+    "logout401"
+  ],
+  "contaTemporariaId": "7ab34219-dbca-4d03-b42e-a657bd966b33",
+  "limpeza": "Conta temporária e dados relacionados removidos; contador confirmado0."
+}
