@@ -63,11 +63,14 @@ export default function Admin({ flow }: { flow: Flow }) {
     );
   async function corrigir(t: TentativaAdmin) {
     if (!token) return;
+    const reavaliar = t.status === "aprovada" || t.status === "revisar";
+    if (reavaliar && !window.confirm("Esta atividade já foi avaliada. Deseja solicitar uma nova correção? A decisão anterior ficará registrada.")) return;
     setOcupado(t.idServidor);
     setErro("");
     try {
       await requisitar(`/admin/tentativas/${t.idServidor}/corrigir`, token, {
         method: "POST",
+        ...(reavaliar ? { body: JSON.stringify({ confirmarReavaliacao: true }) } : {}),
       });
       await carregar();
       flow.setAviso(
