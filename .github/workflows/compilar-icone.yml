@@ -30,6 +30,20 @@ jobs:
         shell: bash
         run: |
           bash scripts/android-compilar.sh
+      - name: Verificar assinatura e estrutura do APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="artefatos/Flow-Programacao-Guiada-0.2.0-debug.apk"
+          test -s "$APK"
+          SDK="${ANDROID_HOME:-/opt/android-sdk}"
+          APKSIGNER="$(find "$SDK/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+          AAPT="$(find "$SDK/build-tools" -name aapt -type f | sort -V | tail -n 1)"
+          test -x "$APKSIGNER"
+          test -x "$AAPT"
+          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          "$AAPT" dump badging "$APK" | head -n 12
+          unzip -t "$APK" | tail -n 2
       - name: Publicar APK para download
         if: success()
         uses: actions/upload-artifact@v4
