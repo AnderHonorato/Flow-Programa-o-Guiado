@@ -1,0 +1,48 @@
+{
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "data": "2026-10-29T20:30:32.697Z",
+  "telas": [
+    {
+      "largura": 390,
+      "tela": "entrada",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "tela": "comunidade-visitante",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "largura": 390,
+      "tela": "aula-opiniao",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "tela": "entrada",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "tela": "comunidade-visitante",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "largura": 1440,
+      "tela": "aula-opiniao",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    }
+  ]
+}

@@ -43,3 +43,13 @@ Após aplicar restrições, um rollback de código deve manter a verificação d
 QA visual controlado: 18 estados de entrada/recompensas, 56 estados dos novos componentes e 24 estados integrados, em 320/390/768/1440 px, temas claro/escuro; zero violações axe, overflow ou erros JavaScript. Os dados desses cenários são de teste. E2E usa API/banco local reais; seus relógios virtuais avançam os períodos de leitura/verificação sem mudar a lógica do produto.
 
 Android: versão 0.5.0/code5, APK de teste 10.652.421 bytes, SHA256 `29ab9cc3683effb95c1618a1fbd1f6d0e0c7f63941b1079313e7cb8e4a12d9cb`. Mesma assinatura debug; 52 arquivos web comparados byte a byte, sem diferenças. Lint: zero erros/oito avisos. Execução em aparelho/emulador estável e audição física continuam pendentes. Os limites editoriais/GPT/executor descritos no README permanecem.
+
+## Publicação conferida
+
+Deployment de produção `dpl_5F52seL4Nr8CXaZvCzefDkx9oNXE`, READY, aplicação `6897a47af1734f71fce8da6439b2c163f09a27af`. [App público](https://flow-programacao-guiada-anderhonoratos-projects.vercel.app) · [APK 0.5.0](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/releases/tag/v0.5.0-teste).
+
+A API pública foi exercitada com duas contas temporárias próprias: leitura idempotente, opinião visível à administração e isolada entre contas, proibição de moderação por aluno, banimento com motivo/prazo, inativação, reativação sem restaurar token e exclusão com confirmação. As duas contas temporárias foram removidas e a sessão administrativa de teste encerrada. Nenhuma conta real foi moderada pela verificação.
+
+O site publicado passou em seis telas móveis/desktop (entrada, comunidade de visitante e opinião da aula): axe0, overflow0, erros JavaScript0. O link de compartilhamento foi conferido. O APK público foi baixado e o SHA256 confirmou os bytes locais. Evidências em `producao-api.json`, `publicado/` e `download-release.json`.
+
+A consulta final ao PostgreSQL confirmou zero contas temporárias restantes. A CI usa fixtures SQLite para as contas de cenário, preservando o teste separado de cadastro público e evitando colisões entre testes no limitador real de autenticação. [Execução da CI](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40950177173). O commit posterior à aplicação altera somente a preparação dos testes; o bundle público e o APK continuam os mesmos.

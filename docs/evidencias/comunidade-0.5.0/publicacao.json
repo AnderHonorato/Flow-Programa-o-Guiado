@@ -1,0 +1,10 @@
+{
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "versao": "0.5.0",
+  "commitAplicativo": "6897a47af1734f71fce8da6439b2c163f09a27af",
+  "deployment": "dpl_5F52seL4Nr8CXaZvCzefDkx9oNXE",
+  "estado": "READY",
+  "ambiente": "production",
+  "migracao": "8510c0a5e001",
+  "publicacaoApkWorkflow": "https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40949295241"
+}
