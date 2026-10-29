@@ -33,3 +33,13 @@ A suíte inclui fluxos de prova definitiva, recompensas e perfil da versão ante
 APK de depuração com identificador e chave anteriores. A execução em aparelho/emulador estável, incluindo TTS real instalado, continua pendente. Catálogo editorial, GPT e executor remoto mantêm os limites declarados no README.
 
 Resultados da implementação: **153 testes frontend (28 arquivos), 64 testes API e 26 fluxos E2E** aprovados. Nas dez combinações de tamanho/tema, axe encontrou zero violações nas regras WCAG aplicadas; não houve overflow horizontal nem erro JavaScript. TypeScript e build de produção aprovados. Os testes de áudio continuam com mecanismo controlado, conforme o limite acima.
+
+## Publicação verificada
+
+Aplicação publicada a partir de `e7a6b3aef355aa9c516c5205f52dfe0f16693234` no deployment `dpl_2bFmKBuADAfxz4VCh5kKqLZQRYre`, estado READY, produção. [Abrir site](https://flow-programacao-guiada-anderhonoratos-projects.vercel.app).
+
+A API pública retornou versão 0.4.0 e saúde disponível. A interação foi repetida no site público em Chromium móvel e desktop, com eventos de TTS controlados: zero erros, zero violações axe e voz inglesa somente por escolha explícita. A auditoria geral adicional passou em 20 telas; somada às dez combinações interativas, são 30 telas/estados locais verificados.
+
+[APK de teste 0.4.0](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/releases/tag/v0.4.0-teste): 10.629.775 bytes, SHA256 `0dc73438cdac93cf20d6877cce19bb10f5d3cc8db0361969d2361646606d7c57`. Build/lint Android concluídos: zero erros e oito avisos. Os 51 arquivos web do APK correspondem byte a byte ao build testado. Assinatura debug igual à anterior. O download público foi baixado novamente e o hash conferiu.
+
+[Workflow de publicação do APK](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40841913877) concluído com sucesso. [CI da aplicação](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40841509591). A branch principal continua preservada e o PR permanece aberto.
