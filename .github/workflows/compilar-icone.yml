@@ -1,4 +1,4 @@
-name: Compilar APK com novo ícone
+name: APK — compilação em contêiner Android
 on:
   push:
     branches: [distribuicao/v0.2.0]
@@ -6,28 +6,35 @@ on:
 permissions:
   contents: read
 jobs:
-  android:
+  compilar:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    container:
+      image: ghcr.io/cirruslabs/android-sdk:35
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-      - uses: android-actions/setup-android@v3
-      - name: Instalar SDK
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
-      - name: Instalar dependências
+      - name: Preparar ambiente de compilação
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install -y python3 python3-pip git curl unzip
+          echo "ANDROID_HOME=${ANDROID_HOME:-/opt/android-sdk}" >> "$GITHUB_ENV"
+          java -version
+          node --version
+      - name: Instalar dependências do projeto
         run: npm ci
-      - name: Compilar APK
-        run: bash scripts/android-compilar.sh
-      - uses: actions/upload-artifact@v4
+      - name: Compilar web e Android
+        shell: bash
+        run: |
+          bash scripts/android-compilar.sh
+      - name: Publicar APK para download
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          name: Flow-Programacao-Guiada-icone-atualizado
+          name: Flow-APK-novo-icone
           path: artefatos/*.apk
           if-no-files-found: error
+          retention-days: 30
