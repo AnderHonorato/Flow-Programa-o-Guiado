@@ -3,7 +3,8 @@ import type {Flow} from '../componentes/useFlow';
 import Icone from '../componentes/Icone';
 import {exportarPerfil,importarPerfil} from '../offline/armazenamento';
 import {AvatarEvolucao, GaleriaEvolucao} from '../evolucao/Evolucao';
-import {experiencia} from '../evolucao/regras';
+import EditorAvatar from '../perfil/EditorAvatar';
+import {experiencia, evolucao} from '../evolucao/regras';
 import {baixarPacote,listarPacotes,removerPacote,consultarEspaco,solicitarArmazenamentoPersistente,pacotePython,type PacoteAulas,type PacoteInstalado} from '../offline/pacotes';
 function baixar(texto:string,nome:string){const url=URL.createObjectURL(new Blob([texto],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download=nome;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 const tamanho=(bytes:number)=>bytes===0?'0 KB':bytes>=1024*1024?`${(bytes/1024/1024).toFixed(1)} MB`:`${Math.max(1,Math.ceil(bytes/1024))} KB`;
@@ -34,6 +35,7 @@ export default function Perfil({flow,aoEntrar}:{flow:Flow;aoEntrar:()=>void}){
  }
  return <>
   <div className="cabecalho-pagina"><div><span className="sobretitulo">UM ESPAÇO QUE É SEU</span><h1>Sua jornada, do seu jeito.</h1><p>Progresso, preferências e trabalho salvos com cuidado.</p></div><AvatarEvolucao perfilId={flow.perfilId} estado={flow.estado} tamanho={76}/></div>
+  <EditorAvatar key={`avatar-${flow.perfilId}`} perfilId={flow.perfilId} avatar={flow.estado.avatar} indiceNivel={evolucao(flow.estado).indice} aoSalvar={flow.definirAvatar}/>
   <GaleriaEvolucao key={flow.perfilId} perfilId={flow.perfilId} estado={flow.estado}/>
   <div className="perfil-grade">
    <section className="painel-secao"><h2>{flow.nome}</h2><p>{flow.sessao?.usuario.email||'Perfil local neste dispositivo'}</p><div className="lista-dados"><div><span>Competências registradas</span><strong>{flow.estado.aulasConcluidas.length}</strong></div><div><span>Experiência conquistada</span><strong>{experiencia(flow.estado)} XP</strong></div><div><span>Envios aguardando internet</span><strong>{flow.fila.filter(t=>t.status==='aguardando_sincronizacao').length}</strong></div><div><span>Progresso remoto</span><small>{flow.sessaoExpirada?'Sessão expirada':flow.sessao?'Conta conectada':'Entre para sincronizar entre dispositivos'}</small></div></div><div className="botoes" style={{marginTop:22}}>{flow.sessaoExpirada?<><button className="botao primario" onClick={aoEntrar}>Entrar novamente</button><button className="botao secundario" onClick={()=>void flow.sair()}>Sair da conta</button></>:flow.sessao?<><button className="botao primario" disabled={flow.sincronizando||!flow.online} onClick={()=>void flow.sincronizar()}><Icone nome="rede"/>{flow.sincronizando?'Sincronizando…':'Sincronizar agora'}</button><button className="botao secundario" onClick={()=>void flow.sair()}>Sair da conta</button></>:<button className="botao primario" onClick={aoEntrar}>Vincular a uma conta <Icone nome="seta"/></button>}</div></section>

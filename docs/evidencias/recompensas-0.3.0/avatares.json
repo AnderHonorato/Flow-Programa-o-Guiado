@@ -1,0 +1,36 @@
+[
+  {
+    "largura": 390,
+    "erros": [],
+    "overflow": false,
+    "violacoes": [],
+    "pixelRecorte": [
+      23,
+      110,
+      225,
+      255
+    ],
+    "fotoPngSalvaCaracteres": 6018,
+    "fotoPersistiu": true,
+    "desenhoPersistiu": true,
+    "cancelamentoPreservouFoto": true,
+    "arquivoFalsoRecusado": "O arquivo não é uma imagem válida. Escolha outra foto."
+  },
+  {
+    "largura": 1440,
+    "erros": [],
+    "overflow": false,
+    "violacoes": [],
+    "pixelRecorte": [
+      23,
+      110,
+      225,
+      255
+    ],
+    "fotoPngSalvaCaracteres": 6018,
+    "fotoPersistiu": true,
+    "desenhoPersistiu": true,
+    "cancelamentoPreservouFoto": true,
+    "arquivoFalsoRecusado": "O arquivo não é uma imagem válida. Escolha outra foto."
+  }
+]

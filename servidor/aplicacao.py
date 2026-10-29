@@ -52,7 +52,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         yield
         motor.dispose()
 
-    app = FastAPI(title='Flow Programação Guiada — API', version='0.2.0', lifespan=ciclo_vida)
+    app = FastAPI(title='Flow Programação Guiada — API', version='0.3.0', lifespan=ciclo_vida)
     app.state.motor = motor
     app.state.banco = fabrica
     app.state.corretor = corretor or CorretorGPT(config.chave_openai, config.modelo_openai)
@@ -159,9 +159,9 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
                            'dns' if 'resolve' in detalhe or 'translate host' in detalhe else
                            'tempo_limite' if 'timeout' in detalhe else
                            'permissao' if 'permission' in detalhe else 'conexao')
-            return JSONResponse({'status': 'indisponivel', 'versao': '0.2.0',
+            return JSONResponse({'status': 'indisponivel', 'versao': '0.3.0',
                                  'banco': 'indisponivel', 'diagnostico': diagnostico}, status_code=503)
-        return {'status': 'disponivel', 'versao': '0.2.0', 'gptConfigurado': bool(config.chave_openai)}
+        return {'status': 'disponivel', 'versao': '0.3.0', 'gptConfigurado': bool(config.chave_openai)}
 
     @app.post('/api/contas', status_code=201)
     def cadastrar(entrada: Cadastro, request: Request, db=Depends(banco)):

@@ -131,3 +131,28 @@ describe('respostas definitivas e recompensas do hook',()=>{
   expect(renders.filter(r=>r.perfilId!==a&&!r.carregando).some(r=>r.avaliacoes?.[aula.id]!==undefined)).toBe(false);
  });
 });
+
+it('salva o avatar confirmado, preserva progresso e não permite callback de outra conta',async()=>{
+ await montar();const local=flow.perfilId;
+ const avatar={tipo:'desenho' as const,valor:'pixel-mago',atualizadoEm:'2026-10-29T12:00:00Z'};
+ await act(async()=>{await flow.definirAvatar(avatar);});
+ expect(flow.estado.avatar).toEqual(avatar);expect((await lerEstado(local)).avatar).toEqual(avatar);
+ const callback=flow.definirAvatar;
+ const id=crypto.randomUUID();await act(async()=>{await flow.autenticar(sessao(id));});await esperar(()=>expect(flow.carregando).toBe(false));
+ expect(flow.estado.avatar).toEqual(avatar);
+ await expect(callback({...avatar,valor:'games-ninja'})).rejects.toThrow('perfil');
+ expect(flow.estado.avatar?.valor).toBe('pixel-mago');
+ await act(async()=>{await flow.definirAvatar({...avatar,valor:'games-piloto',atualizadoEm:'2026-10-29T12:01:00Z'});});
+ expect((await lerEstado(local)).avatar?.valor).toBe('pixel-mago');
+ expect((await lerEstado(id)).avatar?.valor).toBe('games-piloto');
+});
+it('carimba novas conquistas uma vez e mantém as antigas sem data original',async()=>{
+ const perfil=crypto.randomUUID();localStorage.setItem('flow-id-local',perfil);
+ await salvarEstado(perfil,{...estadoInicial(),aulasConcluidas:['legado'],xp:100});await montar();
+ expect(flow.estado.historicoConquistas?.['primeira-criacao']?.origem).toBe('historico');
+ expect(flow.estado.historicoConquistas?.['primeira-criacao']?.adquiridaEm).toBeUndefined();
+ const aula=catalogoIncluido.trilhas[0].modulos[0].aulas[0];
+ await act(async()=>{for(const q of aula.questoes)flow.escolherResposta(aula,q.id,q.alternativas.findIndex(a=>a.correta));flow.enviarAvaliacao(aula);});
+ const data=flow.estado.historicoConquistas?.['primeira-conexao']?.adquiridaEm;expect(data).toBeTruthy();
+ await act(async()=>flow.enviarAvaliacao(aula));expect(flow.estado.historicoConquistas?.['primeira-conexao']?.adquiridaEm).toBe(data);
+});

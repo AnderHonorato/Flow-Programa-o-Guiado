@@ -33,3 +33,14 @@ describe('backup de progresso e código', () => {
     expect((await lerEstado(destino)).aulasConcluidas).toEqual([]);
   });
 });
+
+it('exporta avatar e datas de aquisição e não regride a aparência mais recente',async()=>{
+ const origem=crypto.randomUUID(),destino=crypto.randomUUID();
+ const historicoConquistas={'primeira-criacao':{adquiridaEm:'2026-10-29T12:00:00Z',registradaEm:'2026-10-29T12:00:00Z',origem:'conquista' as const}};
+ await salvarEstado(origem,{aulasConcluidas:['html-1'],respostas:{},revisoes:{},xp:100,ultimaAula:'',historicoConquistas,avatar:{tipo:'desenho',valor:'pixel-mago',atualizadoEm:'2026-10-29T12:00:00Z'}});
+ await importarPerfil(destino,await exportarPerfil(origem));
+ expect((await lerEstado(destino)).historicoConquistas).toEqual(historicoConquistas);
+ expect((await lerEstado(destino)).avatar?.valor).toBe('pixel-mago');
+ const atual=(await lerEstado(destino));await salvarEstado(destino,{...atual,avatar:{tipo:'desenho',valor:'games-piloto',atualizadoEm:'2026-10-29T12:01:00Z'}});
+ await importarPerfil(destino,await exportarPerfil(origem));expect((await lerEstado(destino)).avatar?.valor).toBe('games-piloto');
+});

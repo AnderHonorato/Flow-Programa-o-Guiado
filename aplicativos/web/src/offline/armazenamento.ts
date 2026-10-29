@@ -1,3 +1,5 @@
+import { historicoValido, registrarHistorico, type HistoricoConquistas } from '../evolucao/historico';
+import { validarAvatar, type AvatarPerfil } from '../perfil/avatar';
 import { combinarAvaliacoes, respostasDasAvaliacoes, type Avaliacao } from '../aprendizagem/avaliacao';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { ArquivosCodigo } from '../../../../contratos/tipos';
@@ -5,6 +7,8 @@ import { exportarProjetos, importarProjetos, validarProjetos, type ProjetoExport
 
 export interface EstadoLocal {
   avaliacoes?: Record<string, Avaliacao>;
+  historicoConquistas?: HistoricoConquistas;
+  avatar?: AvatarPerfil;
   aulasConcluidas: string[];
   respostas: Record<string, boolean>;
   revisoes: Record<string, { etapa: number; proxima: string }>;
@@ -85,6 +89,8 @@ function validarEstado(estado: unknown): asserts estado is EstadoLocal {
       !objeto(estado.respostas) || !Object.values(estado.respostas).every(v => typeof v === 'boolean') ||
       !objeto(estado.revisoes) || !Object.values(estado.revisoes).every(v => objeto(v) && Number.isInteger(v.etapa) && Number(v.etapa) >= 0 && Number(v.etapa) <= 4 && dataValida(v.proxima)) ||
       (estado.avaliacoes !== undefined && (!objeto(estado.avaliacoes) || !Object.values(estado.avaliacoes).every(avaliacaoValida))) ||
+      (estado.historicoConquistas !== undefined && !historicoValido(estado.historicoConquistas)) ||
+      (estado.avatar !== undefined && !validarAvatar(estado.avatar)) ||
       !Number.isFinite(estado.xp) || Number(estado.xp) < 0 || typeof estado.ultimaAula !== 'string') {
     throw new Error('Progresso inválido. Nenhum dado foi importado.');
   }
@@ -117,7 +123,15 @@ export function combinarEstados(local: EstadoLocal, remoto: EstadoLocal): Estado
   const aulasConcluidas = [...new Set([...local.aulasConcluidas, ...remoto.aulasConcluidas])];
   const avaliacoes = combinarAvaliacoes(local.avaliacoes, remoto.avaliacoes);
   const protegidas = respostasDasAvaliacoes(respostas, avaliacoes);
-  return { aulasConcluidas, respostas: protegidas, revisoes, xp: Object.keys(avaliacoes).length ? aulasConcluidas.length * 100 + Object.values(protegidas).filter(Boolean).length * 10 : Math.max(local.xp, remoto.xp), ultimaAula: local.ultimaAula || remoto.ultimaAula, ...(Object.keys(avaliacoes).length ? { avaliacoes } : {}) };
+  const historicoConquistas = { ...remoto.historicoConquistas, ...local.historicoConquistas };
+  const avatar = combinarAvatar(local.avatar, remoto.avatar);
+  return { ...(avatar ? { avatar } : {}), ...(Object.keys(historicoConquistas).length ? { historicoConquistas } : {}), aulasConcluidas, respostas: protegidas, revisoes, xp: Object.keys(avaliacoes).length ? aulasConcluidas.length * 100 + Object.values(protegidas).filter(Boolean).length * 10 : Math.max(local.xp, remoto.xp), ultimaAula: local.ultimaAula || remoto.ultimaAula, ...(Object.keys(avaliacoes).length ? { avaliacoes } : {}) };
+}
+
+export function combinarAvatar(a?: AvatarPerfil, b?: AvatarPerfil): AvatarPerfil | undefined {
+  if (!a || !b) return a ?? b;
+  const diferenca = Date.parse(a.atualizadoEm) - Date.parse(b.atualizadoEm);
+  return diferenca > 0 || diferenca === 0 && `${a.tipo}:${a.valor}` >= `${b.tipo}:${b.valor}` ? a : b;
 }
 
 export async function lerEstado(perfilId: string): Promise<EstadoLocal> {
@@ -245,6 +259,8 @@ async function sincronizar(perfilId: string, token: string, api: string) {
     const combinado = combinarEstados(maisRecente, progresso.estado);
     combinado.avaliacoes = combinarAvaliacoes(progresso.estado.avaliacoes, maisRecente.avaliacoes);
     combinado.respostas = respostasDasAvaliacoes({ ...maisRecente.respostas, ...progresso.estado.respostas }, combinado.avaliacoes);
+    combinado.historicoConquistas = { ...maisRecente.historicoConquistas, ...progresso.estado.historicoConquistas };
+    combinado.historicoConquistas = registrarHistorico(combinado, combinado);
     combinado.xp = combinado.aulasConcluidas.length * 100 + Object.values(combinado.respostas).filter(Boolean).length * 10;
     await progressoTx.store.put(combinado, perfilId);
     await progressoTx.done;

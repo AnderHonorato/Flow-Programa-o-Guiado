@@ -17,6 +17,9 @@ async function abrirHtml(page: Page) {
   await page.getByRole('button', { name: 'HTML 1: Minha primeira página' }).click();
   await expect(page.getByRole('heading', { name: 'HTML 1: Minha primeira página' })).toBeVisible();
 }
+async function fecharRecompensas(page:Page){
+ for(let i=0;i<14;i++){const fechar=page.getByRole('button',{name:'Fechar celebração atual',exact:true});if(!await fechar.isVisible())break;await fechar.click();}
+}
 async function prepararLaboratorio(page: Page) {
   const proxima = page.getByRole('button', { name: /Próxima etapa/ });
   if (await proxima.isVisible()) {
@@ -73,6 +76,7 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await questoes.nth(1).getByRole('button', { name: 'A h1 e p são filhos de body.', exact: true }).click();
   await page.getByRole('button', { name: 'Enviar avaliação', exact: true }).click();
   await expect(page.locator('.avaliacao-nota')).toContainText('100');
+  await fecharRecompensas(page);
   await page.getByRole('button', { name: /Li a correção/ }).click();
   await prepararLaboratorio(page);
   await expect(page.locator('.lab-status')).toContainText('Prévia atualizada.');
@@ -81,6 +85,7 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await expect(page.locator('.lab-teste-revisar')).toHaveCount(0);
   await page.getByRole('button', { name: 'Registrar competência' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Competência registrada!' })).toBeVisible();
+  await fecharRecompensas(page);
   // Repetir registro não duplica XP; aprovação do professor continua separada.
   await page.getByRole('button', { name: 'Registrar competência' }).click();
   await context.setOffline(true);
@@ -205,11 +210,13 @@ test('avaliação trava primeira escolha, retoma e só revela nota e correção 
   await questoes.nth(1).getByRole('button',{name:'A h1 e p são filhos de body.',exact:true}).click();
   await page.getByRole('button',{name:'Enviar avaliação',exact:true}).click();
   await expect(page.locator('.avaliacao-nota')).toContainText('50');
+  await fecharRecompensas(page);
   await expect(page.locator('.correcao-item.revisar')).toContainText('O que deveria ter feito');
   await expect(page.locator('.correcao-item.revisar')).toContainText('Escolher: h1');
   await expect(page.locator('.correcao-item.acerto')).toHaveCount(1);
   await expect(page.getByRole('button',{name:'Enviar avaliação',exact:true})).toHaveCount(0);
   await page.reload();await page.getByRole('tab',{name:'Fixar',exact:true}).click();
   await expect(page.locator('.avaliacao-nota')).toContainText('50');
+  await fecharRecompensas(page);
   for(const botao of await page.locator('.alternativa').all())await expect(botao).toBeDisabled();
 });

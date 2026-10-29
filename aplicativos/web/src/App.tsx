@@ -161,7 +161,7 @@ export default function App() {
     );
   return (
     <div className="aplicativo">
-      <CelebracaoEvolucao estado={flow.estado} perfilId={flow.perfilId} pronto={!flow.carregando}/>
+      <CelebracaoEvolucao estado={flow.estado} perfilId={flow.perfilId} pronto={!flow.carregando} aoVerColecao={() => navegar("perfil")}/>
       <a className="pular" href="#conteudo">
         Pular para o conteúdo
       </a>
@@ -666,7 +666,7 @@ export default function App() {
         <footer className="rodape-app">
           <span>Flow Programação Guiada</span>
           <span>Pequenos passos. Conhecimento que fica.</span>
-          <small>v0.2.0</small>
+          <small>v0.3.0</small>
         </footer>
       </div>
       <nav className="navegacao-inferior" aria-label="Atalhos do aplicativo" inert={conta || menu}>

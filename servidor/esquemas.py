@@ -1,7 +1,8 @@
 """Contratos de fronteira; entradas desconhecidas são recusadas."""
 from datetime import datetime
 from typing import Annotated, Any, Literal
-from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
+from servidor.servicos.perfil import DESENHOS_AVATAR, IDS_CONQUISTAS, validar_foto_png
 
 
 class Entrada(BaseModel):
@@ -69,6 +70,50 @@ class Avaliacao(Entrada):
         return valor
 
 
+class AvatarPerfil(Entrada):
+    tipo: Literal['desenho', 'foto', 'emblema']
+    valor: str = Field(min_length=1, max_length=240000)
+    atualizadoEm: AwareDatetime
+
+    @field_validator('atualizadoEm', mode='before')
+    @classmethod
+    def validar_data(cls, valor):
+        if not isinstance(valor, (str, datetime)):
+            raise ValueError('O avatar exige data ISO com fuso horário.')
+        return valor
+
+    @model_validator(mode='after')
+    def validar_avatar(self):
+        if self.tipo == 'desenho' and self.valor not in DESENHOS_AVATAR:
+            raise ValueError('Desenho de avatar não reconhecido.')
+        if self.tipo == 'emblema' and self.valor not in tuple(str(i) for i in range(8)):
+            raise ValueError('Ícone de nível não reconhecido.')
+        if self.tipo == 'foto':
+            validar_foto_png(self.valor)
+        return self
+
+
+class RegistroConquista(Entrada):
+    adquiridaEm: AwareDatetime | None = None
+    registradaEm: AwareDatetime
+    origem: Literal['conquista', 'historico']
+
+    @field_validator('adquiridaEm', 'registradaEm', mode='before')
+    @classmethod
+    def validar_data(cls, valor):
+        if valor is not None and not isinstance(valor, (str, datetime)):
+            raise ValueError('A conquista exige data ISO com fuso horário.')
+        return valor
+
+    @model_validator(mode='after')
+    def validar_origem(self):
+        if self.origem == 'conquista' and self.adquiridaEm is None:
+            raise ValueError('Informe a data de aquisição da conquista.')
+        if self.origem == 'historico' and self.adquiridaEm is not None:
+            raise ValueError('Uma conquista histórica não pode inventar data de aquisição.')
+        return self
+
+
 class Estado(Entrada):
     aulasConcluidas: list[str] = Field(default_factory=list, max_length=10000)
     respostas: dict[str, bool] = Field(default_factory=dict, max_length=10000)
@@ -76,6 +121,15 @@ class Estado(Entrada):
     revisoes: dict[str, RevisaoEspacada] = Field(default_factory=dict, max_length=10000)
     xp: int = Field(default=0, ge=0)
     ultimaAula: str = Field(default='', max_length=100)
+    avatar: AvatarPerfil | None = None
+    historicoConquistas: dict[str, RegistroConquista] = Field(default_factory=dict, max_length=13)
+
+    @field_validator('historicoConquistas')
+    @classmethod
+    def validar_conquistas(cls, valor):
+        if any(id not in IDS_CONQUISTAS for id in valor):
+            raise ValueError('Identificador de conquista inválido.')
+        return valor
 
 
 class Evento(Entrada):

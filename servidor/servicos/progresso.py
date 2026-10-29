@@ -6,6 +6,7 @@ XP é derivado de conquistas, nunca do valor sugerido pelo dispositivo.
 from copy import deepcopy
 from servidor.esquemas import RevisaoEspacada
 from servidor.servicos.catalogo import encontrar_aula
+from servidor.servicos.perfil import mesclar_perfil
 
 
 def estado_vazio():
@@ -97,6 +98,7 @@ def mesclar(atual, recebido, conflitos, catalogo=None):
         novo['ultimaAula'] = recebido['ultimaAula']
     mesclar_avaliacoes(novo, recebido, catalogo)
     novo['xp'] = len(novo['aulasConcluidas']) * 100 + sum(novo['respostas'].values()) * 10
+    mesclar_perfil(novo, recebido, atual)
     return novo, conflitos
 
 

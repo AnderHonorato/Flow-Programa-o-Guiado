@@ -14,8 +14,8 @@ bash scripts/android-compilar.sh
 
 O script provisiona o runtime Python local, compila a web, sincroniza recursos e plugins, executa `assembleDebug` e `lintDebug` e grava:
 
-- `artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk`;
-- `artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk.sha256`;
+- `artefatos/Flow-Programacao-Guiada-0.3.0-debug.apk`;
+- `artefatos/Flow-Programacao-Guiada-0.3.0-debug.apk.sha256`;
 - `artefatos/android-build.log`.
 
 Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, fluxos em navegador com API local e banco temporário, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente. Os exemplos de testes gerados pelo template do Capacitor foram removidos: não verificavam o produto e um deles ainda esperava o identificador padrão. A validação nativa automatizada disponível está no script de emulador abaixo.
@@ -23,7 +23,7 @@ Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --s
 ## Instalar e atualizar
 
 ```bash
-adb install -r artefatos/Flow-Programacao-Guiada-0.1.0-debug.apk
+adb install -r artefatos/Flow-Programacao-Guiada-0.3.0-debug.apk
 adb shell am start -n br.com.ander.flow/.MainActivity
 ```
 
@@ -60,3 +60,7 @@ As evidências reais de ambiente, compilação e emulador ficam em `docs/evidenc
 [`apk-final.json`](evidencias/android/apk-final.json) registra o APK final, assinatura, metadados e a comparação integral dos arquivos do `dist` com os recursos dentro do APK. A compilação final executou `assembleDebug` e `lintDebug` com sucesso; o lint reportou zero erros e oito avisos. A verificação estática confirmou as 12 licenças, o runtime Python WASM, o endereço da API nativa, a atividade de abertura declarada e o Worker Python com bloqueios de IndexedDB e descritores herdados. Esses bloqueios reduzem acesso à origem; não constituem um sandbox completo. A assinatura de depuração foi verificada nos esquemas v1 e v2.
 
 Uma instalação do APK debug anterior retornou `Success` em `instalacao-apk.log`. Isso confirma somente a aceitação daquele pacote pelo gerenciador de instalação. A abertura falhou com serviço Android indisponível na primeira tentativa; na segunda, a chamada de abertura informou atividade inexistente e o roteiro de verificação encerrou por timeout do ADB. Os registros também mostram falhas de depuração de processos do sistema. Esses resultados não comprovam abertura da tela, teclado, rotação, voz nem persistência offline no Android. Não foi iniciada uma terceira tentativa pesada. O APK final recompilado deve ser instalado e validado em aparelho ou emulador com aceleração; os testes web de persistência offline não substituem essa validação nativa.
+
+## Atualização 0.3.0
+
+A versão atual inclui foto recortável, avatares Cartoon/Pixel/Games e histórico/celebrações de conquistas. As evidências atuais ficam em `docs/evidencias/recompensas-0.3.0/`; os registros Android anteriores continuam preservados como histórico. A validação de execução em aparelho estável segue pendente.
