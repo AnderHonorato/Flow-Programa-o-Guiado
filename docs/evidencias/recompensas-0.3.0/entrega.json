@@ -1,0 +1,42 @@
+{
+  "versao": "0.3.0",
+  "data": "2026-10-29T03:35:51.299117+00:00",
+  "commitAplicacao": "d891b0b7eb8145e4f18eff0b164a65d044a42048",
+  "vercelDeployment": "dpl_HedJXdFozo3FR12KAcMkCaVGBYZz",
+  "vercelStatus": "READY",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "testes": {
+    "frontend": 125,
+    "api": 64,
+    "e2eDesktopCelular": 18,
+    "telasAxe": 20,
+    "violacoesAxe": 0,
+    "overflow": 0,
+    "desenhosOriginais": 18
+  },
+  "apk": {
+    "data": "2026-10-29T03:33:26.948656+00:00",
+    "versao": "0.3.0",
+    "bytes": 10612708,
+    "sha256": "2a160e875b7b12882596faa5cd3ef087521bda4762ccc0d040cb0e99040b7620",
+    "assinatura": "Android Debug, v1/v2; mesma chave das versões anteriores",
+    "distComparados": 51,
+    "diferencasDist": 0,
+    "lint": {
+      "erros": 0,
+      "avisos": 8
+    },
+    "execucaoAndroid": "Não validada em aparelho/emulador estável."
+  },
+  "publicacaoVerificada": "API Postgres e navegador anônimo comTLS verificado; foto,desenhos,recorte,persistência,celebração,data/replay e isolamento entre contas.",
+  "release": "https://github.com/AnderHonorato/Flow-Programa-o-Guiado/releases/tag/v0.3.0-teste",
+  "limites": [
+    "APK debug; execução em aparelho Android estável pendente.",
+    "20aulas/80atividades, chave GPT e hospedagem executor remoto seguem nos limites anteriores."
+  ],
+  "ci": {
+    "url": "https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40812599137",
+    "status": "success",
+    "commit": "d891b0b7eb8145e4f18eff0b164a65d044a42048"
+  }
+}

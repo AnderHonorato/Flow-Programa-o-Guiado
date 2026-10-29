@@ -1,0 +1,22 @@
+{
+  "data": "2026-10-29T03:34:27.404982+00:00",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "versao": "0.3.0",
+  "testes": [
+    "desenho-persistido",
+    "aquisicao-primeiro-emblema",
+    "data-imutavel",
+    "foto-PNG-persistida",
+    "avatar-isolado-entre-contas",
+    "SVG-recusado422",
+    "avatar-antigo-nao-regrede-selecao",
+    "aparencia-nao-altera-XP",
+    "sessoes-revogadas"
+  ],
+  "fotoSinteticaSha256": "606553990b3b412a406bdd043c00e3244ef29ffd56f52e43a7bffb51c9cd09d7",
+  "contasTemporarias": [
+    "023e7eb6-989c-4d53-aa15-856e5e80e7af",
+    "77dcecee-70fc-41d4-8baf-b019791c9466"
+  ],
+  "limpeza": "Duas contas temporárias e dados relacionados removidos; contador confirmado0."
+}
