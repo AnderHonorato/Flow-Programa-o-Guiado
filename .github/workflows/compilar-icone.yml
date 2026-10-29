@@ -1,0 +1,33 @@
+name: Compilar APK com novo ícone
+on:
+  push:
+    branches: [distribuicao/v0.2.0]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Instalar SDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Instalar dependências
+        run: npm ci
+      - name: Compilar APK
+        run: bash scripts/android-compilar.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Flow-Programacao-Guiada-icone-atualizado
+          path: artefatos/*.apk
+          if-no-files-found: error
