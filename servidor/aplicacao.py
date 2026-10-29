@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import time
+import hashlib
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +25,7 @@ from servidor.seguranca import HASH_FICTICIO, criar_sessao, hash_senha, resumo_t
 from servidor.servicos.catalogo import AtualizacaoCatalogo, encontrar_aula, ler_catalogo, validar_catalogo
 from servidor.servicos.correcao import CorrecaoIndisponivel, CorretorGPT
 from servidor.servicos.progresso import aplicar_evento, estado_vazio, mesclar
+from servidor.servicos.contas import conferir_acesso, expirar_restricao
 
 bearer = HTTPBearer(auto_error=False)
 
@@ -52,7 +54,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         yield
         motor.dispose()
 
-    app = FastAPI(title='Flow Programação Guiada — API', version='0.4.0', lifespan=ciclo_vida)
+    app = FastAPI(title='Flow Programação Guiada — API', version='0.5.0', lifespan=ciclo_vida)
     app.state.motor = motor
     app.state.banco = fabrica
     app.state.corretor = corretor or CorretorGPT(config.chave_openai, config.modelo_openai)
@@ -65,7 +67,7 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
     @app.middleware('http')
     async def protecoes(request, proximo):
         inicio = time.monotonic()
-        if request.method in {'POST', 'PUT', 'PATCH'}:
+        if request.method in {'POST', 'PUT', 'PATCH', 'DELETE'}:
             total = 0
             partes = []
             async for parte in request.stream():
@@ -89,6 +91,11 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         with fabrica() as sessao:
             if motor.dialect.name == 'sqlite' and request.method in {'POST', 'PUT', 'PATCH', 'DELETE'}:
                 sessao.execute(text('BEGIN IMMEDIATE'))
+            if (motor.dialect.name == 'postgresql' and request.method in {'PATCH', 'DELETE'}
+                    and request.url.path.startswith('/api/admin/usuarios/')):
+                # Antes de autenticar/travar o ator: evita deadlock entre duas
+                # moderações administrativas cruzadas e protege o último admin.
+                sessao.execute(text('SELECT pg_advisory_xact_lock(740125020)'))
             try:
                 yield sessao
             except Exception:
@@ -99,14 +106,24 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         if not credenciais:
             raise HTTPException(401, 'Entre na sua conta para continuar.', headers={'WWW-Authenticate': 'Bearer'})
         sessao = db.get(Sessao, resumo_token(credenciais.credentials))
-        if not sessao or sessao.expira_em.replace(tzinfo=timezone.utc) <= agora():
+        if not sessao:
+            raise HTTPException(401, {'codigo': 'SESSAO_REVOGADA',
+                                     'mensagem': 'Esta sessão foi encerrada ou não está mais disponível. Entre novamente.'},
+                                headers={'WWW-Authenticate': 'Bearer'})
+        if sessao.expira_em.replace(tzinfo=timezone.utc) <= agora():
             raise HTTPException(401, 'Sessão expirada. Entre novamente.', headers={'WWW-Authenticate': 'Bearer'})
         consulta = select(Usuario).where(Usuario.id == sessao.usuario_id)
         if request.method in {'POST', 'PUT', 'PATCH', 'DELETE'}:
             consulta = consulta.with_for_update()
         usuario = db.scalar(consulta)
         if not usuario:
-            raise HTTPException(401, 'Sessão inválida.')
+            raise HTTPException(401, {'codigo': 'SESSAO_REVOGADA', 'mensagem': 'Esta sessão foi encerrada.'})
+        conferir_acesso(usuario)
+        if expirar_restricao(db, usuario):
+            db.commit()
+        if sessao.revogada_em is not None:
+            raise HTTPException(401, {'codigo': 'SESSAO_REVOGADA',
+                                     'mensagem': 'Esta sessão foi encerrada. Entre novamente.'})
         request.state.hash_token = sessao.hash_token
         return usuario
 
@@ -159,9 +176,9 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
                            'dns' if 'resolve' in detalhe or 'translate host' in detalhe else
                            'tempo_limite' if 'timeout' in detalhe else
                            'permissao' if 'permission' in detalhe else 'conexao')
-            return JSONResponse({'status': 'indisponivel', 'versao': '0.4.0',
+            return JSONResponse({'status': 'indisponivel', 'versao': '0.5.0',
                                  'banco': 'indisponivel', 'diagnostico': diagnostico}, status_code=503)
-        return {'status': 'disponivel', 'versao': '0.4.0', 'gptConfigurado': bool(config.chave_openai)}
+        return {'status': 'disponivel', 'versao': '0.5.0', 'gptConfigurado': bool(config.chave_openai)}
 
     @app.post('/api/contas', status_code=201)
     def cadastrar(entrada: Cadastro, request: Request, db=Depends(banco)):
@@ -183,10 +200,22 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
     @app.post('/api/sessao')
     def entrar(entrada: Credenciais, request: Request, db=Depends(banco)):
         limitar_login(request)
-        usuario = db.scalar(select(Usuario).where(Usuario.email == str(entrada.email)))
+        identificador = hashlib.sha256(str(entrada.email).encode()).hexdigest()
+        # Este limite persiste entre processos/serverless. Identificadores são
+        # resumidos; nenhuma senha, token ou IP bruto entra na auditoria.
+        falhas = db.scalar(select(func.count()).select_from(Auditoria).where(
+            Auditoria.acao == 'login_recusado', Auditoria.criado_em >= agora() - timedelta(minutes=5),
+            Auditoria.dados['identificador'].as_string() == identificador))
+        if falhas >= 8:
+            raise HTTPException(429, 'Muitas tentativas para esta conta. Aguarde cinco minutos.', headers={'Retry-After': '300'})
+        usuario = db.scalar(select(Usuario).where(Usuario.email == str(entrada.email)).with_for_update())
         correto = verificar_senha(entrada.senha, usuario.senha_hash if usuario else HASH_FICTICIO)
         if not usuario or not correto:
+            auditar(db, None, 'login_recusado', 'autenticacao', {'identificador': identificador})
+            db.commit()
             raise HTTPException(401, 'E-mail ou senha incorretos.')
+        conferir_acesso(usuario)
+        expirar_restricao(db, usuario)
         token = criar_sessao(db, usuario, config.duracao_sessao_horas)
         auditar(db, usuario, 'sessao_criada', usuario.id)
         db.commit()
@@ -385,10 +414,6 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
         return [{'versao': v.id, 'autorId': v.autor_id, 'criadoEm': v.criado_em.replace(tzinfo=timezone.utc).isoformat(), 'catalogo': v.dados}
                 for v in db.scalars(select(VersaoCatalogo).order_by(VersaoCatalogo.id.desc()).limit(100))]
 
-    @app.get('/api/admin/usuarios')
-    def usuarios(limite: int = Query(100, ge=1, le=500), admin=Depends(administrador), db=Depends(banco)):
-        return [usuario_publico(u) for u in db.scalars(select(Usuario).order_by(Usuario.criado_em.desc()).limit(limite))]
-
     @app.get('/api/admin/metricas')
     def metricas(admin=Depends(administrador), db=Depends(banco)):
         estados = dict(db.execute(select(Tentativa.status, func.count()).group_by(Tentativa.status)).all())
@@ -412,8 +437,10 @@ def criar_aplicacao(configuracao=None, corretor=None, migrar=True):
 
     from servidor.rotas.execucoes import criar_rotas_execucoes
     from servidor.rotas.certificados import criar_rotas_certificados
+    from servidor.rotas.comunidade import criar_rotas_comunidade
     app.include_router(criar_rotas_execucoes(autenticar))
     app.include_router(criar_rotas_certificados(autenticar, banco))
+    app.include_router(criar_rotas_comunidade(autenticar, administrador, banco, config, auditar))
 
     @app.get('/{caminho:path}', include_in_schema=False)
     def web(caminho: str):

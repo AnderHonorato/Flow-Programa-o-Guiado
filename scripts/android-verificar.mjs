@@ -9,7 +9,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const destino = join(raiz, 'docs/evidencias/android');
 const adb = process.env.ANDROID_HOME ? join(process.env.ANDROID_HOME, 'platform-tools/adb') : 'adb';
 const pacote = 'br.com.ander.flow';
-const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.4.0-debug.apk'));
+const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.5.0-debug.apk'));
 const evidencias = { inicio: new Date().toISOString(), pacote, verificacoes: [] };
 const marcador = 'flowAndroidTeclado';
 mkdirSync(destino, { recursive: true });

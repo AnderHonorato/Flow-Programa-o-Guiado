@@ -125,3 +125,30 @@ describe('coleção e ficha de emblemas', () => {
     expect(ficha.textContent).not.toContain('Rever animação');
   });
 });
+
+
+describe('revelações que evoluem com a conquista', () => {
+  it('acrescenta camadas e raridade nos graus maiores sem animar conquistas bloqueadas', async () => {
+    await act(async () => raiz.render(<ColecaoEmblemas estado={vazio}/>));
+    await act(async () => botao('Ver detalhes de Primeira conexão').click());
+    let palco = document.querySelector('.recompensa-palco')!;
+    expect(palco.getAttribute('data-categoria')).toBe('Inicial');
+    expect(palco.querySelectorAll('.recompensa-particula')).toHaveLength(12);
+    expect(palco.querySelectorAll('.recompensa-orbita')).toHaveLength(0);
+    await act(async () => botao('Fechar detalhes do emblema').click());
+    await act(async () => botao('Ver detalhes de Base sólida').click());
+    palco = document.querySelector('.recompensa-palco')!;
+    expect(palco.getAttribute('data-categoria')).toBe('Rara');
+    expect(palco.querySelectorAll('.recompensa-orbita')).toHaveLength(1);
+    await act(async () => botao('Fechar detalhes do emblema').click());
+    await act(async () => botao('Ver detalhes de Universo em expansão').click());
+    palco = document.querySelector('.recompensa-palco')!;
+    expect(palco.getAttribute('data-grau')).toBe('7');
+    expect(palco.getAttribute('data-categoria')).toBe('Lendária');
+    expect(palco.querySelectorAll('.recompensa-particula')).toHaveLength(36);
+    expect(palco.querySelectorAll('.recompensa-orbita')).toHaveLength(3);
+    expect(palco.querySelectorAll('.recompensa-cristais>span')).toHaveLength(6);
+    expect(palco.classList.contains('recompensa-palco--animado')).toBe(false);
+    expect(document.querySelector('[role=dialog]')?.textContent).toContain('Emblema ainda bloqueado');
+  });
+});

@@ -8,6 +8,7 @@ const desenhos: Record<string, ReactNode> = {
   revisao: <><path d="M4 8a8 8 0 1 1 0 8M4 3v5h5M12 7v5l3 2"/></>,
   projetos: <><path d="M3 7h7l2-3h5l2 3h2v13H3Z"/><path d="m9 12-3 3 3 3m6-6 3 3-3 3"/></>,
   perfil: <><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></>,
+  comunidade: <><circle cx="8" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M2 21v-3a6 6 0 0 1 12 0v3M16 14a5 5 0 0 1 6 5v2M7 16h2m-1-1v2"/></>,
   admin: <><path d="m12 2 8 3v6c0 5-8 10-8 10S4 16 4 11V5Z"/><path d="m8 11 3 3 5-6"/></>,
   seta: <><path d="M4 12h16m-6-6 6 6-6 6"/></>,
   play: <path d="m8 4 12 8-12 8Z"/>,

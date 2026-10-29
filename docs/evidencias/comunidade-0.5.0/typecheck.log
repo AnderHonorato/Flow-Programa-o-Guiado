@@ -1,0 +1,8 @@
+
+> flow-programacao-guiada@0.5.0 typecheck
+> npm run typecheck --workspace aplicativos/web
+
+
+> @flow/web@0.5.0 typecheck
+> tsc --noEmit
+

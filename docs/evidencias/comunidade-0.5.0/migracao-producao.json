@@ -1,0 +1,18 @@
+{
+  "revisaoAnterior": "7101d6a5cf57",
+  "revisaoAplicada": "8510c0a5e001",
+  "schema": "flow",
+  "novasTabelas": [
+    "leituras",
+    "avaliacoes_aulas"
+  ],
+  "RLS": true,
+  "backendPodeLer": true,
+  "anonPodeLer": false,
+  "authenticatedPodeLer": false,
+  "advisorsSeguranca": [],
+  "apiAnteriorAposMigracao": {
+    "status": 200,
+    "versao": "0.4.0"
+  }
+}

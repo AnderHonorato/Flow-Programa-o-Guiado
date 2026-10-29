@@ -259,6 +259,7 @@ def test_cms_rejeita_publicacao_incompleta(ambiente):
 def test_limite_payload_e_api_nao_vira_html(ambiente):
     cliente, _ = ambiente
     assert cliente.post('/api/contas', content='x' * 2_000_001).status_code == 413
+    assert cliente.request('DELETE', '/api/admin/usuarios/inexistente', content='x' * 2_000_001).status_code == 413
     resposta = cliente.get('/api/inexistente')
     assert resposta.status_code == 404
     assert resposta.headers['content-type'].startswith('application/json')
@@ -326,8 +327,10 @@ def test_adaptador_baixa_confianca_nao_aprova():
 def test_limite_tentativas_login(ambiente):
     cliente, _ = ambiente
     entrada = {'email': 'ausente@exemplo.com', 'senha': 'senha-incorreta'}
-    for _ in range(20):
-        assert cliente.post('/api/sessao', json=entrada).status_code == 401
+    # Identificadores diferentes exercitam o limite por origem; a nova proteção
+    # persistente por conta é coberta separadamente.
+    for indice in range(20):
+        assert cliente.post('/api/sessao', json={**entrada, 'email': f'ausente{indice}@exemplo.com'}).status_code == 401
     resposta = cliente.post('/api/sessao', json=entrada)
     assert resposta.status_code == 429
     assert resposta.headers['retry-after'] == '60'

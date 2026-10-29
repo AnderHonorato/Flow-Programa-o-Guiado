@@ -1,0 +1,15 @@
+{
+  "data": "2026-10-29T11:03:30.383614+00:00",
+  "versao": "0.5.0",
+  "versionCode": 5,
+  "bytes": 10652421,
+  "sha256": "29ab9cc3683effb95c1618a1fbd1f6d0e0c7f63941b1079313e7cb8e4a12d9cb",
+  "assinatura": "Android Debug v1/v2; mesma chave das versões anteriores",
+  "distComparados": 52,
+  "diferencasDist": 0,
+  "lint": {
+    "erros": 0,
+    "avisos": 8
+  },
+  "execucaoAndroid": "Não validada em aparelho/emulador estável. Voz física não verificada."
+}

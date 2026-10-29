@@ -1,5 +1,6 @@
 """Contratos de fronteira; entradas desconhecidas são recusadas."""
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+from uuid import UUID
 from typing import Annotated, Any, Literal
 from pydantic import AwareDatetime, BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 from servidor.servicos.perfil import DESENHOS_AVATAR, IDS_CONQUISTAS, validar_foto_png
@@ -187,3 +188,59 @@ class RevisaoHumana(Entrada):
 
 class CorrecaoManual(Entrada):
     confirmarReavaliacao: bool = False
+
+
+class ModeracaoUsuario(Entrada):
+    estado: Literal['ativo', 'banido', 'inativo']
+    motivo: str = Field(min_length=5, max_length=1000)
+    ate: AwareDatetime | None = None
+
+    @field_validator('motivo')
+    @classmethod
+    def motivo_preenchido(cls, valor):
+        valor = valor.strip()
+        if len(valor) < 5:
+            raise ValueError('Explique o motivo em pelo menos cinco caracteres.')
+        return valor
+
+    @model_validator(mode='after')
+    def validar_prazo(self):
+        if self.estado == 'ativo' and self.ate is not None:
+            raise ValueError('A reativação não recebe prazo de bloqueio.')
+        if self.ate is not None:
+            instante = datetime.now(timezone.utc)
+            if not instante < self.ate <= instante + timedelta(days=3650):
+                raise ValueError('O prazo deve estar no futuro e não ultrapassar dez anos.')
+        return self
+
+
+class ExclusaoUsuario(Entrada):
+    motivo: str = Field(min_length=5, max_length=1000)
+    confirmacao: str = Field(min_length=3, max_length=254)
+
+    @field_validator('motivo')
+    @classmethod
+    def motivo_preenchido(cls, valor):
+        valor = valor.strip()
+        if len(valor) < 5:
+            raise ValueError('Explique o motivo em pelo menos cinco caracteres.')
+        return valor
+
+
+class NovaLeitura(Entrada):
+    id: UUID
+    aulaId: str = Field(min_length=1, max_length=100)
+    segundos: int = Field(strict=True, ge=20, le=300)
+
+
+class OpiniaoAula(Entrada):
+    nota: int = Field(strict=True, ge=1, le=5)
+    comentario: str = Field(min_length=3, max_length=2000)
+
+    @field_validator('comentario')
+    @classmethod
+    def comentario_preenchido(cls, valor):
+        valor = valor.strip()
+        if len(valor) < 3:
+            raise ValueError('Escreva um comentário com pelo menos três caracteres.')
+        return valor

@@ -1,4 +1,6 @@
 import Seletor from '../componentes/Seletor';
+import AdminUsuarios from '../administracao/AdminUsuarios';
+import AdminAvaliacoes from '../administracao/AdminAvaliacoes';
 import { useEffect, useState } from "react";
 import type { Flow } from "../componentes/useFlow";
 import { requisitar } from "../componentes/api";
@@ -15,6 +17,7 @@ interface TentativaAdmin {
   versao?: number;
 }
 export default function Admin({ flow }: { flow: Flow }) {
+  const [atualizacao,setAtualizacao]=useState(0);
   const [aba, setAba] = useState("fila");
   const [tentativas, setTentativas] = useState<TentativaAdmin[]>([]);
   const [erro, setErro] = useState("");
@@ -26,7 +29,7 @@ export default function Admin({ flow }: { flow: Flow }) {
   const [metricas, setMetricas] = useState<Record<string, unknown>>();
   const token = flow.sessao?.token;
   async function carregar() {
-    if (!token) return;
+    if (!token || flow.sessao?.usuario.papel !== "admin") return;
     setErro("");
     setOcupado("carregar");
     try {
@@ -126,7 +129,7 @@ export default function Admin({ flow }: { flow: Flow }) {
         </div>
         <button
           className="botao secundario"
-          onClick={() => void carregar()}
+          onClick={() => {void carregar();setAtualizacao(n=>n+1);}}
           disabled={!!ocupado}
         >
           Atualizar
@@ -135,6 +138,8 @@ export default function Admin({ flow }: { flow: Flow }) {
       <div className="abas" role="tablist" aria-label="Administração">
         {[
           ["fila", "Fila de correções"],
+          ["usuarios", "Usuários"],
+          ["opinioes", "Opiniões das aulas"],
           ["conteudo", "Conteúdo didático"],
           ["metricas", "Métricas e auditoria"],
         ].map(([id, t]) => (
@@ -148,6 +153,8 @@ export default function Admin({ flow }: { flow: Flow }) {
           </button>
         ))}
       </div>
+      {aba === "usuarios" && <AdminUsuarios key={`${flow.perfilId}:${atualizacao}`} flow={flow}/>}
+      {aba === "opinioes" && <AdminAvaliacoes key={`${flow.perfilId}:${atualizacao}`} flow={flow}/>}
       {erro && (
         <div className="aviso erro" role="alert">
           {erro}

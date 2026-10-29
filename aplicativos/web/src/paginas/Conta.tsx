@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { requisitar, type Sessao } from "../componentes/api";
 import type { Flow } from "../componentes/useFlow";
 import Icone from "../componentes/Icone";
+import VerificacaoEntrada, {type EtapaEntrada} from '../entrada/VerificacaoEntrada';
 export default function Conta({
   flow,
   aoFechar,
@@ -11,8 +12,11 @@ export default function Conta({
 }) {
   const dialogo = useRef<HTMLElement>(null);
   const fecharAtual = useRef(aoFechar);
+  const ativo=useRef(true);
+  const pedido=useRef<AbortController|null>(null);
   fecharAtual.current = aoFechar;
   useEffect(() => {
+    ativo.current=true;
     const anterior = document.activeElement as HTMLElement | null;
     const seletor =
       "button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href]";
@@ -39,6 +43,7 @@ export default function Conta({
     }
     document.addEventListener("keydown", tecla);
     return () => {
+      ativo.current=false;pedido.current?.abort();
       document.removeEventListener("keydown", tecla);
       anterior?.focus();
     };
@@ -46,6 +51,7 @@ export default function Conta({
   const [criando, setCriando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState("");
+  const [etapa,setEtapa]=useState<EtapaEntrada>('credenciais');
   return (
     <div className="modal-fundo">
       <section
@@ -76,7 +82,9 @@ export default function Conta({
           onSubmit={async (e) => {
             e.preventDefault();
             setOcupado(true);
+            setEtapa('credenciais');
             setErro("");
+            const controle=new AbortController();pedido.current=controle;
             const dados = new FormData(e.currentTarget);
             try {
               const s = await requisitar<Sessao>(
@@ -84,6 +92,7 @@ export default function Conta({
                 undefined,
                 {
                   method: "POST",
+                  signal:controle.signal,
                   body: JSON.stringify({
                     email: dados.get("email"),
                     senha: dados.get("senha"),
@@ -91,14 +100,23 @@ export default function Conta({
                   }),
                 },
               );
-              await flow.autenticar(s);
+              if(!ativo.current)return;
+              setEtapa('sessao');
+              const usuario=await requisitar<Sessao['usuario']>('/eu',s.token,{cache:'no-store',signal:controle.signal});
+              if(!ativo.current)return;
+              if(usuario.id!==s.usuario.id||!['admin','aluno'].includes(usuario.papel))throw new Error('Não foi possível confirmar as permissões da conta.');
+              setEtapa('perfil');
+              await flow.autenticar({...s,usuario},controle.signal);
+              if(!ativo.current)return;
+              setEtapa('pronto');
               aoFechar();
             } catch (e) {
+              if(!ativo.current||controle.signal.aborted)return;
               setErro(
                 e instanceof Error ? e.message : "Não foi possível entrar.",
               );
             } finally {
-              setOcupado(false);
+              if(ativo.current)setOcupado(false);
             }
           }}
         >
@@ -109,13 +127,14 @@ export default function Conta({
                 name="nome"
                 autoComplete="name"
                 required
+                disabled={ocupado}
                 defaultValue={flow.nome}
               />
             </label>
           )}
           <label>
             E-mail
-            <input name="email" type="email" autoComplete="email" required />
+            <input name="email" type="email" autoComplete="email" required disabled={ocupado}/>
           </label>
           <label>
             Senha
@@ -125,13 +144,14 @@ export default function Conta({
               minLength={10}
               autoComplete={criando ? "new-password" : "current-password"}
               required
+              disabled={ocupado}
             />
           </label>
           <small>
             Use pelo menos 10 caracteres. A senha é protegida por hash no
             servidor.
           </small>
-          {erro && (
+          {erro && !ocupado && (
             <p className="erro" role="alert">
               {erro}
             </p>
@@ -143,12 +163,14 @@ export default function Conta({
                 ? "Criar minha conta"
                 : "Entrar na minha conta"}
           </button>
+          {ocupado&&<VerificacaoEntrada etapa={etapa}/>}
         </form>
         {!flow.online && (
           <p>Você está sem internet. Seu perfil local continua disponível.</p>
         )}
         <button
           className="link-botao"
+          disabled={ocupado}
           onClick={() => {
             setCriando(!criando);
             setErro("");

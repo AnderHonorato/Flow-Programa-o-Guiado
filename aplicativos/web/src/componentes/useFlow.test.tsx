@@ -156,3 +156,10 @@ it('carimba novas conquistas uma vez e mantém as antigas sem data original',asy
  const data=flow.estado.historicoConquistas?.['primeira-conexao']?.adquiridaEm;expect(data).toBeTruthy();
  await act(async()=>flow.enviarAvaliacao(aula));expect(flow.estado.historicoConquistas?.['primeira-conexao']?.adquiridaEm).toBe(data);
 });
+it('derruba a conta banida com motivo sem apagar dados e ignora notificações de outra sessão',async()=>{
+ const id=crypto.randomUUID(),s=sessao(id);sessionStorage.setItem('flow-sessao',JSON.stringify(s));await salvarEstado(id,{...estadoInicial(),xp:100,aulasConcluidas:['aprendizado-salvo']});await montar();
+ await act(async()=>window.dispatchEvent(new CustomEvent('flow:sessao-invalidada',{detail:{token:'outra-sessao',codigo:'CONTA_BANIDA',mensagem:'Conta banida.',motivo:'Não deve afetar'}})));
+ expect(flow.sessao?.token).toBe(s.token);
+ await act(async()=>window.dispatchEvent(new CustomEvent('flow:sessao-invalidada',{detail:{token:s.token,codigo:'CONTA_BANIDA',mensagem:'Conta banida.',motivo:'Motivo informado pela administração',ate:'2026-11-01T12:00:00Z'}})));
+ await esperar(()=>expect(flow.carregando).toBe(false));expect(flow.sessao).toBeNull();expect(sessionStorage.getItem('flow-sessao')).toBeNull();expect(flow.perfilId).not.toBe(id);expect(flow.estado.aulasConcluidas).toEqual([]);expect(flow.aviso).toContain('Motivo informado');expect((await lerEstado(id)).aulasConcluidas).toContain('aprendizado-salvo');
+});

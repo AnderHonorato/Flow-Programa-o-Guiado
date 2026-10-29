@@ -8,6 +8,10 @@ import { useFlow } from "./componentes/useFlow";
 import Aula from "./paginas/Aula";
 import Conta from "./paginas/Conta";
 import Perfil from "./paginas/Perfil";
+import Comunidade from "./comunidade/Comunidade";
+import BoasVindas from "./entrada/BoasVindas";
+import VerificacaoEntrada from "./entrada/VerificacaoEntrada";
+import Compartilhar from "./componentes/Compartilhar";
 const Admin = lazy(() => import("./paginas/Admin"));
 import Revisao from "./paginas/Revisao";
 import Projetos from "./paginas/Projetos";
@@ -21,6 +25,7 @@ const navegacao = [
   ["codigo", "Laboratório"],
   ["revisao", "Revisão"],
   ["projetos", "Projetos"],
+  ["comunidade", "Comunidade e ranking"],
 ] as const;
 export default function App() {
   const flow = useFlow();
@@ -35,6 +40,7 @@ export default function App() {
   const [transicao, setTransicao] = useState(0);
   const [conta, setConta] = useState(false);
   const [menu, setMenu] = useState(false);
+  useEffect(()=>{if(flow.sessao&&!flow.carregando)setConta(false);},[flow.sessao?.token,flow.carregando]);
   useEffect(() => { audio?.parar(); }, [pagina, flow.perfilId, conta, audio?.parar]);
   const [mobile, setMobile] = useState(
     () => window.matchMedia("(max-width:600px)").matches,
@@ -86,82 +92,7 @@ export default function App() {
     flow.setEstado((e) => ({ ...e, ultimaAula: a.id }));
     navegar("aula");
   }
-  if (!flow.nome)
-    return (
-      <main className="boas-vindas">
-        <div className="marca">
-          <img src="/icone.svg" alt="" />
-          <span>
-            flow<span className="marca-ponto">.</span>
-          </span>
-        </div>
-        <div className="entrada-grade">
-          <section>
-            <span className="sobretitulo">
-              PROGRAMAÇÃO GUIADA, NO SEU RITMO
-            </span>
-            <h1>
-              Pequenos passos.
-              <br />
-              Grandes <em>possibilidades.</em>
-            </h1>
-            <p>
-              Entenda uma ideia, escreva o código e veja acontecer. Sua jornada
-              para criar com tecnologia começa aqui.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                flow.iniciar(
-                  String(new FormData(e.currentTarget).get("nome") || ""),
-                );
-                navegar("inicio");
-              }}
-            >
-              <label htmlFor="nome">Como podemos chamar você?</label>
-              <input
-                id="nome"
-                name="nome"
-                autoComplete="given-name"
-                placeholder="Seu primeiro nome"
-                maxLength={60}
-                required
-              />
-              <button className="botao primario">
-                Começar no meu dispositivo <Icone nome="seta" />
-              </button>
-            </form>
-            <small>
-              Sem cadastro para começar. Aulas e trabalho salvos neste
-              dispositivo.
-            </small>
-          </section>
-          <div className="entrada-ilustracao">
-            <div className="orbita orbita-1" />
-            <div className="orbita orbita-2" />
-            <div className="entrada-codigo">
-              <span>&lt;ideia&gt;</span>
-              <strong>
-                aprender
-                <br />
-                criar
-                <br />
-                evoluir
-              </strong>
-              <span>&lt;/ideia&gt;</span>
-            </div>
-            <Jarvis
-              estado="alegre"
-              mensagem="Olá! Sou J.A.R.V.I.S Vou acompanhar suas descobertas."
-            />
-          </div>
-        </div>
-        <footer>
-          Flow Programação Guiada · Aprender é construir, uma descoberta de cada
-          vez.
-        </footer>
-      </main>
-    );
+  if (!flow.nome) return <><div inert={conta}><BoasVindas aoIniciar={nome=>{flow.iniciar(nome);navegar("inicio");}} aoEntrar={()=>setConta(true)}/></div>{conta&&<Conta flow={flow} aoFechar={()=>setConta(false)}/>}</>;
   return (
     <div className="aplicativo">
       <CelebracaoEvolucao estado={flow.estado} perfilId={flow.perfilId} pronto={!flow.carregando} aoVerColecao={() => navegar("perfil")}/>
@@ -208,6 +139,7 @@ export default function App() {
           ))}
         </nav>
         <div className="lateral-rodape">
+          <Compartilhar/>
           <ResumoEvolucao estado={flow.estado} perfilId={flow.perfilId} compacto/>
           <div className="nota-local">
             <Icone nome={flow.sessao ? "rede" : "escudo"} />
@@ -328,8 +260,8 @@ export default function App() {
               </button>
             </div>
           )}
-          {flow.carregando ? (
-            <p role="status">Abrindo seu espaço de aprendizado…</p>
+          {flow.carregando || flow.verificandoSessao ? (
+            flow.sessao ? <VerificacaoEntrada etapa={flow.verificandoSessao?"sessao":"perfil"}/> : <p className="entrada-verificacao" role="status">Abrindo seu espaço de aprendizado neste dispositivo…</p>
           ) : (
             <>
               {pagina === "inicio" && (
@@ -649,6 +581,7 @@ export default function App() {
                 />
               )}
               {pagina === "certificados" && <Certificados flow={flow} />}
+              {pagina === "comunidade" && <Comunidade key={flow.perfilId} flow={flow}/>}
               {pagina === "perfil" && (
                 <>
                   <Perfil flow={flow} aoEntrar={() => setConta(true)} />
@@ -674,7 +607,7 @@ export default function App() {
         <footer className="rodape-app">
           <span>Flow Programação Guiada</span>
           <span>Pequenos passos. Conhecimento que fica.</span>
-          <small>v0.4.0</small>
+          <small>v0.5.0</small>
         </footer>
       </div>
       <nav className="navegacao-inferior" aria-label="Atalhos do aplicativo" inert={conta || menu}>
@@ -682,7 +615,7 @@ export default function App() {
               data-jarvis-mensagem={`Abrindo ${nome.toLocaleLowerCase("pt-BR")}. Uma nova descoberta começa por aqui!`}
               onClick={() => navegar(id)}><Icone nome={id === "perfil" ? "raio" : id}/><span>{nome}</span></button>)}
       </nav>
-      {conta && <Conta flow={flow} aoFechar={() => setConta(false)} />}
+      {conta && (!flow.sessao||flow.sessaoExpirada) && <Conta flow={flow} aoFechar={() => setConta(false)} />}
     </div>
   );
 }

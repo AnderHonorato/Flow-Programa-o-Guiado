@@ -1,6 +1,6 @@
 # Flow Programação Guiada
 
-Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.4.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
+Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.5.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
 
 ## Executar
 
@@ -30,6 +30,10 @@ O provisionamento baixa **Pyodide0.29.3 oficial**, sem dependências opcionais; 
 
 ## O que está disponível
 
+- Comunidade e ranking para contas conectadas: XP, leituras registradas, conclusões e reconhecimentos auditados, sem e-mails/fotos no ranking.
+- Gestão administrativa de usuários: banir, inativar, reativar e excluir alunos com motivo, prazo e confirmação. Revogação real de sessões e notificação ao titular.
+- Avaliação da experiência em cada aula, com estrelas/comentário enviados à administração.
+- Entrada visual com arte autoral e etapas de verificação vinculadas ao login real. Conquistas com categorias Inicial/Rara/Épica/Lendária.
 - Perfil local sem cadastro; conta por e-mail/senha, sessão revogável, isolamento entre perfis e migração do trabalho local.
 - Aulas narráveis, exemplos guiados, 20 experimentos interativos e preparação por etapas antes do laboratório.
 - Avaliações definitivas: primeira escolha travada, correção e nota somente após envio completo, com explicação dos erros. Escolhas e versão da correção persistem por perfil.
@@ -65,6 +69,6 @@ O APK debug é instalável para testes e não equivale a uma assinatura de produ
 - [API e segurança](docs/arquitetura-api.md)
 - [Laboratório](docs/laboratorios.md) · [Offline e voz](docs/offline-e-audio.md)
 - [Android](docs/android.md) · [Identidade original](docs/identidade.md)
-- [J.A.R.V.I.S e áudio 0.4](docs/jarvis-e-audio-0.4.0.md) · [Recompensas e perfil 0.3](docs/recompensas-e-perfil-0.3.0.md) · [Revisão de qualidade](docs/revisao-qa.md)
+- [Comunidade e moderação 0.5](docs/comunidade-e-moderacao-0.5.0.md) · [J.A.R.V.I.S e áudio 0.4](docs/jarvis-e-audio-0.4.0.md) · [Recompensas e perfil 0.3](docs/recompensas-e-perfil-0.3.0.md) · [Revisão de qualidade](docs/revisao-qa.md)
 
 Os arquivos do pacote visual são referências de composição e paleta. Logos de terceiros não integram a marca Flow.

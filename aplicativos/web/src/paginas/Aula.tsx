@@ -1,6 +1,8 @@
 import { Suspense, lazy, useState } from "react";
 import type { Aula as TipoAula } from "../../../../contratos/tipos";
 import Narracao from "../audio/Narracao";
+import AvaliacaoDaAula from "../aprendizagem/AvaliacaoDaAula";
+import {useRegistroLeitura} from "../aprendizagem/useRegistroLeitura";
 const Laboratorio = lazy(() => import("../laboratorios/Laboratorio"));
 import ExemplosGuiados from "../aprendizagem/ExemplosGuiados";
 import PreparacaoDesafio from "../aprendizagem/PreparacaoDesafio";
@@ -26,6 +28,7 @@ export default function Aula({
   const [reacao, setReacao] = useState<
     "curioso" | "alegre" | "explicando" | "apoiando" | "comemorando"
   >("curioso");
+  useRegistroLeitura(flow.perfilId,aula.id,painel === "aprender" && !flow.carregando);
   const completas = !!flow.estado.avaliacoes?.[aula.id]?.revisada;
   return (
     <section className="pagina-aula">
@@ -221,6 +224,7 @@ export default function Aula({
           </>}
         </div>
       )}
+      <AvaliacaoDaAula key={`${flow.perfilId}:${aula.id}`} aulaId={aula.id} titulo={aula.titulo} flow={flow}/>
     </section>
   );
 }

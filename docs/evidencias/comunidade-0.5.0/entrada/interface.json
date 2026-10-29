@@ -1,0 +1,146 @@
+[
+  {
+    "view": "entrada",
+    "width": 320,
+    "tema": "claro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 320,
+    "tema": "escuro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 390,
+    "tema": "claro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 390,
+    "tema": "escuro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 768,
+    "tema": "claro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 768,
+    "tema": "escuro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 1440,
+    "tema": "claro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "entrada",
+    "width": 1440,
+    "tema": "escuro",
+    "nome": "Lia",
+    "conta": "sim",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "view": "credenciais",
+    "width": 320,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "perfil",
+    "width": 320,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "pronto",
+    "width": 320,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "recompensas",
+    "width": 320,
+    "nome": "Primeira conexão",
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "recompensas",
+    "width": 320,
+    "nome": "Universo em expansão",
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "credenciais",
+    "width": 1440,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "perfil",
+    "width": 1440,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "pronto",
+    "width": 1440,
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "recompensas",
+    "width": 1440,
+    "nome": "Primeira conexão",
+    "overflow": false,
+    "violacoes": []
+  },
+  {
+    "view": "recompensas",
+    "width": 1440,
+    "nome": "Universo em expansão",
+    "overflow": false,
+    "violacoes": []
+  }
+]

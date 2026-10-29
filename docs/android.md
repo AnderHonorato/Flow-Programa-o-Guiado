@@ -1,6 +1,6 @@
 # Android — Flow Programação Guiada
 
-O APK usa os mesmos arquivos locais compilados da aplicação web, empacotados pelo Capacitor 7. Não carrega uma URL remota como tela inicial. Identificador `br.com.ander.flow`, versão `0.4.0`, código de versão `4`, Android mínimo 6.0/API 23 e alvo API 35. Para a interface e o Python, mantenha o Android System WebView atualizado (Chrome/WebView 107 ou mais recente).
+O APK usa os mesmos arquivos locais compilados da aplicação web, empacotados pelo Capacitor 7. Não carrega uma URL remota como tela inicial. Identificador `br.com.ander.flow`, versão `0.5.0`, código de versão `5`, Android mínimo 6.0/API 23 e alvo API 35. Para a interface e o Python, mantenha o Android System WebView atualizado (Chrome/WebView 107 ou mais recente).
 
 ## Compilar um APK de teste
 
@@ -14,8 +14,8 @@ bash scripts/android-compilar.sh
 
 O script provisiona o runtime Python local, compila a web, sincroniza recursos e plugins, executa `assembleDebug` e `lintDebug` e grava:
 
-- `artefatos/Flow-Programacao-Guiada-0.4.0-debug.apk`;
-- `artefatos/Flow-Programacao-Guiada-0.4.0-debug.apk.sha256`;
+- `artefatos/Flow-Programacao-Guiada-0.5.0-debug.apk`;
+- `artefatos/Flow-Programacao-Guiada-0.5.0-debug.apk.sha256`;
 - `artefatos/android-build.log`.
 
 Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, fluxos em navegador com API local e banco temporário, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente. Os exemplos de testes gerados pelo template do Capacitor foram removidos: não verificavam o produto e um deles ainda esperava o identificador padrão. A validação nativa automatizada disponível está no script de emulador abaixo.
@@ -23,7 +23,7 @@ Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --s
 ## Instalar e atualizar
 
 ```bash
-adb install -r artefatos/Flow-Programacao-Guiada-0.4.0-debug.apk
+adb install -r artefatos/Flow-Programacao-Guiada-0.5.0-debug.apk
 adb shell am start -n br.com.ander.flow/.MainActivity
 ```
 
@@ -69,3 +69,8 @@ A versão 0.3 incluiu foto recortável, avatares Cartoon/Pixel/Games e históric
 ## Atualização 0.4.0
 
 J.A.R.V.I.S reage a ações e termos e mostra “Falando...” apenas após o início real da síntese. Português brasileiro é o padrão estrito; inglês é alternativa explícita, sem tradução do conteúdo. Controles e seletores têm desenho próprio. Compilação e verificação de assinatura não substituem audição e execução em aparelho. Evidências em `docs/evidencias/jarvis-0.4.0/`.
+
+
+## Atualização 0.5.0
+
+Comunidade/ranking, opiniões de aula e gestão de usuários usam a API pública e exigem conexão/conta. Leituras registradas após20segundos visíveis ficam numa fila offline separada por perfil e são sincronizadas sem XP adicional. A interface verifica restrições a cada20segundos visíveis e ao retomar; o servidor recusa a sessão revogada em cada pedido. Sem rede não há expulsão remota imediata. Nova entrada visual e conquistas Inicial/Rara/Épica/Lendária com movimentos finitos. Evidências em `docs/evidencias/comunidade-0.5.0/`.

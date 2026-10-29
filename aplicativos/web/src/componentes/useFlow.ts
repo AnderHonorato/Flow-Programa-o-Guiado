@@ -7,7 +7,9 @@ import type {Aula,ArquivosCodigo} from '../../../../contratos/tipos';
 import {catalogoIncluido,lerCatalogoLocal,atualizarCatalogo} from '../offline/catalogo';
 import {lerEstado,salvarEstado,enfileirarTentativa,listarFila,sincronizarFila,vincularPerfil,combinarEstados,lerSincronizacao,type EstadoLocal,type TentativaLocal} from '../offline/armazenamento';
 import {atualizarRevisao} from '../offline/revisao';
-import {baseApi,requisitar,type Sessao} from './api';
+import {baseApi,requisitar,mensagemDeAcesso,type DetalheAcesso,type Sessao,type Usuario} from './api';
+import {useSessaoVerificada} from '../seguranca/useSessaoVerificada';
+import {useFilaLeituras} from '../aprendizagem/useRegistroLeitura';
 export const catalogo=catalogoIncluido;
 export const aulas=catalogo.trilhas.flatMap(t=>t.modulos.flatMap(m=>m.aulas));
 const estadoInicial:EstadoLocal={aulasConcluidas:[],respostas:{},revisoes:{},xp:0,ultimaAula:''};
@@ -21,7 +23,7 @@ export function useFlow(){
  const [fila,setFila]=useState<TentativaLocal[]>([]);
  const [carregando,setCarregando]=useState(true);
  const [online,setOnline]=useState(navigator.onLine);
- const [aviso,setAviso]=useState('');
+ const [aviso,setAviso]=useState(()=>{try{return sessionStorage.getItem('flow-acesso-aviso')||'';}catch{return '';}});
  const [sincronizando,setSincronizando]=useState(false);
  const [sessaoExpirada,setSessaoExpirada]=useState(false);
  const pronto=useRef<string|null>(null);
@@ -29,6 +31,22 @@ export function useFlow(){
  const sessaoAtual=useRef(sessao);sessaoAtual.current=sessao;
  const estadoAtual=useRef(estado);estadoAtual.current=estado;
  const gravacao=useRef<Promise<void>>(Promise.resolve());
+ const {verificandoSessao,erroVerificacao}=useSessaoVerificada({sessao,online,aoInvalidar:invalidarAcesso,aoExpirar:()=>setSessaoExpirada(true),aoAtualizar:atualizarUsuario});
+ useFilaLeituras(perfilId,sessao?.token,online&&!sessaoExpirada);
+ function invalidarAcesso(detalhe:DetalheAcesso){
+  const anterior=sessaoAtual.current;if(!anterior)return;
+  if(pronto.current===anterior.usuario.id){const copia=estadoAtual.current;gravacao.current=gravacao.current.then(()=>salvarEstado(anterior.usuario.id,copia)).catch(()=>{});}
+  sessaoAtual.current=null;pronto.current=null;sessionStorage.removeItem('flow-sessao');
+  const mensagem=mensagemDeAcesso(detalhe);try{sessionStorage.setItem('flow-acesso-aviso',mensagem);}catch{/* A notificação permanece nesta tela. */}
+  setSessao(null);setSessaoExpirada(false);setSincronizando(false);setAviso(mensagem);
+  const local=localStorage.getItem('flow-nome-local')||'Estudante';localStorage.setItem('flow-nome',local);setNome(local);
+ }
+ function atualizarUsuario(usuario:Usuario){
+  const anterior=sessaoAtual.current;if(!anterior||anterior.usuario.id!==usuario.id)return;
+  if(['id','nome','email','papel'].every(k=>anterior.usuario[k as keyof Usuario]===usuario[k as keyof Usuario]))return;
+  const nova={token:anterior.token,usuario:{id:usuario.id,nome:usuario.nome,email:usuario.email,papel:usuario.papel}};
+  sessaoAtual.current=nova;sessionStorage.setItem('flow-sessao',JSON.stringify(nova));setSessao(nova);setNome(usuario.nome);localStorage.setItem('flow-nome',usuario.nome);
+ }
  useEffect(()=>{const atualizar=()=>setOnline(navigator.onLine);window.addEventListener('online',atualizar);window.addEventListener('offline',atualizar);return()=>{window.removeEventListener('online',atualizar);window.removeEventListener('offline',atualizar);};},[]);
  useEffect(()=>{
   let ativo=true;const controle=new AbortController();setCatalogoAtual(catalogoIncluido);
@@ -63,12 +81,17 @@ export function useFlow(){
   const timer=setTimeout(()=>void sincronizar(true),800);
   return()=>clearTimeout(timer);
  },[assinaturaAvaliacoes,sessao,online,carregando,perfilId,sincronizar]);
- function iniciar(nomeNovo:string){const n=nomeNovo.trim().slice(0,60)||'Estudante';localStorage.setItem('flow-nome',n);setNome(n);}
- async function autenticar(nova:Sessao){
+ function iniciar(nomeNovo:string){const n=nomeNovo.trim().slice(0,60)||'Estudante';localStorage.setItem('flow-nome',n);if(!sessaoAtual.current)localStorage.setItem('flow-nome-local',n);setNome(n);}
+ async function autenticar(nova:Sessao,signal?:AbortSignal){
+  const origem=perfilId,tokenAnterior=sessaoAtual.current?.token;
+  const conferir=()=>{if(signal?.aborted||perfilAtual.current!==origem||sessaoAtual.current?.token!==tokenAnterior)throw new Error('A entrada foi cancelada. Tente novamente.');};
+  conferir();
   await gravacao.current;
+  conferir();
   if(pronto.current===perfilId)await salvarEstado(perfilId,estadoAtual.current);
   if(!sessao)await vincularPerfil(idLocal,nova.usuario.id);
-  sessionStorage.setItem('flow-sessao',JSON.stringify(nova));setSessaoExpirada(false);setSessao(nova);iniciar(nova.usuario.nome);
+  await Promise.all([lerEstado(nova.usuario.id),listarFila(nova.usuario.id)]);conferir();
+  sessionStorage.removeItem('flow-acesso-aviso');sessaoAtual.current=nova;sessionStorage.setItem('flow-sessao',JSON.stringify(nova));setSessaoExpirada(false);setSessao(nova);iniciar(nova.usuario.nome);
  }
  async function sair(){await gravacao.current;if(sessaoAtual.current?.token!==sessao?.token)return;sessionStorage.removeItem('flow-sessao');setSessao(null);setSessaoExpirada(false);setSincronizando(false);setAviso('Sessão encerrada. Você voltou ao seu perfil local.');if(sessao)try{await requisitar('/sessao',sessao.token,{method:'DELETE'});}catch{/* sessão local termina mesmo sem rede */}}
  function escolherResposta(aula:Aula,questao:string,indice:number){
@@ -103,6 +126,6 @@ export function useFlow(){
   setEstado(e=>({...e,avatar}));
  }
  async function enviar(aula:Aula,arquivos:ArquivosCodigo){const tentativa:TentativaLocal={id:crypto.randomUUID(),aulaId:aula.id,arquivos,criadaEm:new Date().toISOString(),status:'aguardando_sincronizacao'};await enfileirarTentativa(perfilId,tentativa);const atualizada=await listarFila(perfilId);if(perfilAtual.current!==perfilId)return;setFila(atualizada);setAviso(sessao&&online?'Trabalho salvo. Enviando para a fila de validação…':'Aguardando sincronização. Entre em uma conta quando tiver conexão para enviar ao professor.');if(sessao&&online)await sincronizar();}
- return {catalogo:catalogoAtual,aulas:catalogoAtual.trilhas.flatMap(t=>t.modulos.flatMap(m=>m.aulas)),nome,iniciar,sessao,sessaoExpirada,autenticar,sair,perfilId,estado:pronto.current===perfilId?estado:estadoInicial,setEstado,fila:pronto.current===perfilId?fila:[],carregando:carregando||pronto.current!==perfilId,online,aviso,setAviso,sincronizando,sincronizar,escolherResposta,enviarAvaliacao,revisarAvaliacao,concluir,enviar,definirAvatar};
+ return {catalogo:catalogoAtual,aulas:catalogoAtual.trilhas.flatMap(t=>t.modulos.flatMap(m=>m.aulas)),nome,iniciar,sessao,sessaoExpirada,autenticar,sair,perfilId,estado:pronto.current===perfilId?estado:estadoInicial,setEstado,fila:pronto.current===perfilId?fila:[],carregando:carregando||pronto.current!==perfilId,verificandoSessao,erroVerificacao,online,aviso,setAviso,sincronizando,sincronizar,escolherResposta,enviarAvaliacao,revisarAvaliacao,concluir,enviar,definirAvatar};
 }
 export type Flow=ReturnType<typeof useFlow>;

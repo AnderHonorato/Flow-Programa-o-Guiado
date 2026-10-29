@@ -1,7 +1,7 @@
 """Modelos persistentes. Todas as relações privadas possuem dono explícito."""
 from datetime import datetime, timezone
 from uuid import uuid4
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -25,6 +25,9 @@ class Usuario(Base):
     senha_hash: Mapped[str] = mapped_column(Text)
     papel: Mapped[str] = mapped_column(String(20), default='aluno')
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)
+    estado: Mapped[str] = mapped_column(String(20), default='ativo', server_default='ativo', index=True)
+    motivo_estado: Mapped[str | None] = mapped_column(Text, nullable=True)
+    acesso_ate: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class Sessao(Base):
@@ -32,6 +35,7 @@ class Sessao(Base):
     hash_token: Mapped[str] = mapped_column(String(64), primary_key=True)
     usuario_id: Mapped[str] = mapped_column(ForeignKey('usuarios.id'), index=True)
     expira_em: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revogada_em: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class Progresso(Base):
@@ -85,3 +89,28 @@ class VersaoCatalogo(Base):
     autor_id: Mapped[str] = mapped_column(ForeignKey('usuarios.id'))
     dados: Mapped[dict] = mapped_column(JSON)
     criado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)
+
+
+class Leitura(Base):
+    __tablename__ = 'leituras'
+    __table_args__ = (UniqueConstraint('usuario_id', 'id_cliente'),
+                      CheckConstraint('segundos >= 20 AND segundos <= 300', name='ck_leituras_segundos'))
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=identificador)
+    id_cliente: Mapped[str] = mapped_column(String(36))
+    usuario_id: Mapped[str] = mapped_column(ForeignKey('usuarios.id'), index=True)
+    aula_id: Mapped[str] = mapped_column(String(100), index=True)
+    segundos: Mapped[int] = mapped_column(Integer)
+    criada_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)
+
+
+class AvaliacaoAula(Base):
+    __tablename__ = 'avaliacoes_aulas'
+    __table_args__ = (UniqueConstraint('usuario_id', 'aula_id'),
+                      CheckConstraint('nota >= 1 AND nota <= 5', name='ck_avaliacoes_aulas_nota'))
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=identificador)
+    usuario_id: Mapped[str] = mapped_column(ForeignKey('usuarios.id'), index=True)
+    aula_id: Mapped[str] = mapped_column(String(100), index=True)
+    nota: Mapped[int] = mapped_column(Integer)
+    comentario: Mapped[str] = mapped_column(Text)
+    criada_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)
+    atualizada_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora)

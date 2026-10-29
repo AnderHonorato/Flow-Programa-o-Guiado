@@ -2,6 +2,7 @@ import { historicoValido, registrarHistorico, type HistoricoConquistas } from '.
 import { validarAvatar, type AvatarPerfil } from '../perfil/avatar';
 import { combinarAvaliacoes, respostasDasAvaliacoes, type Avaliacao } from '../aprendizagem/avaliacao';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import { mensagemDeAcesso, notificarAcesso } from '../componentes/api';
 import type { ArquivosCodigo } from '../../../../contratos/tipos';
 import { exportarProjetos, importarProjetos, validarProjetos, type ProjetoExportado } from '../laboratorios/armazenamento';
 
@@ -214,8 +215,10 @@ async function sincronizar(perfilId: string, token: string, api: string) {
   async function requisitar(caminho: string, op: RequestInit = {}): Promise<unknown> {
     const resposta = await fetch(`${base}${caminho}`, { ...op, headers, cache: 'no-store' });
     if (!resposta.ok) {
+      let dados:unknown;try{dados=await resposta.json();}catch{/* Resposta antiga sem detalhes estruturados. */}
+      const acesso=notificarAcesso(resposta.status,dados,token);
       if (resposta.status === 401) sessaoExpirada = true;
-      throw new Error(resposta.status === 401 ? 'Sessão expirada. Entre novamente; seus envios continuam salvos.' : `Sincronização indisponível (HTTP ${resposta.status}).`);
+      throw new Error(acesso?mensagemDeAcesso(acesso):resposta.status === 401 ? 'Sessão expirada. Entre novamente; seus envios continuam salvos.' : `Sincronização indisponível (HTTP ${resposta.status}).`);
     }
     return resposta.json();
   }
