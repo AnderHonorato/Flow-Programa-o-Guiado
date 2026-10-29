@@ -9,7 +9,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const destino = join(raiz, 'docs/evidencias/android');
 const adb = process.env.ANDROID_HOME ? join(process.env.ANDROID_HOME, 'platform-tools/adb') : 'adb';
 const pacote = 'br.com.ander.flow';
-const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.3.0-debug.apk'));
+const apk = resolve(process.argv[2] || join(raiz, 'artefatos/Flow-Programacao-Guiada-0.4.0-debug.apk'));
 const evidencias = { inicio: new Date().toISOString(), pacote, verificacoes: [] };
 const marcador = 'flowAndroidTeclado';
 mkdirSync(destino, { recursive: true });
@@ -61,7 +61,7 @@ try {
       window.Capacitor.Plugins.NarradorNativo.vozes(),
       new Promise((_, rejeitar) => setTimeout(() => rejeitar(new Error('O mecanismo TTS nao respondeu em 20 segundos.')), 20_000)),
     ]));
-    evidencias.tts = evidencias.vozes.vozes.some(voz => voz.local && /^pt(-|$)/i.test(voz.idioma))
+    evidencias.tts = evidencias.vozes.vozes.some(voz => voz.local && /^pt-BR$/i.test(voz.idioma))
       ? 'Voz local em portugues detectada; audicao fisica ainda requer aparelho e pessoa.'
       : 'Sem voz local em portugues neste emulador; fallback de indisponibilidade deve ser usado.';
   } catch (erro) {

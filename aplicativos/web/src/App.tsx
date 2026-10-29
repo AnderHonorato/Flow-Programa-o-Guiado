@@ -3,6 +3,7 @@ import { AvatarEvolucao, ResumoEvolucao, CelebracaoEvolucao } from "./evolucao/E
 import { experiencia } from "./evolucao/regras";
 import Icone from "./componentes/Icone";
 import Jarvis from "./mascote/Jarvis";
+import { useAudio } from "./audio/AudioProvider";
 import { useFlow } from "./componentes/useFlow";
 import Aula from "./paginas/Aula";
 import Conta from "./paginas/Conta";
@@ -23,6 +24,7 @@ const navegacao = [
 ] as const;
 export default function App() {
   const flow = useFlow();
+  const audio = useAudio();
   const { catalogo, aulas } = flow;
   const [pagina, setPagina] = useState(
     () => localStorage.getItem("flow-pagina") || "inicio",
@@ -33,6 +35,7 @@ export default function App() {
   const [transicao, setTransicao] = useState(0);
   const [conta, setConta] = useState(false);
   const [menu, setMenu] = useState(false);
+  useEffect(() => { audio?.parar(); }, [pagina, flow.perfilId, conta, audio?.parar]);
   const [mobile, setMobile] = useState(
     () => window.matchMedia("(max-width:600px)").matches,
   );
@@ -149,7 +152,7 @@ export default function App() {
             </div>
             <Jarvis
               estado="alegre"
-              mensagem="Olá! Sou J.A.R.V.IS. Vou acompanhar suas descobertas."
+              mensagem="Olá! Sou J.A.R.V.I.S Vou acompanhar suas descobertas."
             />
           </div>
         </div>
@@ -191,6 +194,8 @@ export default function App() {
               key={id}
               className={pagina === id ? "ativo" : ""}
               aria-current={pagina === id ? "page" : undefined}
+              data-jarvis-reacao="curioso"
+              data-jarvis-mensagem={`Abrindo ${nome.toLocaleLowerCase("pt-BR")}. Uma nova descoberta começa por aqui!`}
               onClick={() => navegar(id)}
             >
               <Icone nome={id} />
@@ -219,6 +224,7 @@ export default function App() {
           </div>
           <button
             className={pagina === "perfil" ? "ativo" : ""}
+            data-jarvis-reacao="orgulhoso" data-jarvis-mensagem="Seu perfil está ganhando personalidade. Cada conquista conta uma parte da sua história."
             onClick={() => navegar("perfil")}
           >
             <AvatarEvolucao estado={flow.estado} perfilId={flow.perfilId} tamanho={34}/>
@@ -277,6 +283,8 @@ export default function App() {
             <button
               className="botao-icone"
               aria-label={`Ativar tema ${tema === "claro" ? "escuro" : "claro"}`}
+              data-jarvis-reacao="surpreso"
+              data-jarvis-mensagem={tema === "claro" ? "Modo noturno ativado. Meus circuitos agradecem o clima espacial!" : "Acenderam as luzes! Já posso guardar minha lanterna de bits."}
               onClick={() => setTema(tema === "claro" ? "escuro" : "claro")}
             >
               <Icone nome={tema === "claro" ? "lua" : "sol"} />
@@ -666,11 +674,13 @@ export default function App() {
         <footer className="rodape-app">
           <span>Flow Programação Guiada</span>
           <span>Pequenos passos. Conhecimento que fica.</span>
-          <small>v0.3.0</small>
+          <small>v0.4.0</small>
         </footer>
       </div>
       <nav className="navegacao-inferior" aria-label="Atalhos do aplicativo" inert={conta || menu}>
-        {[["inicio", "Início"], ["trilhas", "Trilhas"], ["codigo", "Praticar"], ["perfil", "Evolução"]].map(([id, nome]) => <button key={id} type="button" aria-current={pagina === id ? "page" : undefined} onClick={() => navegar(id)}><Icone nome={id === "perfil" ? "raio" : id}/><span>{nome}</span></button>)}
+        {[["inicio", "Início"], ["trilhas", "Trilhas"], ["codigo", "Praticar"], ["perfil", "Evolução"]].map(([id, nome]) => <button key={id} type="button" aria-current={pagina === id ? "page" : undefined} data-jarvis-reacao="curioso"
+              data-jarvis-mensagem={`Abrindo ${nome.toLocaleLowerCase("pt-BR")}. Uma nova descoberta começa por aqui!`}
+              onClick={() => navegar(id)}><Icone nome={id === "perfil" ? "raio" : id}/><span>{nome}</span></button>)}
       </nav>
       {conta && <Conta flow={flow} aoFechar={() => setConta(false)} />}
     </div>

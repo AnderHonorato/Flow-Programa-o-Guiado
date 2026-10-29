@@ -76,6 +76,8 @@ export default function Aula({
                 document.getElementById(`aba-${proximo}`)?.focus();
               }
             }}
+            data-jarvis-reacao={id === "aprender" ? "explicando" : "concentrado"}
+            data-jarvis-mensagem={id === "aprender" ? "Primeiro vamos ligar as ideias ao exemplo. Selecione um termo do conteúdo para me perguntar sobre ele." : id === "praticar" ? "Hora de pensar com calma. Só vou corrigir depois que você enviar a avaliação." : "Laboratório aberto! Mude uma parte do código e observe o que acontece."}
             onClick={() => setPainel(id)}
           >
             {nome}
@@ -91,7 +93,7 @@ export default function Aula({
       >
         <article className="conteudo-aula">
           <Narracao blocos={aula.blocos} />
-          <div className="objetivo">
+          <div className="objetivo" data-jarvis-conteudo>
             <Icone nome="alvo" />
             <div>
               <strong>O que você vai aprender</strong>
@@ -101,8 +103,9 @@ export default function Aula({
               )}
             </div>
           </div>
+          <p className="jarvis-dica-selecao"><Icone nome="busca" tamanho={16}/> Uma palavra nova? Selecione no conteúdo ou abra J.A.R.V.I.S e digite o termo.</p>
           <ExemplosGuiados aula={aula}/>
-          <div className="resumo">
+          <div className="resumo" data-jarvis-conteudo>
             <h2>Guarde esta ideia</h2>
             <p>{aula.resumo}</p>
             <h3>Onde é comum ter dúvida</h3>

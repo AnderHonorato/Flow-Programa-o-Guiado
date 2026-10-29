@@ -55,6 +55,15 @@ textarea {
 }
 button {
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  padding: 10px 14px;
+  min-height: 44px;
+  line-height: 1.5;
+  font-weight: 600;
 }
 button:disabled {
   cursor: not-allowed;

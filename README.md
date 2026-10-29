@@ -1,6 +1,6 @@
 # Flow Programação Guiada
 
-Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.3.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
+Escola de programação em português com aplicativo web/PWA e Android Capacitor. Versão **0.4.0 de teste**: laboratório executável, currículo autoral, perfil local, revisões, sincronização autenticada e correção pedagógica manual por administrador.
 
 ## Executar
 
@@ -37,7 +37,7 @@ O provisionamento baixa **Pyodide0.29.3 oficial**, sem dependências opcionais; 
 - 8 níveis e 6 emblemas SVG com revelação animada, ficha, descrição e data de aquisição.
 - Foto recortável e 18 avatares originais Cartoon/Pixel/Games, além de 8 ícones de nível, com sincronização privada do perfil. Revisões espaçadas e XP por compreensão; projeto enviado distingue fila local e validação recebida pelo servidor.
 - Painel administrativo com RBAC servidor, CMS versionado, revisão humana, auditoria e botão explícito de correção GPT. A credencial do modelo só existe no servidor.
-- J.A.R.V.IS. holográfico original no canto, com balão inseparável, estados animados, temas claro/escuro e controles de movimento/dicas. Navegação móvel inferior e superfícies de aplicativo.
+- J.A.R.V.I.S holográfico no canto, com indicador de fala real, vibração, glossário por seleção/consulta, piadas e braveza de brincadeira. Português Brasil por padrão, inglês opcional, controles próprios e movimento reduzido. Navegação móvel inferior e superfícies de aplicativo.
 
 **Inventário inicial:** 10 trilhas, 60 módulos catalogados, 20 aulas completas e80 atividades autorais. Os40 módulos sem aulas estão identificados como **em produção editorial**. A meta180aulas/450exercícios ainda requer expansão autoral; o inventário não conta planejamento como conteúdo entregue. Consulte [inventário](conteudos/inventario.json).
 
@@ -65,6 +65,6 @@ O APK debug é instalável para testes e não equivale a uma assinatura de produ
 - [API e segurança](docs/arquitetura-api.md)
 - [Laboratório](docs/laboratorios.md) · [Offline e voz](docs/offline-e-audio.md)
 - [Android](docs/android.md) · [Identidade original](docs/identidade.md)
-- [Recompensas e perfil 0.3](docs/recompensas-e-perfil-0.3.0.md) · [Revisão de qualidade](docs/revisao-qa.md)
+- [J.A.R.V.I.S e áudio 0.4](docs/jarvis-e-audio-0.4.0.md) · [Recompensas e perfil 0.3](docs/recompensas-e-perfil-0.3.0.md) · [Revisão de qualidade](docs/revisao-qa.md)
 
 Os arquivos do pacote visual são referências de composição e paleta. Logos de terceiros não integram a marca Flow.

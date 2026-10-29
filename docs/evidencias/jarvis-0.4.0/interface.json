@@ -1,0 +1,222 @@
+[
+  {
+    "width": 320,
+    "height": 740,
+    "tema": "claro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 18,
+        "y": 83.34375,
+        "width": 290,
+        "height": 444.859375,
+        "right": 308,
+        "bottom": 528.203125
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "tema": "escuro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 18,
+        "y": 83.34375,
+        "width": 290,
+        "height": 444.859375,
+        "right": 308,
+        "bottom": 528.203125
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "tema": "claro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 88,
+        "y": 187.34375,
+        "width": 290,
+        "height": 444.859375,
+        "right": 378,
+        "bottom": 632.203125
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "tema": "escuro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 88,
+        "y": 187.34375,
+        "width": 290,
+        "height": 444.859375,
+        "right": 378,
+        "bottom": 632.203125
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 768,
+    "height": 1000,
+    "tema": "claro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 434,
+        "y": 368.640625,
+        "width": 304,
+        "height": 450.859375,
+        "right": 738,
+        "bottom": 819.5
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 768,
+    "height": 1000,
+    "tema": "escuro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 434,
+        "y": 368.640625,
+        "width": 304,
+        "height": 450.859375,
+        "right": 738,
+        "bottom": 819.5
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 1440,
+    "height": 1000,
+    "tema": "claro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 1106,
+        "y": 368.640625,
+        "width": 304,
+        "height": 450.859375,
+        "right": 1410,
+        "bottom": 819.5
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 1440,
+    "height": 1000,
+    "tema": "escuro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 1106,
+        "y": 368.640625,
+        "width": 304,
+        "height": 450.859375,
+        "right": 1410,
+        "bottom": 819.5
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 740,
+    "height": 360,
+    "tema": "claro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 348,
+        "y": 24,
+        "width": 290,
+        "height": 324,
+        "right": 638,
+        "bottom": 348
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  },
+  {
+    "width": 740,
+    "height": 360,
+    "tema": "escuro",
+    "indicador": "Falando...",
+    "vibraPausado": 0,
+    "ingles": "en-US",
+    "layout": {
+      "overflow": false,
+      "balao": {
+        "x": 348,
+        "y": 24,
+        "width": 290,
+        "height": 324,
+        "right": 638,
+        "bottom": 348
+      },
+      "pequenos": []
+    },
+    "violacoes": [],
+    "erros": []
+  }
+]

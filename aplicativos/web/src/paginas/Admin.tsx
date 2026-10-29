@@ -1,3 +1,4 @@
+import Seletor from '../componentes/Seletor';
 import { useEffect, useState } from "react";
 import type { Flow } from "../componentes/useFlow";
 import { requisitar } from "../componentes/api";
@@ -164,20 +165,7 @@ export default function Admin({ flow }: { flow: Flow }) {
                 onChange={(e) => setFiltro(e.target.value)}
               />
             </label>
-            <label>
-              Estado
-              <select
-                value={estadoFiltro}
-                onChange={(e) => setEstadoFiltro(e.target.value)}
-              >
-                <option value="">Todos</option>
-                <option value="pendente_validacao">
-                  Pendente de validação
-                </option>
-                <option value="aprovada">Aprovada</option>
-                <option value="revisar">Revisar</option>
-              </select>
-            </label>
+            <Seletor rotulo="Estado" valor={estadoFiltro} aoMudar={setEstadoFiltro} opcoes={[{ valor: '', rotulo: 'Todos' }, { valor: 'pendente_validacao', rotulo: 'Pendente de validação' }, { valor: 'aprovada', rotulo: 'Aprovada' }, { valor: 'revisar', rotulo: 'Revisar' }]}/>
           </div>
           {tentativas
             .filter(
@@ -239,16 +227,7 @@ export default function Admin({ flow }: { flow: Flow }) {
                         }
                       />
                     </label>
-                    <label>
-                      Decisão
-                      <select name="status" defaultValue={t.status}>
-                        <option value="pendente_validacao">
-                          Manter pendente
-                        </option>
-                        <option value="revisar">Solicitar revisão</option>
-                        <option value="aprovada">Aprovar</option>
-                      </select>
-                    </label>
+                    <Seletor rotulo="Decisão" nome="status" valorInicial={t.status} opcoes={[{ valor: 'pendente_validacao', rotulo: 'Manter pendente' }, { valor: 'revisar', rotulo: 'Solicitar revisão' }, { valor: 'aprovada', rotulo: 'Aprovar' }]}/>
                     <label>
                       Justificativa humana
                       <input name="justificativa" required minLength={5} />

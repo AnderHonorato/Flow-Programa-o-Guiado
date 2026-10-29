@@ -64,7 +64,7 @@ describe('narração da aula', () => {
     const falas: FalaTeste[] = [];
     vi.stubGlobal('SpeechSynthesisUtterance', FalaTeste);
     vi.stubGlobal('speechSynthesis', {
-      getVoices: () => [], addEventListener: () => {}, removeEventListener: () => {},
+      getVoices: () => [{ voiceURI: 'pt-br', name: 'Brasil', lang: 'pt-BR', localService: true }], addEventListener: () => {}, removeEventListener: () => {},
       cancel: () => {}, pause: () => {}, resume: () => {},
       speak: (fala: FalaTeste) => { falas.push(fala); fala.onstart?.(); },
     });

@@ -66,6 +66,16 @@ public class NarradorNativoPlugin extends Plugin {
         });
     }
 
+    private boolean idiomaPermitido(Locale idioma) {
+        return ("pt".equals(idioma.getLanguage()) && "BR".equals(idioma.getCountry()))
+            || "en".equals(idioma.getLanguage());
+    }
+
+    private boolean mesmoIdioma(Locale voz, Locale pedido) {
+        return "en".equals(pedido.getLanguage()) ? "en".equals(voz.getLanguage())
+            : "pt".equals(voz.getLanguage()) && "BR".equals(voz.getCountry());
+    }
+
     @PluginMethod
     public void vozes(PluginCall chamada) {
         quandoPronto(chamada, () -> {
@@ -73,6 +83,7 @@ public class NarradorNativoPlugin extends Plugin {
             Set<Voice> vozes = narrador.getVoices();
             if (vozes != null) {
                 for (Voice voz : vozes) {
+                    if (!idiomaPermitido(voz.getLocale()) || voz.isNetworkConnectionRequired()) continue;
                     JSObject item = new JSObject();
                     item.put("id", voz.getName());
                     item.put("nome", voz.getName());
@@ -95,13 +106,17 @@ public class NarradorNativoPlugin extends Plugin {
             return;
         }
         quandoPronto(chamada, () -> {
-            Locale idioma = Locale.forLanguageTag(chamada.getString("idioma", "pt-BR"));
+            Locale idioma = Locale.forLanguageTag(chamada.getString("idioma", "pt-BR").replace('_', '-'));
+            if (!idiomaPermitido(idioma)) {
+                chamada.reject("Selecione portugues do Brasil ou ingles para a leitura.", "IDIOMA_NAO_PERMITIDO");
+                return;
+            }
             String vozId = chamada.getString("voz");
             Voice escolhida = null;
             Set<Voice> vozes = narrador.getVoices();
             if (vozes != null) {
                 for (Voice voz : vozes) {
-                    if (voz.isNetworkConnectionRequired()) continue;
+                    if (voz.isNetworkConnectionRequired() || !idiomaPermitido(voz.getLocale()) || !mesmoIdioma(voz.getLocale(), idioma)) continue;
                     if (vozId != null ? voz.getName().equals(vozId) : voz.getLocale().equals(idioma)) {
                         escolhida = voz;
                         break;
@@ -109,7 +124,7 @@ public class NarradorNativoPlugin extends Plugin {
                 }
                 if (escolhida == null && vozId == null) {
                     for (Voice voz : vozes) {
-                        if (!voz.isNetworkConnectionRequired() && voz.getLocale().getLanguage().equals(idioma.getLanguage())) {
+                        if (!voz.isNetworkConnectionRequired() && idiomaPermitido(voz.getLocale()) && mesmoIdioma(voz.getLocale(), idioma)) {
                             escolhida = voz;
                             break;
                         }
@@ -117,7 +132,7 @@ public class NarradorNativoPlugin extends Plugin {
                 }
             }
             if (escolhida == null || narrador.setVoice(escolhida) != TextToSpeech.SUCCESS) {
-                chamada.reject("Instale uma voz local em portugues nas configuracoes de sintese de voz do Android.", "VOZ_LOCAL_INDISPONIVEL");
+                chamada.reject("Instale uma voz local em portugues do Brasil ou ingles nas configuracoes de sintese de voz do Android.", "VOZ_LOCAL_INDISPONIVEL");
                 return;
             }
             Double velocidade = chamada.getDouble("velocidade", 1.0);

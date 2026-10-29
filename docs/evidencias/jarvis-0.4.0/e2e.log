@@ -1,0 +1,35 @@
+
+Running 26 tests using 1 worker
+
+(node:35964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (1.9s)
+  ✓   2 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (15.6s)
+  ✓   3 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (1.4s)
+  ✓   4 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (7.0s)
+  ✓   5 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (2.9s)
+  ✓   6 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (4.7s)
+  ✓   7 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:29:5 › português brasileiro é padrão e os eventos reais coordenam fala, pausa e encerramento (3.5s)
+  ✓   8 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:42:5 › sem voz brasileira não troca idioma sozinho; inglês é uma escolha explícita no menu do app (2.3s)
+  ✓   9 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:56:5 › seleção editorial explica sem áudio automático; consulta e humor funcionam por toque e teclado (1.6s)
+  ✓  10 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:76:5 › reage à ação de estudar sem revelar resposta e menus próprios respeitam teclado e menos movimento (2.1s)
+  ✓  11 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (2.1s)
+  ✓  12 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (2.2s)
+  ✓  13 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (3.3s)
+(node:37251) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  14 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (983ms)
+  ✓  15 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (14.2s)
+  ✓  16 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (1.4s)
+  ✓  17 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (7.4s)
+  ✓  18 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (3.1s)
+  ✓  19 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (4.5s)
+  ✓  20 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:29:5 › português brasileiro é padrão e os eventos reais coordenam fala, pausa e encerramento (3.3s)
+  ✓  21 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:42:5 › sem voz brasileira não troca idioma sozinho; inglês é uma escolha explícita no menu do app (1.4s)
+  ✓  22 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:56:5 › seleção editorial explica sem áudio automático; consulta e humor funcionam por toque e teclado (1.5s)
+  ✓  23 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:76:5 › reage à ação de estudar sem revelar resposta e menus próprios respeitam teclado e menos movimento (2.0s)
+  ✓  24 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (1.8s)
+  ✓  25 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (1.7s)
+  ✓  26 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (3.3s)
+
+  26 passed (1.7m)
