@@ -2,13 +2,15 @@ import { chromium } from '@playwright/test';
 import axe from 'axe-core';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
-const ids = ['fundamentos-algoritmos', 'html-tabelas', 'css-grid', 'js-escopo', 'dom-formularios', 'python-arquivos', 'frontend-estado', 'api-validacao', 'fullstack-sessao', 'projeto-calculadora'];
+const ids = process.env.FLOW_QA_AMOSTRA
+  ? ['html-tabelas', 'python-arquivos', 'projeto-calculadora']
+  : ['fundamentos-algoritmos', 'html-tabelas', 'css-grid', 'js-escopo', 'dom-formularios', 'python-arquivos', 'frontend-estado', 'api-validacao', 'fullstack-sessao', 'projeto-calculadora'];
 const catalogo = JSON.parse(await readFile(new URL('../../conteudos/catalogo.json', import.meta.url), 'utf8'));
 const aulas = catalogo.trilhas.flatMap(t => t.modulos.flatMap(m => m.aulas));
 const endereco = process.env.FLOW_QA_URL || 'http://127.0.0.1:4173';
-const destino = new URL('../../docs/evidencias/curriculo-0.6.0/interface/', import.meta.url).pathname;
-await mkdir(destino, { recursive: true });
 const publico = new URL(endereco).hostname !== '127.0.0.1' && new URL(endereco).hostname !== 'localhost';
+const destino = new URL(`../../docs/evidencias/curriculo-0.6.0/${publico ? 'publicado' : 'interface'}/`, import.meta.url).pathname;
+await mkdir(destino, { recursive: true });
 const proxy = publico && (process.env.HTTPS_PROXY || process.env.HTTP_PROXY);
 const navegador = await chromium.launch({ headless: true, ...(proxy ? { proxy: { server: proxy } } : {}) });
 const resultados = [];
@@ -56,4 +58,4 @@ try {
 }
 const falhas = resultados.filter(r => r.overflow || r.violacoes.length || r.erros.length || !r.resultado);
 console.log(JSON.stringify({ telas: resultados.length, falhas }, null, 2));
-if (falhas.length || resultados.length !== 40) process.exitCode = 1;
+if (falhas.length || resultados.length !== ids.length * 4) process.exitCode = 1;

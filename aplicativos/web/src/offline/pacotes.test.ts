@@ -10,7 +10,13 @@ function prepararCache() {
   vi.stubGlobal('caches', {
     open: async (nome: string) => {
       const mapa = armazens.get(nome) ?? new Map(); armazens.set(nome, mapa);
-      return { put: async (url: string, resposta: Response) => { mapa.set(url, resposta); },match:async(requisicao:Request)=>mapa.get(requisicao.url)?.clone() };
+      return { put: async (url: string, resposta: Response) => { mapa.set(url, resposta); },match:async(requisicao:Request|string)=>{
+        const pedido=typeof requisicao==='string'?new Request(requisicao):requisicao;
+        const resposta=mapa.get(pedido.url);
+        // Cache.put recebeu uma URL, portanto sua chave não tinha Origin.
+        if(resposta?.headers.get('Vary')?.toLowerCase()==='origin'&&pedido.headers.has('Origin'))return undefined;
+        return resposta?.clone();
+      }};
     },
     delete: async (nome: string) => armazens.delete(nome),
     keys: async () => [...armazens.keys()],
@@ -19,6 +25,15 @@ function prepararCache() {
 }
 
 describe('pacotes offline', () => {
+  it('serve o runtime instalado ao import de worker com Origin e resposta Vary Origin',async()=>{
+    prepararCache();const perfil=crypto.randomUUID();
+    vi.stubGlobal('fetch',async()=>new Response('módulo local',{headers:{Vary:'Origin'}}));
+    await baixarPacote(perfil,pacotePython);
+    vi.stubGlobal('fetch',async()=>{throw new Error('Sem rede');});
+    const pedido=new Request('https://flow.test/pyodide/pyodide.mjs',{headers:{Origin:'https://flow.test'}});
+    expect(await (await runtimePacotes.handler({request:pedido})).text()).toBe('módulo local');
+    await expect(runtimePacotes.handler({request:new Request(pedido,{headers:{Authorization:'Bearer ficticio'}})})).rejects.toThrow('Sem rede');
+  });
   it('publica o pacote somente após todos os recursos baixarem e permite liberar o espaço', async () => {
     const cachesLocais = prepararCache(), perfil = crypto.randomUUID();
     vi.stubGlobal('fetch', async () => new Response('conteúdo local'));

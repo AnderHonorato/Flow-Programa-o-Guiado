@@ -5,7 +5,10 @@ export const runtimePacotes = {
     if (request.method !== 'GET' || request.headers.has('Authorization') || request.cache === 'no-cache' || request.cache === 'reload') return fetch(request);
     for (const nome of await caches.keys()) {
       if (!nome.startsWith('flow-pacote-')) continue;
-      const resposta = await (await caches.open(nome)).match(request);
+      // O download grava pela URL pública, sem cabeçalhos do consumidor.
+      // Imports de worker enviam Origin; Vary: Origin não pode esconder o pacote
+      // instalado. Usar a mesma chave preserva a comparação de Vary com a entrada.
+      const resposta = await (await caches.open(nome)).match(request.url);
       if (resposta) return resposta;
     }
     return fetch(request);
