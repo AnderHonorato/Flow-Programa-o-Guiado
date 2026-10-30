@@ -1,0 +1,82 @@
+--------- beginning of main
+10-27 02:18:35.228  1307  1307 E crash_dump64: failed to get the guest state header for thread 956: Bad address
+10-27 02:18:35.237  1307  1307 E crash_dump64: failed to get the guest state header for thread 957: Bad address
+10-27 02:18:35.252   683  1339 I system_server: libdebuggerd_client: done dumping process 1239
+10-27 02:18:35.346  1239  1239 I bt_btif : system/btif/src/bluetooth.cc:420 init: start restricted = false ; common criteria mode = false, config compare result = 0
+10-27 02:18:35.391  1307  1307 E crash_dump64: failed to get the guest state header for thread 958: Bad address
+10-27 02:18:35.398  1307  1307 E crash_dump64: failed to get the guest state header for thread 959: Bad address
+10-27 02:18:35.461  1307  1307 E crash_dump64: failed to get the guest state header for thread 960: Bad address
+--------- beginning of system
+10-27 02:18:35.469   683  1216 I ActivityManager: dumpStackTraces nativepids=[1239]
+10-27 02:18:35.470   683  1216 I ActivityManager: Collecting stacks for native pid 1239
+10-27 02:18:35.477   683  1216 E android.os.Debug: Failed to get binder state info for pid: 1239 status: -2: Socket operation on non-socket
+10-27 02:18:35.520  1307  1307 E crash_dump64: failed to get the guest state header for thread 961: Bad address
+10-27 02:18:35.521  1307  1307 E crash_dump64: failed to get the guest state header for thread 962: Bad address
+10-27 02:18:35.549   683  1216 I system_server: libdebuggerd_client: started dumping process 1239
+10-27 02:18:35.584  1265  1336 D EGL_emulation: app_time_stats: avg=37.53ms min=13.46ms max=67.79ms count=25
+10-27 02:18:35.602  1307  1307 E crash_dump64: failed to get the guest state header for thread 963: Bad address
+10-27 02:18:35.614   217   217 I tombstoned: registered intercept for pid 1239 and type kDebuggerdNativeBacktrace
+10-27 02:18:35.615  1307  1307 E crash_dump64: failed to get the guest state header for thread 964: Bad address
+10-27 02:18:35.620  1239  1240 I libc    : Requested dump for pid 1239 (droid.bluetooth)
+10-27 02:18:35.729  1083  1083 D LocalBluetoothProfileManager: LocalBluetoothProfileManager construction complete
+10-27 02:18:36.045  1307  1307 E crash_dump64: failed to get the guest state header for thread 965: Bad address
+10-27 02:18:36.084  1083  1083 D LocalBluetoothProfileManager: Adding local Hearing Aid profile
+10-27 02:18:35.742  1239  1371 I bluetooth: system/common/message_loop_thread.cc:189 Run: message loop starting for thread bt_stack_manager_thread
+10-27 02:18:36.491  1307  1307 E crash_dump64: failed to get the guest state header for thread 966: Bad address
+10-27 02:18:36.500  1307  1307 E crash_dump64: failed to get the guest state header for thread 967: Bad address
+10-27 02:18:36.605  1265  1336 D EGL_emulation: app_time_stats: avg=51.79ms min=14.45ms max=85.55ms count=18
+10-27 02:18:36.632  1374  1374 E crash_dump64: failed to get the guest state header for thread 1239: Bad address
+10-27 02:18:36.644  1374  1374 E crash_dump64: failed to get the guest state header for thread 1240: Bad address
+10-27 02:18:36.655  1374  1374 E crash_dump64: failed to get the guest state header for thread 1241: Bad address
+10-27 02:18:36.664  1307  1307 E crash_dump64: failed to get the guest state header for thread 968: Bad address
+10-27 02:18:36.666  1239  1371 I bt_stack_manager: system/btif/src/stack_manager.cc:257 event_init_stack: is initializing the stack
+10-27 02:18:36.708  1307  1307 E crash_dump64: failed to get the guest state header for thread 969: Bad address
+10-27 02:18:36.720  1239  1375 I bluetooth: system/common/message_loop_thread.cc:189 Run: message loop starting for thread bt_main_thread
+10-27 02:18:36.723  1307  1307 E crash_dump64: failed to get the guest state header for thread 970: Bad address
+10-27 02:18:36.758  1374  1374 E crash_dump64: failed to get the guest state header for thread 1242: Bad address
+10-27 02:18:36.761  1374  1374 E crash_dump64: failed to get the guest state header for thread 1243: Bad address
+10-27 02:18:36.768  1374  1374 E crash_dump64: failed to get the guest state header for thread 1244: Bad address
+10-27 02:18:36.775  1374  1374 E crash_dump64: failed to get the guest state header for thread 1245: Bad address
+10-27 02:18:36.792  1307  1307 E crash_dump64: failed to get the guest state header for thread 971: Bad address
+10-27 02:18:36.794  1374  1374 E crash_dump64: failed to get the guest state header for thread 1246: Bad address
+10-27 02:18:36.802  1374  1374 E crash_dump64: failed to get the guest state header for thread 1247: Bad address
+10-27 02:18:36.805  1374  1374 E crash_dump64: failed to get the guest state header for thread 1248: Bad address
+10-27 02:18:36.813  1307  1307 E crash_dump64: failed to get the guest state header for thread 972: Bad address
+10-27 02:18:36.820  1374  1374 E crash_dump64: failed to get the guest state header for thread 1283: Bad address
+10-27 02:18:36.822  1374  1374 E crash_dump64: failed to get the guest state header for thread 1296: Bad address
+10-27 02:18:36.827  1374  1374 E crash_dump64: failed to get the guest state header for thread 1297: Bad address
+10-27 02:18:36.829  1374  1374 E crash_dump64: failed to get the guest state header for thread 1308: Bad address
+10-27 02:18:36.833  1374  1374 E crash_dump64: failed to get the guest state header for thread 1369: Bad address
+10-27 02:18:36.786  1239  1371 I device_iot_config: system/device/src/device_iot_config_int.cc:63 device_iot_config_module_init: 
+10-27 02:18:36.835  1374  1374 E crash_dump64: failed to get the guest state header for thread 1371: Bad address
+10-27 02:18:36.959  1374  1374 I crash_dump64: obtaining output fd from tombstoned, type: kDebuggerdNativeBacktrace
+10-27 02:18:36.964   217   217 I tombstoned: received crash request for pid 1239
+10-27 02:18:36.964   217   217 I tombstoned: found intercept fd 512 for pid 1239 and type kDebuggerdNativeBacktrace
+10-27 02:18:36.968  1374  1374 I crash_dump64: performing dump of process 1239 (target tid = 1239)
+10-27 02:18:37.020  1307  1307 E crash_dump64: failed to get the guest state header for thread 974: Bad address
+10-27 02:18:37.050  1239  1371 E bluetooth: system/osi/src/config.cc:104 config_new: unable to open file '/data/misc/bluedroid/bt_remote_dev_info.conf': No such file or directory
+10-27 02:18:37.079  1239  1371 W device_iot_config: system/device/src/device_iot_config_int.cc:77 device_iot_config_module_init: Unable to load config file: /data/misc/bluedroid/bt_remote_dev_info.conf; using backup.
+10-27 02:18:37.098  1239  1371 E bluetooth: system/osi/src/config.cc:104 config_new: unable to open file '/data/misc/bluedroid/bt_remote_dev_info.bak': No such file or directory
+10-27 02:18:37.098  1239  1371 E device_iot_config: system/device/src/device_iot_config_int.cc:84 device_iot_config_module_init: Unable to load bak file; creating empty config.
+10-27 02:18:37.105  1239  1371 I device_iot_config: system/device/src/device_iot_config_int.cc:125 device_iot_config_module_init: Devices loaded 0
+10-27 02:18:37.206  1307  1307 E crash_dump64: failed to get the guest state header for thread 976: Bad address
+10-27 02:18:37.252  1307  1307 E crash_dump64: failed to get the guest state header for thread 979: Bad address
+10-27 02:18:37.337  1307  1307 E crash_dump64: failed to get the guest state header for thread 980: Bad address
+10-27 02:18:37.420  1307  1307 E crash_dump64: failed to get the guest state header for thread 981: Bad address
+10-27 02:18:37.577  1307  1307 E crash_dump64: failed to get the guest state header for thread 982: Bad address
+10-27 02:18:37.585  1307  1307 E crash_dump64: failed to get the guest state header for thread 983: Bad address
+10-27 02:18:37.608   683  1216 E system_server: libdebuggerd_client: timeout expired
+10-27 02:18:37.647  1265  1336 D EGL_emulation: app_time_stats: avg=37.72ms min=16.54ms max=77.45ms count=20
+10-27 02:18:37.700  1239  1381 I bt_osi_thread: system/osi/src/thread.cc:211 run_thread: thread id 1381, thread name alarm_default_ca started
+10-27 02:18:37.782  1307  1307 E crash_dump64: failed to get the guest state header for thread 984: Bad address
+10-27 02:18:38.052   683  1216 I ActivityManager: dumpStackTraces extraPids=null
+10-27 02:18:38.054   683  1216 I ActivityManager: Done dumping
+10-27 02:18:38.266  1239  1384 I bt_osi_thread: system/osi/src/thread.cc:211 run_thread: thread id 1384, thread name alarm_dispatcher started
+10-27 02:18:38.356  1239  1371 I bt_core_module: system/btcore/src/module.cc:88 module_start_up: Starting module "gd_shim_module"
+10-27 02:18:38.357  1239  1371 I bt_gd_shim: system/main/shim/stack.cc:77 StartEverything: Starting Gd stack
+10-27 02:18:38.358  1239  1371 I bt_gd_shim: system/main/shim/stack.cc:139 Start: Starting Gd stack
+10-27 02:18:38.424  1307  1307 E crash_dump64: failed to get the guest state header for thread 986: Bad address
+10-27 02:18:38.521  1307  1307 E crash_dump64: failed to get the guest state header for thread 987: Bad address
+10-27 02:18:38.636  1265  1336 D EGL_emulation: app_time_stats: avg=52.08ms min=17.93ms max=104.63ms count=16
+10-27 02:18:38.915  1307  1307 E crash_dump64: failed to get the guest state header for thread 988: Bad address
+10-27 02:18:38.972  1307  1307 E crash_dump64: failed to get the guest state header for thread 989: Bad address

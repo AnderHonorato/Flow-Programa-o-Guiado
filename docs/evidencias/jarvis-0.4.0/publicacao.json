@@ -1,0 +1,11 @@
+{
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "api": {
+    "status": "disponivel",
+    "versao": "0.4.0",
+    "gptConfigurado": false
+  },
+  "statusHtml": 200,
+  "commitAplicativo": "e7a6b3aef355aa9c516c5205f52dfe0f16693234",
+  "deployment": "dpl_2bFmKBuADAfxz4VCh5kKqLZQRYre"
+}

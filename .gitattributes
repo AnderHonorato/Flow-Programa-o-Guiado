@@ -1,0 +1,5 @@
+* text=auto
+*.bat text eol=crlf whitespace=cr-at-eol
+*.log -whitespace
+
+docs/evidencias/** -whitespace

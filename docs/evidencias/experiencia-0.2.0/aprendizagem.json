@@ -1,0 +1,162 @@
+[
+  {
+    "nome": "desktop-claro-aprender",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-claro-preparar-0",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-claro-preparar-1",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-claro-preparar-2",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-escuro-aprender",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-escuro-preparar-0",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-escuro-preparar-1",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "desktop-escuro-preparar-2",
+    "geometria": {
+      "largura": 1440,
+      "documento": 1440,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-claro-aprender",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-claro-preparar-0",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-claro-preparar-1",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-claro-preparar-2",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-escuro-aprender",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-escuro-preparar-0",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-escuro-preparar-1",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "nome": "celular-escuro-preparar-2",
+    "geometria": {
+      "largura": 390,
+      "documento": 390,
+      "fora": []
+    },
+    "erros": [],
+    "violacoes": []
+  }
+]

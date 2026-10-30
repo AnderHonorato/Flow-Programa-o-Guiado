@@ -1,0 +1,91 @@
+/* O balão e o núcleo são filhos da mesma presença flutuante. Sem cards órfãos. */
+.jarvis-dock{--jarvis-luz:#8cf0f7;position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));z-index:24;width:104px;display:flex;flex-direction:column;align-items:center;isolation:isolate;pointer-events:none;color:#e9fcff;font-family:"Inter Variable",Inter,system-ui,sans-serif;animation:jarvis-surgir .5s cubic-bezier(.16,1,.3,1) both}
+.jarvis-ativador{position:relative;pointer-events:auto;display:grid;place-items:center;flex:0 0 auto;width:100px;height:100px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--jarvis-luz);cursor:pointer;transition:transform .2s;filter:drop-shadow(0 7px 14px #061e3259)}
+.jarvis-ativador:hover{transform:translateY(-3px) scale(1.035)}
+.jarvis-ativador:focus-visible,.jarvis-controles button:focus-visible{outline:3px solid #8cf0f7;outline-offset:4px}
+.jarvis-nucleo{display:block;width:100%;height:100%;overflow:visible}
+.jarvis-holograma{transform-origin:60px 56px;animation:jarvis-flutuar 4.5s ease-in-out infinite}
+.jarvis-anel{transform-origin:60px 56px}.jarvis-anel--externo{animation:jarvis-orbita 22s linear infinite}.jarvis-anel--interno{animation:jarvis-orbita 16s linear infinite reverse}
+.jarvis-centelha{animation:jarvis-pulso 2.6s ease-in-out infinite}.jarvis-visor{transform-origin:60px 53px;animation:jarvis-olhar 6s ease-in-out infinite}.jarvis-particulas{animation:jarvis-particulas 3.6s ease-in-out infinite}
+.jarvis-legenda{margin-top:-3px;padding:3px 8px;background:#092c3d;color:#c6f5fb;border:1px solid #276371;border-radius:20px;text-align:center;font-size:9px;line-height:1.5;white-space:nowrap;box-shadow:0 3px 12px #08233020}
+.jarvis-nome-curto{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1.2;letter-spacing:.06em;color:#c9f9fc;font-weight:700;pointer-events:none}
+.jarvis-balao{position:relative;align-self:flex-end;margin-right:12px;margin-bottom:7px;width:min(304px,calc(100vw - 36px));padding:17px 18px 10px;border:1px solid #377784;border-radius:19px 19px 5px 19px;background:linear-gradient(140deg,#12394c,#091f30 90%);box-shadow:0 14px 40px #04172438,inset 0 1px #b1f7ff12;pointer-events:none;animation:jarvis-balao-chegar .35s cubic-bezier(.2,.8,.2,1) both;transform-origin:bottom right}
+.jarvis-balao:after{content:"";position:absolute;bottom:-7px;right:24px;width:12px;height:12px;border-right:1px solid #377784;border-bottom:1px solid #377784;background:#0a2232;transform:rotate(45deg);border-radius:0 0 3px 0}
+.jarvis-identidade{display:flex;align-items:center;gap:6px;line-height:1.5}.jarvis-identidade strong{font-size:11px;letter-spacing:.09em;color:#9cf4fa}.jarvis-identidade>span:last-child{font-size:8px;letter-spacing:.1em;margin-left:auto;color:#b2d5df}
+.jarvis-indicador{width:5px;height:5px;border-radius:50%;background:#8cf0f7;box-shadow:0 0 8px #8cf0f7}
+.jarvis-balao .jarvis-mensagem{margin:10px 0 7px;font-size:13px;line-height:1.65;color:#e9f9fc;overflow-wrap:anywhere;max-height:min(30vh,240px);overflow:auto}
+.jarvis-controles{pointer-events:auto;display:flex;align-items:center;gap:3px;border-top:1px solid #bddae51c;padding-top:4px}.jarvis-controles button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:36px;min-height:36px;padding:6px 8px;border:0;border-radius:9px;background:transparent;color:#bfdfe7;font:inherit;font-size:10px;cursor:pointer;transition:background .15s}.jarvis-controles button:first-child{margin-right:auto}.jarvis-controles button:hover{background:#b5e9ff16;color:#fff}
+.jarvis-dock--minimizado{width:52px}.jarvis-dock--minimizado .jarvis-ativador{width:52px;height:52px}.jarvis-dock--minimizado .jarvis-nome-curto{bottom:1px;font-size:8px}
+.jarvis-dock[data-estado=pensando] .jarvis-anel--interno{animation-duration:3s}.jarvis-dock[data-estado=pensando] .jarvis-sinal{stroke-dasharray:12;animation:jarvis-scan 1.2s linear infinite}
+.jarvis-dock[data-estado=explicando] .jarvis-sinal{stroke-dasharray:24;animation:jarvis-scan 2s linear infinite}.jarvis-dock[data-estado=comemorando] .jarvis-holograma,.jarvis-dock[data-estado=alegre] .jarvis-holograma{animation:jarvis-celebrar .65s ease-in-out 2,jarvis-flutuar 4.5s 1.3s ease-in-out infinite}.jarvis-dock[data-estado=comemorando] .jarvis-particulas{animation:jarvis-particulas .8s ease-in-out infinite}
+.jarvis-dock[data-estado=preocupado] .jarvis-visor{stroke:#ffd9a1}.jarvis-dock[data-estado=apoiando] .jarvis-centelha{fill:#adefd7}.jarvis-dock[data-estado=descansando] .jarvis-visor{opacity:.5}.jarvis-dock[data-estado=descansando] .jarvis-anel{animation-duration:40s}
+.jarvis-dock--pausado *{animation:none!important;transition:none!important}
+@keyframes jarvis-surgir{from{opacity:0;transform:translateY(25px) scale(.85)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes jarvis-balao-chegar{from{opacity:0;transform:translateY(9px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes jarvis-flutuar{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes jarvis-orbita{to{transform:rotate(360deg)}}
+@keyframes jarvis-pulso{0%,100%{opacity:.65}50%{opacity:1}}
+@keyframes jarvis-olhar{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.18)}}
+@keyframes jarvis-particulas{0%,100%{opacity:.35;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@keyframes jarvis-scan{to{stroke-dashoffset:-48}}
+@keyframes jarvis-celebrar{0%,100%{transform:translateY(0)}45%{transform:translateY(-9px) scale(1.04)}}
+@media(max-width:600px){.jarvis-dock{right:max(12px,env(safe-area-inset-right));bottom:calc(80px + env(safe-area-inset-bottom));width:74px}.jarvis-ativador{width:74px;height:74px}.jarvis-legenda{max-width:94px;font-size:8px;white-space:normal;line-height:1.35}.jarvis-balao{width:min(290px,calc(100vw - 28px));margin-right:0;padding:14px 15px 8px}.jarvis-balao .jarvis-mensagem{font-size:12px}.jarvis-controles button{min-height:40px;min-width:40px}.jarvis-dock--minimizado{width:48px}.jarvis-dock--minimizado .jarvis-ativador{width:48px;height:48px}}
+@media(max-height:500px){.jarvis-dock{bottom:12px}.jarvis-balao{position:absolute;bottom:30px;right:75px;width:240px}.jarvis-balao .jarvis-mensagem{max-height:90px}.jarvis-balao:after{display:none}}
+@media(prefers-reduced-motion:reduce){.jarvis-dock,.jarvis-dock *{animation:none!important;transition:none!important}}
+/* Controles desenhados para o assistente, com alvos confortáveis e rolagem própria. */
+.jarvis-balao{pointer-events:none;max-height:calc(100dvh - 170px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#598e9c #102c3e}
+.jarvis-balao--interativo{pointer-events:auto}
+.jarvis-balao:after{display:none}
+.jarvis-presenca{position:relative;flex-shrink:0;display:grid;place-items:center;line-height:0}
+.jarvis-presenca:before{content:"";position:absolute;inset:15%;border-radius:50%;background:#71edf016;filter:blur(10px);pointer-events:none;transition:background .25s}
+.jarvis-balao .jarvis-mensagem{max-height:unset;overflow:visible;font-size:12px;line-height:1.65;margin-bottom:12px}
+.jarvis-dock[data-voz=falando] .jarvis-balao,.jarvis-dock[data-voz=preparando] .jarvis-balao,.jarvis-dock[data-voz=pausada] .jarvis-balao{margin-bottom:42px}
+.jarvis-termo{display:grid;gap:2px;margin-top:12px;padding:10px 11px;border:1px solid #578995;border-radius:11px;background:#133e50;line-height:1.4}
+.jarvis-termo>span{font-size:8px;letter-spacing:.14em;color:#b0e5ee}
+.jarvis-termo strong{color:#f1ffff;font-size:14px;overflow-wrap:anywhere}
+.jarvis-termo small{font-size:9px;color:#c4e5eb}
+.jarvis-acoes{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.jarvis-acoes button,.jarvis-audio button,.jarvis-consulta button{appearance:none;-webkit-appearance:none;min-width:44px;min-height:44px;border:1px solid #416c7e;border-radius:12px;background:linear-gradient(145deg,#20485e,#113447);color:#e2f9fc;padding:8px 9px;display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:10px;font-weight:600;line-height:1.3;transition:background .2s,transform .2s,border-color .2s;cursor:pointer;touch-action:manipulation}
+.jarvis-acoes button:hover:not(:disabled),.jarvis-audio button:hover:not(:disabled),.jarvis-consulta button:hover:not(:disabled){background:#2b566b;border-color:#84c9d7;transform:translateY(-1px)}
+.jarvis-acoes button:active:not(:disabled),.jarvis-audio button:active:not(:disabled),.jarvis-consulta button:active:not(:disabled){transform:scale(.96)}
+.jarvis-acoes button>span[aria-hidden]{font-size:18px;width:15px;line-height:1}
+.jarvis-acoes button:focus-visible,.jarvis-audio button:focus-visible,.jarvis-consulta button:focus-visible,.jarvis-consulta input:focus-visible{outline:3px solid #a5effa;outline-offset:2px}
+.jarvis-audio{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.jarvis-audio>button:first-child{flex:1;background:#20596c;border-color:#6ab2c0}
+.jarvis-audio>button:disabled{opacity:.65;cursor:not-allowed}
+.jarvis-parar{display:block;width:12px;height:12px;border-radius:3px;background:currentColor}
+.jarvis-sem-voz{display:block;color:#b8dce5;font-size:9px;line-height:1.5;margin-bottom:9px}
+.jarvis-controles{gap:4px}
+.jarvis-controles button{min-width:44px;min-height:44px;font-size:10px}
+.jarvis-consulta{display:grid;gap:7px;margin:0 0 10px}
+.jarvis-consulta label{color:#d2f4fc;font-size:11px;line-height:1.5}
+.jarvis-consulta>div{display:flex;gap:6px}
+.jarvis-consulta input{appearance:none;-webkit-appearance:none;width:100%;min-width:0;border:1px solid #6e9da9;border-radius:11px;background:#071e2d;color:#effdff;padding:9px;font:inherit;font-size:12px;line-height:1.4}
+.jarvis-consulta input::placeholder{color:#aacbd5;opacity:1}
+.jarvis-consulta p{color:#ffd4ba;font-size:11px;line-height:1.5;margin:0}
+.jarvis-consulta .jarvis-cancelar{justify-self:start;background:transparent;border-color:#416c7e;padding-inline:12px}
+.jarvis-fala-status{pointer-events:none;position:absolute;bottom:calc(100% + 3px);right:0;display:flex;align-items:center;justify-content:center;gap:7px;min-height:29px;min-width:105px;max-width:220px;padding:6px 10px;border:1px solid #62b2bf;border-radius:13px 13px 5px 13px;background:#123d50;color:#e8ffff;font-size:10px;font-weight:650;line-height:1.4;white-space:nowrap;box-shadow:0 5px 15px #03182740}
+.jarvis-fala-status:after{content:"";position:absolute;right:22px;bottom:-5px;width:7px;height:7px;background:#123d50;border-right:1px solid #62b2bf;border-bottom:1px solid #62b2bf;transform:rotate(45deg)}
+.jarvis-ondas{display:flex;align-items:center;gap:2px;height:13px}
+.jarvis-ondas i{display:block;width:2px;height:5px;background:#a4f8ff;border-radius:3px}
+.jarvis-fala-status--ativa .jarvis-ondas i{animation:jarvis-onda-voz .8s ease-in-out infinite}.jarvis-fala-status--ativa .jarvis-ondas i:nth-child(2){animation-delay:.14s}.jarvis-fala-status--ativa .jarvis-ondas i:nth-child(3){animation-delay:.28s}
+.jarvis-dock--falando .jarvis-holograma{animation:jarvis-vibrar .18s ease-in-out infinite}
+.jarvis-dock--falando .jarvis-sinal{stroke-dasharray:3 2;animation:jarvis-scan .8s linear infinite}
+.jarvis-dock--falando .jarvis-centelha{animation:jarvis-pulso .7s ease-in-out infinite}
+.jarvis-dock[data-estado=brincalhao] .jarvis-holograma{animation:jarvis-risada .45s ease-in-out 3,jarvis-flutuar 4.5s 1.35s ease-in-out infinite}
+.jarvis-dock[data-estado=brincalhao] .jarvis-visor{transform:rotate(-7deg);stroke:#caffb6}
+.jarvis-dock[data-estado=bravo] .jarvis-visor{stroke:#ffcc91;transform:scaleY(1.4)}
+.jarvis-dock[data-estado=bravo] .jarvis-holograma{animation:jarvis-birra .45s ease-in-out 3,jarvis-flutuar 4.5s 1.35s ease-in-out infinite}
+.jarvis-dock[data-estado=bravo] .jarvis-anel--externo{stroke:#ffc681}
+.jarvis-dock[data-estado=surpreso] .jarvis-holograma{animation:jarvis-surpresa .55s ease-out,jarvis-flutuar 4.5s .55s ease-in-out infinite}
+.jarvis-dock[data-estado=apoiando] .jarvis-presenca:before{background:#7feac92b}
+.jarvis-dock--falando[data-estado] .jarvis-holograma{animation:jarvis-vibrar .18s ease-in-out infinite}
+.jarvis-dock--pausado *{animation:none!important;transition:none!important}
+@keyframes jarvis-vibrar{0%,100%{transform:translate(-.8px,.2px) rotate(-.5deg)}50%{transform:translate(.8px,-.6px) rotate(.5deg)}}
+@keyframes jarvis-onda-voz{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(2.2)}}
+@keyframes jarvis-risada{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(4deg)}}
+@keyframes jarvis-birra{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px) rotate(-2deg)}75%{transform:translateX(3px) rotate(2deg)}}
+@keyframes jarvis-surpresa{0%,100%{transform:scale(1)}45%{transform:translateY(-8px) scale(1.08)}}
+@media(max-width:600px){.jarvis-balao{max-height:calc(100dvh - 205px);padding:14px 13px 7px}.jarvis-balao .jarvis-mensagem{font-size:12px}.jarvis-acoes button{font-size:10px}.jarvis-controles button{min-height:44px;min-width:44px}.jarvis-fala-status{right:-2px;font-size:10px}.jarvis-dock[data-voz=falando] .jarvis-balao,.jarvis-dock[data-voz=preparando] .jarvis-balao,.jarvis-dock[data-voz=pausada] .jarvis-balao{max-height:calc(100dvh - 240px)}}
+@media(max-height:500px){.jarvis-balao{bottom:0;right:72px;max-height:calc(100dvh - 36px);width:min(290px,calc(100vw - 115px));margin-bottom:0!important}.jarvis-balao .jarvis-mensagem{max-height:unset}.jarvis-dock[data-voz=falando] .jarvis-balao,.jarvis-dock[data-voz=preparando] .jarvis-balao,.jarvis-dock[data-voz=pausada] .jarvis-balao{max-height:calc(100dvh - 36px)}.jarvis-fala-status{right:0;bottom:calc(100% + 2px)}}
+@media(prefers-reduced-motion:reduce){.jarvis-dock,.jarvis-dock *{animation:none!important;transition:none!important}}

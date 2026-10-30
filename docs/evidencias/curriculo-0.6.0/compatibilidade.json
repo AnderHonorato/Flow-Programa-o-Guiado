@@ -1,0 +1,18 @@
+{
+  "base": "0aa2c4a5a858ae0c82b11a9bcc94dc292ae21a7a",
+  "aulasAnterioresIntegrais": 20,
+  "aulasNovas": [
+    "api-validacao",
+    "css-grid",
+    "dom-formularios",
+    "frontend-estado",
+    "fullstack-sessao",
+    "fundamentos-algoritmos",
+    "html-tabelas",
+    "js-escopo",
+    "projeto-calculadora",
+    "python-arquivos"
+  ],
+  "questoesAnterioresPreservadas": true,
+  "migracaoDeBancoNecessaria": false
+}

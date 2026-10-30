@@ -1,0 +1,13 @@
+# Flow 0.2.0 — aprendizagem, assistente e evolução
+
+O Jarvis passa a ser uma presença única holográfica, com núcleo, visor e anéis animados. As telas publicam contexto; o provider desenha personagem e balão no mesmo elemento flutuante. Minimizar ou silenciar elimina o balão. Tocar ou focar o conteúdo recolhe a fala para não atrapalhar o estudo. Animações podem ser pausadas e respeitam redução de movimento.
+
+As 20 aulas têm exemplos percorríveis, experimento específico com controles e resultados, e um preparo de três etapas com plano próprio da missão antes do editor. HTML/CSS são renderizados em iframe isolado, sem scripts ou rede. Os experimentos de JavaScript usam programas predeterminados; os de Python mostram rastreamento didático explicitamente. O laboratório preserva a execução real de código/Pyodide separada.
+
+Em Fixar, a primeira alternativa tocada é definitiva. Não há acerto, erro, explicação nem pontos durante a seleção. Depois de responder tudo, Enviar avaliação registra o envio, calcula a nota e mostra a correção: sua escolha, o motivo, a alternativa correta e o que deveria ter feito. Reabrir ou sincronizar não destrava. O diagnóstico segue a mesma regra. Após ler a correção é possível seguir para o laboratório, mesmo com erros, que permanecem para orientar revisão. A competência depende da correção revisada e das verificações do laboratório.
+
+Cada perfil guarda avaliações em IndexedDB e as contas sincronizam com o servidor. Em conflitos entre dispositivos, a primeira escolha recebida no servidor vence; o retorno canônico atualiza o dispositivo. O servidor valida aula/questões/índices e calcula acertos; não confia nos booleanos nem no snapshot sugerido pelo cliente. Congela conteúdo e gabarito no primeiro registro para que uma edição futura do CMS não altere nota e explicação. Conquistas do app não emitem certificado e os registros locais não são mecanismo antitrapaça.
+
+Evolução: 100 XP por competência e 10 XP por questão correta enviada, sem duplicação. 8 níveis progressivos, 6 emblemas e 8 ícones originais; ícone escolhido é salvo localmente por perfil e acompanha backup. O maior nível exige2000XP e pode ser alcançado com as vinte competências publicadas, mesmo com erros nas avaliações. Acertos ajudam a evoluir antes; errar não torna a recompensa final impossível.
+
+A aparência usa superfícies e cores claras/escuras, botões táteis, navegação inferior no celular, indicador de mudança de tela e comemorações por conquista. A ausência de credencial GPT, executor remoto hospedado e validação em Android estável continuam como limites anteriores. Este APK é debug, não uma versão assinada para loja.

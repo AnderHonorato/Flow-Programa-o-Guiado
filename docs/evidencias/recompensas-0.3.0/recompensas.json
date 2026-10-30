@@ -1,0 +1,38 @@
+[
+  {
+    "nome": "celular",
+    "estado": "celebracao",
+    "violacoes": [],
+    "overflow": false
+  },
+  {
+    "nome": "celular",
+    "estado": "ficha",
+    "violacoes": [],
+    "overflow": false
+  },
+  {
+    "nome": "desktop",
+    "estado": "celebracao",
+    "violacoes": [],
+    "overflow": false
+  },
+  {
+    "nome": "desktop",
+    "estado": "ficha",
+    "violacoes": [],
+    "overflow": false
+  },
+  {
+    "nome": "estreito",
+    "estado": "celebracao",
+    "violacoes": [],
+    "overflow": false
+  },
+  {
+    "nome": "estreito",
+    "estado": "ficha",
+    "violacoes": [],
+    "overflow": false
+  }
+]

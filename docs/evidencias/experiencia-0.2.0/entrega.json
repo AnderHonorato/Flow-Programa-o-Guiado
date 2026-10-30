@@ -1,0 +1,38 @@
+{
+  "versao": "0.2.0",
+  "data": "2026-10-28T02:20:57.904633+00:00",
+  "commitAplicacao": "3b37dcca955f12953887974ebe903459ce06288b",
+  "vercelDeployment": "dpl_EjEsvEQBfStUyUgTyL4CD49FhVBS",
+  "vercelStatus": "READY",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "testes": {
+    "frontend": 101,
+    "api": 40,
+    "e2eDesktopCelular": 12,
+    "telasAxe": 20,
+    "violacoesAxe": 0,
+    "overflow": 0,
+    "estadosPedagogicosAuditados": 16
+  },
+  "apk": {
+    "data": "2026-10-28T02:19:42.965961+00:00",
+    "versao": "0.2.0",
+    "apk": "artefatos/Flow-Programacao-Guiada-0.2.0-debug.apk",
+    "bytes": 10869759,
+    "sha256": "e687d4e83662cd4421d05b2746ea15b34465ef6cf29486e7fb384d2ca3274abc",
+    "assinatura": "v1 e v2, Android Debug",
+    "distComparado": 51,
+    "distDiferencas": 0,
+    "lint": {
+      "erros": 0,
+      "avisos": 8
+    },
+    "execucaoAndroid": "Ainda não validada em aparelho ou emulador estável."
+  },
+  "limites": [
+    "APK debug: execução Android em aparelho estável pendente.",
+    "GPT requer credencial; executor dedicado não hospedado; expansão editorial pendente."
+  ],
+  "pr": "https://github.com/AnderHonorato/Flow-Programa-o-Guiado/pull/1",
+  "release": "https://github.com/AnderHonorato/Flow-Programa-o-Guiado/releases/tag/v0.2.0-teste"
+}

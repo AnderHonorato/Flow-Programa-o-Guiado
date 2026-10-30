@@ -1,0 +1,24 @@
+{
+  "publicado": {
+    "trilhasComAulas": 10,
+    "modulosComAulas": 30,
+    "aulas": 30,
+    "questoesObjetivas": 60,
+    "desafios": 30,
+    "variacoes": 30,
+    "exercicios": 120,
+    "exemplos": 60,
+    "testesObjetivos": 80
+  },
+  "emProducao": {
+    "modulosSemAulas": 30,
+    "aulasParaMetaMinima": 150,
+    "exerciciosParaMetaMinima": 330
+  },
+  "verificacao": {
+    "integridadeEditorial": true,
+    "exemplosPythonExecutados": 8,
+    "exemplosJavaScriptSintaxe": 32,
+    "erros": []
+  }
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "perfil",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "detalhes",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "exclusao",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 320,
+    "tema": "escuro",
+    "view": "opinioes",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "perfil",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "detalhes",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "exclusao",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 390,
+    "tema": "escuro",
+    "view": "opinioes",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "perfil",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "detalhes",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "exclusao",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 768,
+    "tema": "escuro",
+    "view": "opinioes",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "ranking",
+    "estado": "perfil",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "detalhes",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "admin",
+    "estado": "exclusao",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  },
+  {
+    "largura": 1440,
+    "tema": "escuro",
+    "view": "opinioes",
+    "estado": "lista",
+    "overflow": false,
+    "erros": [],
+    "violacoes": []
+  }
+]

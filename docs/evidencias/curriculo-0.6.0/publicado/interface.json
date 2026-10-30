@@ -1,0 +1,126 @@
+{
+  "endereco": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "executadoEm": "2026-10-30T03:39:56.151Z",
+  "telas": [
+    {
+      "id": "html-tabelas",
+      "width": 390,
+      "tema": "claro",
+      "modelo": "Uma tabela que explica suas relações",
+      "resultado": "Leitura: 4 vagas.\nCabeçalhos de coluna e linha identificados.",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "python-arquivos",
+      "width": 390,
+      "tema": "claro",
+      "modelo": "Rastreie a ida e a volta do JSON",
+      "resultado": "Rastreamento do arquivo JSON: {\"nome\":\"Leitura\",\"vagas\":3}\nApós a leitura: Leitura · 3 vagas",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "projeto-calculadora",
+      "width": 390,
+      "tema": "claro",
+      "modelo": "Uma conta começa pela entrada",
+      "resultado": "14.5",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "html-tabelas",
+      "width": 390,
+      "tema": "escuro",
+      "modelo": "Uma tabela que explica suas relações",
+      "resultado": "Leitura: 4 vagas.\nCabeçalhos de coluna e linha identificados.",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "python-arquivos",
+      "width": 390,
+      "tema": "escuro",
+      "modelo": "Rastreie a ida e a volta do JSON",
+      "resultado": "Rastreamento do arquivo JSON: {\"nome\":\"Leitura\",\"vagas\":3}\nApós a leitura: Leitura · 3 vagas",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "projeto-calculadora",
+      "width": 390,
+      "tema": "escuro",
+      "modelo": "Uma conta começa pela entrada",
+      "resultado": "14.5",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "html-tabelas",
+      "width": 1440,
+      "tema": "claro",
+      "modelo": "Uma tabela que explica suas relações",
+      "resultado": "Leitura: 4 vagas.\nCabeçalhos de coluna e linha identificados.",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "python-arquivos",
+      "width": 1440,
+      "tema": "claro",
+      "modelo": "Rastreie a ida e a volta do JSON",
+      "resultado": "Rastreamento do arquivo JSON: {\"nome\":\"Leitura\",\"vagas\":3}\nApós a leitura: Leitura · 3 vagas",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "projeto-calculadora",
+      "width": 1440,
+      "tema": "claro",
+      "modelo": "Uma conta começa pela entrada",
+      "resultado": "14.5",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "html-tabelas",
+      "width": 1440,
+      "tema": "escuro",
+      "modelo": "Uma tabela que explica suas relações",
+      "resultado": "Leitura: 4 vagas.\nCabeçalhos de coluna e linha identificados.",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "python-arquivos",
+      "width": 1440,
+      "tema": "escuro",
+      "modelo": "Rastreie a ida e a volta do JSON",
+      "resultado": "Rastreamento do arquivo JSON: {\"nome\":\"Leitura\",\"vagas\":3}\nApós a leitura: Leitura · 3 vagas",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    },
+    {
+      "id": "projeto-calculadora",
+      "width": 1440,
+      "tema": "escuro",
+      "modelo": "Uma conta começa pela entrada",
+      "resultado": "14.5",
+      "overflow": false,
+      "violacoes": [],
+      "erros": []
+    }
+  ]
+}

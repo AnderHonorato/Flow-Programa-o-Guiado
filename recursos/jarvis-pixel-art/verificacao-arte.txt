@@ -1,0 +1,4 @@
+2026-10-25 UTC
+PASS: 13 SVGs XML; PNGs 192/512 com alpha real; folha 256x704, 11 estados, 4 quadros únicos em cada estado.
+TypeScript estrito Icone.tsx e Jarvis.tsx: exit 0.
+Prancha e ícone 192 abertos com view_image para inspeção visual.

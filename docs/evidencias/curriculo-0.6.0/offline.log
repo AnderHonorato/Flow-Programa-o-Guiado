@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:16779) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:167:5 › arquivos Python executam em WebAssembly após fechar e reabrir sem internet (22.8s)
+(node:17120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:167:5 › arquivos Python executam em WebAssembly após fechar e reabrir sem internet (34.7s)
+
+  2 passed (59.8s)

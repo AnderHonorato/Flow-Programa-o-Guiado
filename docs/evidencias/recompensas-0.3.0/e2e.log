@@ -1,0 +1,35 @@
+
+> flow-programacao-guiada@0.3.0 test:e2e
+> playwright test --workers=2
+
+
+Running 18 tests using 2 workers
+
+(node:23505) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23506) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (4.0s)
+  ✓   2 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (8.3s)
+  ✓   4 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (9.7s)
+  ✓   5 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (12.4s)
+  ✓   3 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (28.9s)
+(node:24188) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (5.7s)
+  ✓   7 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (4.7s)
+  ✓   8 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (27.3s)
+  ✓  10 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (12.7s)
+  ✓   9 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (40.0s)
+  ✓  12 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (5.8s)
+  ✓  11 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (15.3s)
+(node:24727) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (20.0s)
+  ✓  14 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (11.5s)
+  ✓  16 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (7.6s)
+  ✓  15 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (13.7s)
+  ✓  17 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (10.0s)
+  ✓  18 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (11.5s)
+
+  18 passed (2.2m)

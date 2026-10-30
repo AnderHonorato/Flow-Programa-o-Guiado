@@ -1,0 +1,14 @@
+{
+  "data": "2026-10-29T03:33:26.948656+00:00",
+  "versao": "0.3.0",
+  "bytes": 10612708,
+  "sha256": "2a160e875b7b12882596faa5cd3ef087521bda4762ccc0d040cb0e99040b7620",
+  "assinatura": "Android Debug, v1/v2; mesma chave das versões anteriores",
+  "distComparados": 51,
+  "diferencasDist": 0,
+  "lint": {
+    "erros": 0,
+    "avisos": 8
+  },
+  "execucaoAndroid": "Não validada em aparelho/emulador estável."
+}

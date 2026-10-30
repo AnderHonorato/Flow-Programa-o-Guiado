@@ -1,0 +1,17 @@
+desktop-claro-inicio [ 'color-contrast' ] 1440
+desktop-claro-trilhas [] 1440
+desktop-claro-aula [ 'color-contrast' ] 1440
+desktop-claro-perfil [ 'color-contrast' ] 1440
+desktop-escuro-inicio [] 1440
+desktop-escuro-trilhas [] 1440
+desktop-escuro-aula [] 1440
+desktop-escuro-perfil [] 1440
+celular-claro-inicio [] 390
+celular-claro-trilhas [] 390
+celular-claro-aula [ 'color-contrast', 'scrollable-region-focusable' ] 390
+celular-claro-perfil [] 390
+celular-escuro-inicio [] 390
+celular-escuro-trilhas [] 390
+celular-escuro-aula [ 'scrollable-region-focusable' ] 390
+celular-escuro-perfil [] 390
+Fim da auditoria.

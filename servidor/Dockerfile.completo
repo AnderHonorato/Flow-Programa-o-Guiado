@@ -1,0 +1,29 @@
+# Contexto de build: raiz do monorepo. Banco deve usar Postgres gerenciado em produção.
+FROM node:22-bookworm-slim AS web
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY aplicativos/web/package.json ./aplicativos/web/package.json
+RUN --mount=type=secret,id=ca_cert,target=/tmp/ca.pem \
+    if [ -f /tmp/ca.pem ]; then export NODE_EXTRA_CA_CERTS=/tmp/ca.pem; fi; \
+    npm ci
+COPY aplicativos/web ./aplicativos/web
+COPY contratos ./contratos
+COPY conteudos ./conteudos
+COPY recursos ./recursos
+RUN npm run build
+
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY servidor/requirements.txt /app/servidor/requirements.txt
+RUN --mount=type=secret,id=ca_cert,target=/tmp/ca.pem \
+    if [ -f /tmp/ca.pem ]; then export PIP_CERT=/tmp/ca.pem; fi; \
+    pip install --no-cache-dir -r servidor/requirements.txt && useradd --create-home flow && mkdir -p /dados && chown flow:flow /dados
+COPY --chown=flow:flow servidor /app/servidor
+COPY --chown=flow:flow executores/__init__.py executores/contratos.py /app/executores/
+COPY --chown=flow:flow conteudos /app/conteudos
+COPY --from=web --chown=flow:flow /app/aplicativos/web/dist /app/aplicativos/web/dist
+USER flow
+ENV DATABASE_URL=sqlite:////dados/flow.db
+EXPOSE 8000
+CMD ["sh", "-c", "python -m uvicorn servidor.principal:app --host 0.0.0.0 --port ${PORT:-8000}"]

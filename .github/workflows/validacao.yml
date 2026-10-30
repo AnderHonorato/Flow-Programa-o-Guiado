@@ -1,0 +1,105 @@
+name: Validar e compilar Flow
+
+on:
+  push:
+    branches-ignore: ['distribuicao/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validacao-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  web-android:
+    name: Web, testes e APK de depuracao
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/provisionar-python.mjs
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: servidor/requirements*.txt
+      - run: python -m pip install -r servidor/requirements.txt
+      - name: Verificar fluxos web em navegador real
+        env:
+          DATABASE_URL: sqlite:////tmp/flow-e2e.db
+        run: |
+          python -m uvicorn servidor.principal:app --host 127.0.0.1 --port 8000 > /tmp/flow-api.log 2>&1 &
+          api_pid=$!
+          npm run preview --workspace aplicativos/web -- --host 127.0.0.1 --port 4173 > /tmp/flow-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$api_pid" "$preview_pid" 2>/dev/null || true' EXIT
+          for tentativa in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null && curl -fsS http://127.0.0.1:4173/api/saude > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4173/api/saude
+          npm run test:e2e
+      - name: Guardar logs dos servidores de teste
+        if: always()
+        run: |
+          mkdir -p artefatos
+          for arquivo in /tmp/flow-api.log /tmp/flow-preview.log; do
+            if [ -f "$arquivo" ]; then cp "$arquivo" artefatos/; fi
+          done
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Instalar plataforma Android
+        run: sdkmanager 'platforms;android-35' 'build-tools;34.0.0' 'build-tools;35.0.0'
+      - name: Compilar e verificar Android
+        run: bash scripts/android-compilar.sh --sem-web
+      - name: Guardar APK, checksum e relatorios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flow-0.6.0-debug
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            artefatos/
+            aplicativos/android/app/build/reports/lint-results-debug.html
+            aplicativos/web/dist/
+            playwright-report/
+            test-results/
+  servidor:
+    name: API e permissoes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: servidor/requirements*.txt
+      - run: python -m pip install -r servidor/requirements-desenvolvimento.txt
+      - name: Auditar currículo e reprodução das fontes
+        run: |
+          python conteudos/fontes/gerar_catalogo.py
+          python conteudos/verificadores/auditar_catalogo.py
+          git diff --exit-code -- conteudos/catalogo.json conteudos/inventario.json
+      - run: python -m pytest servidor/testes -q

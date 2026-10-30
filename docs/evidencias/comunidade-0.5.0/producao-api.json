@@ -1,0 +1,26 @@
+{
+  "data": "2026-10-29T20:30:24.388565+00:00",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "verificacoes": [
+    "API pública 0.5.0 saudável",
+    "Ranking não está exposto a visitantes",
+    "Leituras idempotentes e perfis separados sem dados administrativos",
+    "Opinião persistida, isolada e recebida somente pela administração",
+    "Aluno não pode moderar usuários",
+    "Banimento revoga sessão e informa motivo/prazo sem afetar outro usuário",
+    "Reativação exige novo login e não restaura token anterior",
+    "Inativação temporária também encerra o acesso",
+    "Exclusão sem confirmação correta é recusada"
+  ],
+  "limpeza": [
+    {
+      "contaTemporariaRemovida": true,
+      "status": 204
+    },
+    {
+      "contaTemporariaRemovida": true,
+      "status": 204
+    }
+  ],
+  "sessaoDeVerificacaoEncerrada": true
+}

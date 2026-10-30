@@ -1,0 +1,23 @@
+{
+  "inicio": "2026-10-27T02:27:31.329Z",
+  "pacote": "br.com.ander.flow",
+  "verificacoes": [],
+  "resultado": "falhou",
+  "erro": "Error: spawnSync /workspace/android-sdk/platform-tools/adb ETIMEDOUT",
+  "fim": "2026-10-27T02:29:31.446Z",
+  "contextoDaExecucao": {
+    "tentativasEmulador": 2,
+    "aceleracaoKvmDisponivel": false,
+    "instalacaoAnterior": "instalacao-apk.log registra Success para um APK debug anterior; o APK final recompilado não foi reinstalado.",
+    "abertura": "Não confirmada. abertura-apk.log: serviço activity indisponível. abertura-segunda-tentativa.log: atividade não encontrada. Verificação automática: ADB ETIMEDOUT.",
+    "validacoesNaoConcluidas": [
+      "abertura da interface Android",
+      "teclado Android",
+      "rotação",
+      "TTS local no dispositivo",
+      "reabertura e persistência offline no Android"
+    ],
+    "limiteDeTentativas": "Não foi iniciada terceira tentativa pesada de emulador.",
+    "proximaValidacao": "Instalar o APK final em aparelho ou emulador acelerado e executar scripts/android-verificar.mjs."
+  }
+}

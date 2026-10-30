@@ -1,0 +1,15 @@
+{
+  "data": "2026-10-28T02:19:42.965961+00:00",
+  "versao": "0.2.0",
+  "apk": "artefatos/Flow-Programacao-Guiada-0.2.0-debug.apk",
+  "bytes": 10869759,
+  "sha256": "e687d4e83662cd4421d05b2746ea15b34465ef6cf29486e7fb384d2ca3274abc",
+  "assinatura": "v1 e v2, Android Debug",
+  "distComparado": 51,
+  "distDiferencas": 0,
+  "lint": {
+    "erros": 0,
+    "avisos": 8
+  },
+  "execucaoAndroid": "Ainda não validada em aparelho ou emulador estável."
+}

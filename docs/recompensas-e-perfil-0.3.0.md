@@ -1,0 +1,13 @@
+# Recompensas e perfil na versão 0.3.0
+
+A coleção de emblemas mostra o significado, a regra e a aquisição de cada prêmio. Ao ganhar, uma revelação animada usa o desenho do emblema, halo, raios e confetes. Todos os prêmios de uma mesma ação entram na fila, incluindo subidas de nível; dispensar um mostra o próximo. A ficha permite rever a animação sem ganhar pontos ou mudar a data. Foco/hover/aba em segundo plano pausam o fechamento automático. Movimento reduzido é respeitado.
+
+A data de aquisição é registrada uma vez no perfil local e sincronizada com a conta. O servidor deriva prêmios dos resultados canônicos, sem confiar em IDs ou XP recebidos, e preserva datas já registradas. Uma escolha de avaliação perdedora num conflito não bloqueia a sincronização nem concede emblema. Conquistas anteriores à funcionalidade são identificadas como históricas, com data original indisponível; a data desta atualização não é apresentada como aquisição antiga. Reabrir o app ou receber um histórico antigo de outro dispositivo não repete celebrações.
+
+A personalização oferece dezoito desenhos SVG originais em Cartoon, Pixel e Games, além dos oito emblemas de nível. Desenhos são livres; emblemas respeitam o nível conquistado. As escolhas antigas da versão 0.2 continuam como fallback até confirmar uma nova aparência. Escolher estilo, ver a prévia, trocar a foto ou cancelar não muda o perfil antes da confirmação.
+
+Foto JPEG/PNG/WebP: até 8 MB e 16 megapixels. O usuário ajusta zoom e posição no recorte quadrado. O app reprocessa os pixels no dispositivo para PNG de até 384×384, reduzindo mais se necessário, limitado a 240 mil caracteres de data URL. O arquivo original e metadados não são enviados. O servidor valida estrutura, assinatura, dimensões, CRC, pixels descomprimidos e limites sem dependência nova. SVG, URLs externas, animações, imagens excessivas e corrompidas são recusados. Uma imagem que falha ao carregar no perfil usa o emblema como fallback.
+
+Aparência e histórico ficam no JSON privado do progresso: disponíveis offline, incluídos no backup/exportação e transferidos ao vincular o perfil local à conta. As contas sincronizam a aparência mais recente; timestamps empatados têm desempate determinístico. Nenhum dado de imagem vai ao bundle, URL pública ou catálogo. Não houve migração de esquema. Os prêmios de progresso não substituem certificação administrativa.
+
+Limites anteriores preservados: APK debug, execução em aparelho Android estável ainda pendente; 20 aulas publicadas/80 atividades; expansão editorial, chave GPT e hospedagem do executor dedicado seguem pendentes.

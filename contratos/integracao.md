@@ -1,0 +1,17 @@
+# Contrato de integração v1
+Idioma de nomes próprios: português, sem acentos em identificadores. Raiz npm workspace aplicativos/web; frontend React 19 + TS + Vite. Arquivos compartilhados criados por responsáveis, não modificar outros domínios.
+
+## Currículo
+conteudos/catalogo.json exporta objeto {versao:1,trilhas:[{id,titulo,descricao,cor,preRequisitos:string[],modulos:[{id,titulo,estado:"publicado"|"em_producao",aulas:Aula[]}]}]}. Aula: {id,titulo,objetivo,preRequisitos:string[],blocos:string[],exemplos:[{titulo,codigo,explicacao:string[]}],questoes:[{id,enunciado,alternativas:[{texto,correta,feedback}]}],desafio,variacao,resumo,pontosDificeis:string[],pistas:string[],arquivos:{html,css,js,python?},competencia,linguagem:"html"|"css"|"javascript"|"dom"|"python"|"api",rubrica:string[]}. Publicado só com aulas completas. JSON importado no cliente. Tipos em contratos/tipos.ts definidos pela frente currículo.
+
+## Laboratório
+aplicativos/web/src/laboratorios/Laboratorio.tsx exporta componente default props {aula:Aula,perfilId:string,aoTestar?:(resultado:{aprovado:boolean;mensagens:string[]})=>void,aoEnviar?:(arquivos:ArquivosCodigo)=>void}. Tipos importados de ../../../../contratos/tipos. Persistência própria por perfil/aula. CSS próprio. CodeMirror, iframe sandbox seguro, HTML/CSS/JS reais, Python WASM quando instalado; console/testes/snapshots. Dependências necessárias comunicar ao principal.
+
+## Persistência e áudio
+aplicativos/web/src/offline/armazenamento.ts exporta lerEstado(perfilId):Promise<EstadoLocal>, salvarEstado(perfilId,estado):Promise<void>, enfileirarTentativa(perfilId,tentativa):Promise<void>, listarFila(perfilId):Promise<TentativaLocal[]>, sincronizarFila(perfilId,token,api):Promise<{enviadas:number,pendentes:number}>. EstadoLocal {aulasConcluidas:string[],respostas:Record<string,boolean>,revisoes:Record<string,{etapa:number,proxima:string}>,xp:number,ultimaAula:string}. TentativaLocal {id:string,aulaId:string,arquivos:ArquivosCodigo,criadaEm:string,status:"aguardando_sincronizacao"|"pendente_validacao"|"aprovada"|"revisar",feedback?:unknown}. Exportar tipos nesse arquivo. áudio: componente default src/audio/Narracao.tsx props {blocos:string[],aoDestacar?:(indice:number)=>void}. PWA service worker gerado por vite-plugin-pwa pelo principal; fornecer configuração recomendada. Não editar package.json.
+
+## API
+Base /api. POST /contas {nome,email,senha}; POST /sessao {email,senha} → {token,usuario:{id,nome,email,papel}}; GET /eu; DELETE /sessao; GET/PUT /progresso (estado e eventos idempotentes documentados); POST /tentativas {id,aulaId,arquivos,criadaEm} → tentativa status pendente_validacao; GET /tentativas (somente próprias). Admin GET /admin/tentativas com filtros; POST /admin/tentativas/{id}/corrigir (GPT manual); PATCH /admin/tentativas/{id} revisão humana; CMS GET/PUT /admin/catalogo. Tokens Bearer, RBAC no servidor, hashing seguro, auditoria, schema validado de GPT, sem execução aluno na API. Configuração por env, admin provisionado CLI. Documentar payload de progresso e feedback final.
+
+## Android / CI
+Capacitor configuração aplicativos/web/capacitor.config.ts; diretório nativo aplicativos/android. App id br.com.ander.flow; nome Flow Programação Guiada; versão 0.1.0. WebDir dist. Principal instala npm e faz build; responsável Android gerencia SDK/Gradle/build APK e CI sem alterar package raiz. Coordenar quando build web necessário.

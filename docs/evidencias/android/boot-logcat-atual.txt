@@ -1,0 +1,33 @@
+--------- beginning of system
+10-27 02:17:21.037   683   683 V SystemServerTiming: OnBootPhase_550_com.android.safetycenter.SafetyCenterService took to complete: 0ms
+10-27 02:17:21.037   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.appsearch.AppSearchModule$Lifecycle
+10-27 02:17:21.037   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.appsearch.AppSearchModule$Lifecycle took to complete: 0ms
+10-27 02:17:21.038   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.media.MediaCommunicationService
+10-27 02:17:21.038   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.media.MediaCommunicationService took to complete: 0ms
+10-27 02:17:21.038   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.compat.overrides.AppCompatOverridesService$Lifecycle
+10-27 02:17:21.038   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.compat.overrides.AppCompatOverridesService$Lifecycle took to complete: 0ms
+10-27 02:17:21.062   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.healthconnect.HealthConnectManagerService
+10-27 02:17:21.068   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.healthconnect.HealthConnectManagerService took to complete: 0ms
+10-27 02:17:21.069   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.devicelock.DeviceLockService
+10-27 02:17:21.070   683   683 D DeviceLockService: onBootPhase: 550
+10-27 02:17:21.095   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.devicelock.DeviceLockService took to complete: 25ms
+10-27 02:17:21.095   683   683 D SystemServerTiming: OnBootPhase_550_com.android.server.SensitiveContentProtectionManagerService
+10-27 02:17:21.096   683   683 V SystemServerTiming: OnBootPhase_550_com.android.server.SensitiveContentProtectionManagerService took to complete: 0ms
+10-27 02:17:21.096   683   683 V SystemServerTiming: OnBootPhase_550 took to complete: 10429ms
+10-27 02:17:21.097   683   683 V SystemServerTiming: StartActivityManagerReadyPhase took to complete: 10459ms
+10-27 02:17:21.097   683   683 D SystemServerTiming: StartObservingNativeCrashes
+10-27 02:17:21.116   683   683 V SystemServerTiming: StartObservingNativeCrashes took to complete: 19ms
+10-27 02:17:21.123   683   683 D SystemServerTiming: RegisterAppOpsPolicy
+10-27 02:17:21.205   683   683 V SystemServerTiming: RegisterAppOpsPolicy took to complete: 81ms
+10-27 02:17:21.228   683   683 D SystemServerTiming: MakeNetworkManagementServiceReady
+--------- beginning of main
+10-27 02:17:21.230   683   683 W NetworkManagement: setDataSaverMode(): already false
+10-27 02:17:21.244   683   868 D SystemServerTimingAsync: InitThreadPoolExec:WebViewFactoryPreparation
+10-27 02:17:21.245   683   868 D SystemServerInitThreadPool: Started executing WebViewFactoryPreparation
+10-27 02:17:21.253   683   868 I SystemServer: WebViewFactoryPreparation
+10-27 02:17:21.253   683   868 D SystemServerTimingAsync: WebViewFactoryPreparation
+10-27 02:17:21.263   356   356 I netd    : firewallSetFirewallType(1) <0.14ms>
+10-27 02:17:21.364   683   683 V SystemServerTiming: MakeNetworkManagementServiceReady took to complete: 135ms
+10-27 02:17:21.384   683   683 D SystemServerTiming: MakeConnectivityServiceReady
+--------- beginning of kernel
+10-27 02:17:21.406     0     0 I logd    : logdr: UID=2000 GID=2000 PID=1111 n tail=30 logMask=99 pid=0 start=0ns deadline=0ns

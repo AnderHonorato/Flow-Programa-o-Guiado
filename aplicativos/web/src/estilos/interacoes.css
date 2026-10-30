@@ -1,0 +1,30 @@
+/* Controles do Flow: a semântica e o teclado continuam nativos; o desenho é do app. */
+.compartilhar-flow{margin-bottom:12px}.compartilhar-flow-painel{border:1px solid var(--line);padding:12px;border-radius:14px;display:grid;gap:8px;background:var(--surface)}.compartilhar-flow-painel p,.compartilhar-flow-painel label{font-size:10px;margin:0}.compartilhar-flow-painel a{font-size:11px;color:var(--accent);min-height:44px;display:flex;align-items:center}.compartilhar-flow-painel input{width:100%;font-size:10px;padding:8px}.compartilhar-flow-painel small{font-size:10px}.compartilhar-flow-painel button{border:1px solid var(--line);background:var(--surface-2)}
+.abas[aria-label="Administração"]{flex-wrap:wrap}.abas[aria-label="Administração"] button{flex:1 1 145px}
+input[type=checkbox],input[type=radio]{appearance:none;-webkit-appearance:none;display:inline-grid!important;place-content:center;flex-shrink:0;width:22px!important;height:22px;min-width:22px;margin:0 8px 0 0!important;padding:0;border:1.5px solid var(--muted);border-radius:7px;background:var(--surface-2);vertical-align:middle;cursor:pointer;transition:background .2s,box-shadow .2s}
+input[type=checkbox]:checked,input[type=radio]:checked{background:var(--accent);border-color:var(--accent);box-shadow:0 2px 7px color-mix(in srgb,var(--accent) 24%,transparent)}
+input[type=checkbox]:checked::after{content:"";display:block;width:11px;height:6px;border-left:2px solid var(--bg);border-bottom:2px solid var(--bg);transform:translateY(-1px) rotate(-45deg)}
+input[type=radio]{border-radius:50%}input[type=radio]:checked::after{content:"";width:8px;height:8px;background:var(--bg);border-radius:50%}
+input[type=checkbox]:disabled,input[type=radio]:disabled{opacity:.5;cursor:not-allowed}
+input[type=range]{appearance:none;-webkit-appearance:none;max-width:100%;height:44px;min-height:44px;padding:0;border:0;background:transparent;cursor:pointer;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:7px;background:var(--line);border:1px solid color-mix(in srgb,var(--muted) 30%,var(--line));border-radius:20px}
+input[type=range]::-moz-range-track{height:5px;background:var(--line);border:1px solid color-mix(in srgb,var(--muted) 30%,var(--line));border-radius:20px}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;background:var(--accent);border:4px solid var(--surface-2);border-radius:50%;box-shadow:0 0 0 1px var(--accent),0 3px 7px #0002;transition:box-shadow .2s}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--accent);border:4px solid var(--surface-2);border-radius:50%;box-shadow:0 0 0 1px var(--accent),0 3px 7px #0002}
+input[type=range]:active::-webkit-slider-thumb{box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 20%,transparent)}
+input[type=file]{font-size:12px;border-style:dashed}
+input[type=file]::file-selector-button{appearance:none;margin:0 10px 0 0;min-height:44px;padding:9px 14px;font:inherit;font-weight:650;color:var(--accent);border:1px solid var(--line);border-radius:11px;background:var(--surface);cursor:pointer}
+button:enabled:not(.jarvis-ativador):active{filter:brightness(.94)}
+button:enabled svg{transition:transform .2s}
+@media(hover:hover){button:enabled:hover svg:not(.jarvis-nucleo){transform:translateY(-1px)}}
+.jarvis-dica-selecao{display:flex;align-items:flex-start;gap:8px;margin:6px 0 24px;padding:12px 14px;border:1px dashed var(--line);border-radius:13px;font-size:12px!important;line-height:1.6;color:var(--muted)}.jarvis-dica-selecao svg{flex-shrink:0;margin-top:2px;color:var(--accent)}
+.lab-versoes>.flow-seletor{min-width:180px;flex:1}.lab-previa-cabecalho>.flow-seletor{width:min(170px,48%)}.lab-api-linha>.flow-seletor{flex:1;min-width:140px}.experimento-controles>.flow-seletor{align-self:end}
+/* Movimento curto responde à ação sem competir com a leitura. */
+#conteudo>.pagina-aula,#conteudo>.cabecalho-pagina,.avaliacao-resultado,.correcao-itens,.narracao-atual,.experimento-saida,details[open]>.lab-inspecao{animation:flow-descoberta .35s cubic-bezier(.2,.7,.3,1) both}
+.avaliacao-resultado .correcao-item{animation:flow-descoberta .35s ease-out both}.correcao-item:nth-child(2){animation-delay:.07s}.correcao-item:nth-child(3){animation-delay:.14s}
+.metricas>div{animation:flow-descoberta .4s ease-out both}.metricas>div:nth-child(2){animation-delay:.06s}.metricas>div:nth-child(3){animation-delay:.12s}
+.perfil-avatar-item,.evo-conquista,.recompensa-item{transition:transform .2s,border-color .2s,box-shadow .2s}
+@media(hover:hover){.perfil-avatar-item:enabled:hover{transform:translateY(-3px)}.perfil-avatar-item:enabled:hover svg{transform:rotate(-3deg) scale(1.03)}}
+.flow-seletor-lista{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+@keyframes flow-descoberta{from{opacity:.45;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.metricas>div,.avaliacao-resultado,.avaliacao-resultado .correcao-item,.correcao-itens,.narracao-atual,.experimento-saida,#conteudo>.pagina-aula,#conteudo>.cabecalho-pagina{animation:none!important}button svg,.perfil-avatar-item,input[type=checkbox],input[type=range]::-webkit-slider-thumb{transition:none!important}}

@@ -1,0 +1,441 @@
+{
+  "versao": 1,
+  "criterio": "Exercício autoral = questão objetiva, desafio de laboratório ou variação com enunciado próprio. Exemplos, testes, pistas e módulos em produção não contam.",
+  "metasMinimas": {
+    "trilhas": 10,
+    "modulos": 60,
+    "aulas": 180,
+    "exercicios": 450
+  },
+  "publicado": {
+    "trilhasComAulas": 10,
+    "modulosComAulas": 30,
+    "aulas": 30,
+    "questoesObjetivas": 60,
+    "desafios": 30,
+    "variacoes": 30,
+    "exercicios": 120,
+    "exemplos": 60,
+    "testesObjetivos": 80
+  },
+  "emProducao": {
+    "modulosSemAulas": 30,
+    "aulasParaMetaMinima": 150,
+    "exerciciosParaMetaMinima": 330
+  },
+  "planejamento": {
+    "aulas": 180,
+    "exercicios": 720,
+    "observacao": "Planejamento não é conteúdo publicado; quatro atividades por aula projetam 720, acima do mínimo editorial de 450."
+  },
+  "porTrilha": [
+    {
+      "id": "fundamentos",
+      "titulo": "Fundamentos da programação",
+      "modulos": 6,
+      "aulasPublicadas": 2,
+      "exerciciosPublicados": 8
+    },
+    {
+      "id": "html",
+      "titulo": "HTML: conteúdo com significado",
+      "modulos": 6,
+      "aulasPublicadas": 4,
+      "exerciciosPublicados": 16
+    },
+    {
+      "id": "css",
+      "titulo": "CSS: forma e layout",
+      "modulos": 6,
+      "aulasPublicadas": 4,
+      "exerciciosPublicados": 16
+    },
+    {
+      "id": "javascript",
+      "titulo": "JavaScript: lógica em ação",
+      "modulos": 6,
+      "aulasPublicadas": 5,
+      "exerciciosPublicados": 20
+    },
+    {
+      "id": "dom",
+      "titulo": "DOM: interfaces que respondem",
+      "modulos": 6,
+      "aulasPublicadas": 3,
+      "exerciciosPublicados": 12
+    },
+    {
+      "id": "python",
+      "titulo": "Python: dados e automação",
+      "modulos": 6,
+      "aulasPublicadas": 4,
+      "exerciciosPublicados": 16
+    },
+    {
+      "id": "frontend",
+      "titulo": "Frontend: aplicações acessíveis",
+      "modulos": 6,
+      "aulasPublicadas": 2,
+      "exerciciosPublicados": 8
+    },
+    {
+      "id": "backend",
+      "titulo": "Backend: APIs e dados",
+      "modulos": 6,
+      "aulasPublicadas": 2,
+      "exerciciosPublicados": 8
+    },
+    {
+      "id": "fullstack",
+      "titulo": "Full stack: do navegador ao banco",
+      "modulos": 6,
+      "aulasPublicadas": 2,
+      "exerciciosPublicados": 8
+    },
+    {
+      "id": "projetos",
+      "titulo": "Projetos para o portfólio",
+      "modulos": 6,
+      "aulasPublicadas": 2,
+      "exerciciosPublicados": 8
+    }
+  ],
+  "aulas": [
+    {
+      "id": "fundamentos-caminho-web",
+      "competencia": "web-recursos-url",
+      "linguagem": "html",
+      "questoes": [
+        "fundamentos-caminho-web-q1",
+        "fundamentos-caminho-web-q2"
+      ],
+      "desafio": "fundamentos-caminho-web-desafio",
+      "variacao": "fundamentos-caminho-web-variacao"
+    },
+    {
+      "id": "fundamentos-algoritmos",
+      "competencia": "fundamentos-algoritmos-sequencia",
+      "linguagem": "javascript",
+      "questoes": [
+        "fundamentos-algoritmos-q1",
+        "fundamentos-algoritmos-q2"
+      ],
+      "desafio": "fundamentos-algoritmos-desafio",
+      "variacao": "fundamentos-algoritmos-variacao"
+    },
+    {
+      "id": "html-primeira-pagina",
+      "competencia": "html-estrutura-documento",
+      "linguagem": "html",
+      "questoes": [
+        "html-primeira-pagina-q1",
+        "html-primeira-pagina-q2"
+      ],
+      "desafio": "html-primeira-pagina-desafio",
+      "variacao": "html-primeira-pagina-variacao"
+    },
+    {
+      "id": "html-listas-links",
+      "competencia": "html-hierarquia-navegacao",
+      "linguagem": "html",
+      "questoes": [
+        "html-listas-links-q1",
+        "html-listas-links-q2"
+      ],
+      "desafio": "html-listas-links-desafio",
+      "variacao": "html-listas-links-variacao"
+    },
+    {
+      "id": "html-tabelas",
+      "competencia": "html-tabelas-cabecalhos",
+      "linguagem": "html",
+      "questoes": [
+        "html-tabelas-q1",
+        "html-tabelas-q2"
+      ],
+      "desafio": "html-tabelas-desafio",
+      "variacao": "html-tabelas-variacao"
+    },
+    {
+      "id": "html-formulario",
+      "competencia": "html-formulario-acessivel",
+      "linguagem": "html",
+      "questoes": [
+        "html-formulario-q1",
+        "html-formulario-q2"
+      ],
+      "desafio": "html-formulario-desafio",
+      "variacao": "html-formulario-variacao"
+    },
+    {
+      "id": "css-cascata",
+      "competencia": "css-cascata-seletores",
+      "linguagem": "css",
+      "questoes": [
+        "css-cascata-q1",
+        "css-cascata-q2"
+      ],
+      "desafio": "css-cascata-desafio",
+      "variacao": "css-cascata-variacao"
+    },
+    {
+      "id": "css-box-model",
+      "competencia": "css-modelo-caixa",
+      "linguagem": "css",
+      "questoes": [
+        "css-box-model-q1",
+        "css-box-model-q2"
+      ],
+      "desafio": "css-box-model-desafio",
+      "variacao": "css-box-model-variacao"
+    },
+    {
+      "id": "css-flexbox",
+      "competencia": "css-layout-flex",
+      "linguagem": "css",
+      "questoes": [
+        "css-flexbox-q1",
+        "css-flexbox-q2"
+      ],
+      "desafio": "css-flexbox-desafio",
+      "variacao": "css-flexbox-variacao"
+    },
+    {
+      "id": "css-grid",
+      "competencia": "css-grid-trilhas-responsivas",
+      "linguagem": "css",
+      "questoes": [
+        "css-grid-q1",
+        "css-grid-q2"
+      ],
+      "desafio": "css-grid-desafio",
+      "variacao": "css-grid-variacao"
+    },
+    {
+      "id": "js-valores",
+      "competencia": "javascript-tipos-conversao",
+      "linguagem": "javascript",
+      "questoes": [
+        "js-valores-q1",
+        "js-valores-q2"
+      ],
+      "desafio": "js-valores-desafio",
+      "variacao": "js-valores-variacao"
+    },
+    {
+      "id": "js-funcoes",
+      "competencia": "javascript-funcoes-condicoes",
+      "linguagem": "javascript",
+      "questoes": [
+        "js-funcoes-q1",
+        "js-funcoes-q2"
+      ],
+      "desafio": "js-funcoes-desafio",
+      "variacao": "js-funcoes-variacao"
+    },
+    {
+      "id": "js-arrays",
+      "competencia": "javascript-colecoes",
+      "linguagem": "javascript",
+      "questoes": [
+        "js-arrays-q1",
+        "js-arrays-q2"
+      ],
+      "desafio": "js-arrays-desafio",
+      "variacao": "js-arrays-variacao"
+    },
+    {
+      "id": "js-escopo",
+      "competencia": "javascript-escopo-fechamentos",
+      "linguagem": "javascript",
+      "questoes": [
+        "js-escopo-q1",
+        "js-escopo-q2"
+      ],
+      "desafio": "js-escopo-desafio",
+      "variacao": "js-escopo-variacao"
+    },
+    {
+      "id": "js-assincrono",
+      "competencia": "api-assincronia-erros",
+      "linguagem": "api",
+      "questoes": [
+        "js-assincrono-q1",
+        "js-assincrono-q2"
+      ],
+      "desafio": "js-assincrono-desafio",
+      "variacao": "js-assincrono-variacao"
+    },
+    {
+      "id": "dom-selecao",
+      "competencia": "dom-selecao-texto",
+      "linguagem": "dom",
+      "questoes": [
+        "dom-selecao-q1",
+        "dom-selecao-q2"
+      ],
+      "desafio": "dom-selecao-desafio",
+      "variacao": "dom-selecao-variacao"
+    },
+    {
+      "id": "dom-eventos",
+      "competencia": "dom-eventos-estado",
+      "linguagem": "dom",
+      "questoes": [
+        "dom-eventos-q1",
+        "dom-eventos-q2"
+      ],
+      "desafio": "dom-eventos-desafio",
+      "variacao": "dom-eventos-variacao"
+    },
+    {
+      "id": "dom-formularios",
+      "competencia": "dom-formularios-envio-local",
+      "linguagem": "dom",
+      "questoes": [
+        "dom-formularios-q1",
+        "dom-formularios-q2"
+      ],
+      "desafio": "dom-formularios-desafio",
+      "variacao": "dom-formularios-variacao"
+    },
+    {
+      "id": "python-tipos",
+      "competencia": "python-tipos-saida",
+      "linguagem": "python",
+      "questoes": [
+        "python-tipos-q1",
+        "python-tipos-q2"
+      ],
+      "desafio": "python-tipos-desafio",
+      "variacao": "python-tipos-variacao"
+    },
+    {
+      "id": "python-funcoes",
+      "competencia": "python-funcoes-repeticao",
+      "linguagem": "python",
+      "questoes": [
+        "python-funcoes-q1",
+        "python-funcoes-q2"
+      ],
+      "desafio": "python-funcoes-desafio",
+      "variacao": "python-funcoes-variacao"
+    },
+    {
+      "id": "python-dicionarios",
+      "competencia": "python-dicionarios",
+      "linguagem": "python",
+      "questoes": [
+        "python-dicionarios-q1",
+        "python-dicionarios-q2"
+      ],
+      "desafio": "python-dicionarios-desafio",
+      "variacao": "python-dicionarios-variacao"
+    },
+    {
+      "id": "python-arquivos",
+      "competencia": "python-arquivos-json-utf8",
+      "linguagem": "python",
+      "questoes": [
+        "python-arquivos-q1",
+        "python-arquivos-q2"
+      ],
+      "desafio": "python-arquivos-desafio",
+      "variacao": "python-arquivos-variacao"
+    },
+    {
+      "id": "frontend-componentes",
+      "competencia": "frontend-componentes-contratos",
+      "linguagem": "dom",
+      "questoes": [
+        "frontend-componentes-q1",
+        "frontend-componentes-q2"
+      ],
+      "desafio": "frontend-componentes-desafio",
+      "variacao": "frontend-componentes-variacao"
+    },
+    {
+      "id": "frontend-estado",
+      "competencia": "frontend-estado-renderizacao-unica",
+      "linguagem": "dom",
+      "questoes": [
+        "frontend-estado-q1",
+        "frontend-estado-q2"
+      ],
+      "desafio": "frontend-estado-desafio",
+      "variacao": "frontend-estado-variacao"
+    },
+    {
+      "id": "api-http",
+      "competencia": "backend-http-contratos",
+      "linguagem": "api",
+      "questoes": [
+        "api-http-q1",
+        "api-http-q2"
+      ],
+      "desafio": "api-http-desafio",
+      "variacao": "api-http-variacao"
+    },
+    {
+      "id": "api-validacao",
+      "competencia": "backend-validacao-resposta-json",
+      "linguagem": "api",
+      "questoes": [
+        "api-validacao-q1",
+        "api-validacao-q2"
+      ],
+      "desafio": "api-validacao-desafio",
+      "variacao": "api-validacao-variacao"
+    },
+    {
+      "id": "fullstack-contratos",
+      "competencia": "fullstack-contratos-validacao",
+      "linguagem": "api",
+      "questoes": [
+        "fullstack-contratos-q1",
+        "fullstack-contratos-q2"
+      ],
+      "desafio": "fullstack-contratos-desafio",
+      "variacao": "fullstack-contratos-variacao"
+    },
+    {
+      "id": "fullstack-sessao",
+      "competencia": "fullstack-sessao-validade-autorizacao",
+      "linguagem": "api",
+      "questoes": [
+        "fullstack-sessao-q1",
+        "fullstack-sessao-q2"
+      ],
+      "desafio": "fullstack-sessao-desafio",
+      "variacao": "fullstack-sessao-variacao"
+    },
+    {
+      "id": "projeto-landing-page",
+      "competencia": "projeto-landing-page",
+      "linguagem": "html",
+      "questoes": [
+        "projeto-landing-page-q1",
+        "projeto-landing-page-q2"
+      ],
+      "desafio": "projeto-landing-page-desafio",
+      "variacao": "projeto-landing-page-variacao"
+    },
+    {
+      "id": "projeto-calculadora",
+      "competencia": "projeto-calculadora-validacao-feedback",
+      "linguagem": "dom",
+      "questoes": [
+        "projeto-calculadora-q1",
+        "projeto-calculadora-q2"
+      ],
+      "desafio": "projeto-calculadora-desafio",
+      "variacao": "projeto-calculadora-variacao"
+    }
+  ],
+  "verificacao": {
+    "integridadeEditorial": true,
+    "exemplosPythonExecutados": 8,
+    "exemplosJavaScriptSintaxe": 32,
+    "erros": []
+  }
+}

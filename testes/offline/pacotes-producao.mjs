@@ -1,0 +1,43 @@
+import {chromium,expect} from '@playwright/test';
+import {mkdirSync,writeFileSync} from 'node:fs';
+const endereco=process.env.FLOW_OFFLINE_URL||'http://127.0.0.1:4184';
+const pasta=new URL('./evidencias/',import.meta.url);mkdirSync(pasta,{recursive:true});
+const navegador=await chromium.launch({headless:true,args:['--no-sandbox']});
+const contexto=await navegador.newContext({viewport:{width:1440,height:1000},baseURL:endereco});
+const evidencia={executadoEm:new Date().toISOString(),endereco,ambiente:'Chromium headless · build produção · service worker real',verificacoes:[]};
+let pagina=await contexto.newPage();
+try{
+ await pagina.goto('/');await pagina.getByLabel('Como podemos chamar você?').fill('QA offline');
+ await pagina.getByRole('button',{name:'Começar no meu dispositivo'}).click();
+ await pagina.evaluate(async()=>{await navigator.serviceWorker.ready;});await pagina.reload();
+ await expect.poll(()=>pagina.evaluate(()=>Boolean(navigator.serviceWorker.controller))).toBe(true);
+ await pagina.locator('.lateral-rodape').getByRole('button').filter({hasText:'QA offline'}).click();
+ const secao=pagina.locator('section').filter({has:pagina.getByRole('heading',{name:'Pacotes no dispositivo'})});
+ const html=secao.locator('.lista-dados > div').filter({hasText:'HTML: conteúdo com significado'});
+ await html.getByRole('button',{name:'Baixar pacote',exact:true}).click();await expect(html.getByRole('button',{name:'Remover pacote'})).toBeVisible();
+ await html.getByRole('button',{name:'Remover pacote'}).click();await expect(html.getByRole('button',{name:'Baixar pacote',exact:true})).toBeEnabled();
+ await html.getByRole('button',{name:'Baixar pacote',exact:true}).click();await expect(html.getByRole('button',{name:'Remover pacote'})).toBeVisible();
+ evidencia.verificacoes.push('Trilha HTML baixada, removida e instalada novamente pela interface.');
+ const python=secao.locator('.lista-dados > div').filter({hasText:'Python local · Pyodide 0.29.3'});
+ await python.getByRole('button',{name:'Baixar pacote',exact:true}).click();await expect(python.getByRole('button',{name:'Remover pacote'})).toBeVisible({timeout:60000});
+ await expect(python).toContainText('11.7 MB');
+ evidencia.pacotes=await pagina.evaluate(async()=>{const db=await new Promise((resolver,rejeitar)=>{const pedido=indexedDB.open('flow-programacao-guiada');pedido.onsuccess=()=>resolver(pedido.result);pedido.onerror=()=>rejeitar(pedido.error);});return new Promise((resolver,rejeitar)=>{const pedido=db.transaction('recursos').objectStore('recursos').getAll();pedido.onsuccess=()=>resolver(pedido.result.filter(r=>r.chave.startsWith('pacote:')).map(r=>({id:r.conteudo.id,bytes:r.conteudo.bytes,arquivos:r.conteudo.recursos})));pedido.onerror=()=>rejeitar(pedido.error);});});
+ evidencia.verificacoes.push('Runtime Python: seis arquivos reais instalados em CacheStorage e metadados IndexedDB.');
+ const depuracao=await contexto.newCDPSession(pagina);await depuracao.send('Network.clearBrowserCache');await depuracao.detach();
+ await contexto.setOffline(true);await pagina.close();pagina=await contexto.newPage();await pagina.goto('/');
+ await expect(pagina.getByRole('heading',{name:'Pacotes no dispositivo'})).toBeVisible();
+ await expect(pagina.getByText('Sem internet · modo offline')).toBeVisible();
+ const recursosPython=evidencia.pacotes.find(p=>p.id==='python-runtime-0.29.3').arquivos;
+ evidencia.bytesOffline=await pagina.evaluate(async urls=>{const tamanhos=[];for(const url of urls){const resposta=await fetch(url);if(!resposta.ok)throw new Error(`Recurso ausente: ${url}`);tamanhos.push((await resposta.arrayBuffer()).byteLength);}return tamanhos;},recursosPython);
+ expect(evidencia.bytesOffline.every(n=>n>0)).toBe(true);
+ evidencia.verificacoes.push('Página fechada e reaberta sem rede após limpar cache HTTP; seis recursos Python recuperados pelo service worker.');
+ await pagina.getByRole('button',{name:'Trilhas',exact:true}).click();await pagina.getByRole('button',{name:/Python: dados e automação/}).click();
+ await pagina.getByRole('button',{name:'Python: texto, números e saída',exact:true}).click();await pagina.getByRole('button',{name:'Ir para o laboratório'}).click();
+ await pagina.getByRole('textbox',{name:'Editor PYTHON'}).fill('estoque = 35\nquantidade = int("12")\nsaldo = estoque - quantidade\nprint(f"Restam {saldo} livros.")\nprint(type(quantidade).__name__)');
+ await pagina.getByRole('button',{name:/Testar código/}).click();
+ await expect(pagina.locator('.lab-teste-ok')).toHaveCount(1,{timeout:60000});await expect(pagina.locator('.lab-teste-revisar')).toHaveCount(0);
+ evidencia.verificacoes.push('Exercício Python real executado em Worker WebAssembly sem rede: teste objetivo de saldo aprovado.');
+ await pagina.screenshot({path:new URL('python-sem-internet.png',pasta).pathname,fullPage:true});
+ evidencia.resultado='aprovado';
+}catch(erro){evidencia.resultado='falhou';evidencia.erro=String(erro);await pagina.screenshot({path:new URL('falha-pacotes.png',pasta).pathname,fullPage:true}).catch(()=>{});throw erro;}
+finally{writeFileSync(new URL('pacotes-producao.json',pasta),JSON.stringify(evidencia,null,2));console.log(JSON.stringify(evidencia,null,2));await navegador.close();}

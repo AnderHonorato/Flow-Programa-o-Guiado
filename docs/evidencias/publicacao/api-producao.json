@@ -1,0 +1,46 @@
+{
+  "data": "2026-10-27",
+  "ambiente": "Vercel produção + Supabase honorato.tech",
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "verificacoes": [
+    {
+      "teste": "cadastro_aluno",
+      "status": 201
+    },
+    {
+      "teste": "cadastro_admin",
+      "status": 201
+    },
+    {
+      "teste": "aluno_bloqueado_admin",
+      "status": 403
+    },
+    {
+      "teste": "envio_pendente_idempotente",
+      "status": 201,
+      "deduplicado": true
+    },
+    {
+      "teste": "logout_revoga_token",
+      "status": 401
+    },
+    {
+      "teste": "GPT_sem_chave_nao_aprova",
+      "status": 503
+    },
+    {
+      "teste": "revisao_humana_emite_certificado_auditado",
+      "status": 200
+    },
+    {
+      "teste": "progresso_persistente_postgres",
+      "status": 200
+    },
+    {
+      "teste": "revogacao_certificado",
+      "status": 200
+    }
+  ],
+  "GPT_real": "não configurado, nenhuma chamada ao modelo",
+  "contasTemporarias": "removidas após verificação; zero contas temporárias restantes"
+}
