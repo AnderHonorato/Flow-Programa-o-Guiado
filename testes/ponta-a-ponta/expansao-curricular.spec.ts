@@ -194,7 +194,14 @@ test('arquivos Python executam em WebAssembly após fechar e reabrir sem interne
   await prepararLaboratorio(page);
   const codigo = solucaoDaAula(aula.id).python!;
   await editar(page, 'python', codigo);
-  await expect.poll(() => page.evaluate(() => Object.values(localStorage).some(valor => valor.includes('TemporaryDirectory')))).toBe(true);
+  // O inicial também importa TemporaryDirectory. Espere a versão completa ser
+  // persistida, pois fechar antes do debounce de autosave descarta a última edição.
+  await expect.poll(() => page.evaluate(({ id, codigo }) => {
+    const perfil = localStorage.getItem('flow-id-local') || '';
+    const chave = `flow:laboratorio:v1:${encodeURIComponent(perfil)}:${encodeURIComponent(id)}`;
+    const salvo = JSON.parse(localStorage.getItem(chave) || 'null');
+    return salvo?.arquivos?.python === codigo;
+  }, { id: aula.id, codigo }))).toBe(true);
 
   // Limpa o cache HTTP e fecha a aba para não reaproveitar runtime ou worker em memória.
   // CacheStorage do pacote e precache do aplicativo são os únicos recursos offline.
