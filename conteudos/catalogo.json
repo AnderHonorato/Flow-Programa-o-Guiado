@@ -157,8 +157,124 @@
         {
           "id": "fundamentos-02",
           "titulo": "Algoritmos e decomposição",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "fundamentos-algoritmos",
+              "titulo": "Decompor uma tarefa em passos verificáveis",
+              "objetivo": "Separar entrada, processamento e saída e acompanhar uma sequência numérica com um teste conhecido.",
+              "preRequisitos": [
+                "fundamentos-caminho-web"
+              ],
+              "blocos": [
+                "A biblioteca começou o dia com doze livros disponíveis, recebeu três doações e emprestou quatro exemplares. Antes de abrir um editor, escreva o que você sabe, o que precisa descobrir e como vai conferir. Esses três grupos são entrada, processamento e saída. O problema deixa de ser uma frase comprida e passa a ter pequenas responsabilidades verificáveis.",
+                "Um algoritmo descreve uma sequência finita de passos para resolver uma tarefa. Neste caso, leia o estoque inicial, acrescente as doações e desconte os empréstimos. Faça a conta à mão primeiro: doze mais três menos quatro resulta em onze. Esse resultado conhecido permite conferir se o programa realmente segue a regra, em vez de aceitar qualquer número mostrado na tela.",
+                "Vamos registrar os passos em JavaScript, a linguagem executada pelo navegador. const inicial = 12 cria um nome para o valor doze; o sinal = associa o valor ao nome, e não pergunta se duas coisas são iguais. Cada declaração termina com ponto e vírgula. Os operadores + e - fazem a soma e a subtração quando os valores são números, escritos sem aspas.",
+                "Uma declaração pode usar nomes definidos nas linhas anteriores. const aposDoacoes = inicial + doacoes guarda uma etapa intermediária; const saldo = aposDoacoes - emprestimos guarda a próxima. console.log(\"Saldo:\", saldo) escreve uma mensagem e o valor no console. O texto fica entre aspas e a vírgula separa os itens exibidos. Nesta aula não precisamos alterar a página nem ler campos.",
+                "Para encontrar uma falha, acompanhe uma linha de cada vez e anote seu resultado. Se as doações são zero, o primeiro passo deve manter o estoque; se não há empréstimos, o saldo final coincide com o estoque após as doações. Não troque a conta por um número escrito diretamente no console: o programa precisa continuar correto quando as entradas mudarem. A regra desta prática considera quantidades inteiras não negativas e empréstimos que cabem no estoque."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Acompanhar o estoque em duas etapas",
+                  "codigo": "const estoqueInicio = 8;\nconst recebidos = 2;\nconst disponiveis = estoqueInicio + recebidos;\nconst saldoFinal = disponiveis - 3;\nconsole.log(\"Saldo:\", saldoFinal);",
+                  "explicacao": [
+                    "Linha 1: Guarda oito livros como entrada numérica do exemplo.",
+                    "Linha 2: Registra os dois livros que chegaram depois da abertura.",
+                    "Linha 3: Soma os valores anteriores e guarda dez livros disponíveis.",
+                    "Linha 4: Desconta três empréstimos depois de contabilizar as doações.",
+                    "Linha 5: Mostra a identificação da saída e o saldo calculado de sete."
+                  ]
+                },
+                {
+                  "titulo": "Uma fronteira: nenhuma alteração",
+                  "codigo": "const quantidadeBase = 5;\nconst doacoesDoDia = 0;\nconst emprestimosDoDia = 0;\nconst quantidadeAtual = quantidadeBase + doacoesDoDia - emprestimosDoDia;\nconsole.log(\"Sem movimento:\", quantidadeAtual);",
+                  "explicacao": [
+                    "Linha 1: Define um estoque inicial diferente para conferir a regra.",
+                    "Linha 2: Representa uma entrada válida em que não chegou nenhum livro.",
+                    "Linha 3: Registra que também não houve empréstimos neste cenário.",
+                    "Linha 4: Aplica a mesma sequência e mantém cinco livros disponíveis.",
+                    "Linha 5: Permite comparar a saída calculada com o estoque original."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "fundamentos-algoritmos-q1",
+                  "enunciado": "Qual ação ajuda a verificar o algoritmo antes de executá-lo?",
+                  "alternativas": [
+                    {
+                      "texto": "Calcular um caso conhecido à mão e comparar com a saída.",
+                      "correta": true,
+                      "feedback": "Um resultado esperado independente do programa permite detectar se a sequência implementa a regra."
+                    },
+                    {
+                      "texto": "Escolher qualquer número que pareça razoável.",
+                      "correta": false,
+                      "feedback": "Uma saída plausível pode esconder uma operação errada; ela precisa corresponder às entradas e à regra."
+                    },
+                    {
+                      "texto": "Mudar a cor do título antes de escrever os passos.",
+                      "correta": false,
+                      "feedback": "A aparência não verifica a conta; primeiro separe os dados, a transformação e o resultado esperado."
+                    }
+                  ]
+                },
+                {
+                  "id": "fundamentos-algoritmos-q2",
+                  "enunciado": "O que const saldo = aposDoacoes - emprestimos representa?",
+                  "alternativas": [
+                    {
+                      "texto": "Uma etapa de processamento que calcula um novo valor.",
+                      "correta": true,
+                      "feedback": "A expressão usa duas entradas já conhecidas e guarda a diferença em um novo nome."
+                    },
+                    {
+                      "texto": "Uma pergunta que compara dois valores.",
+                      "correta": false,
+                      "feedback": "O sinal = associa o resultado ao nome saldo; não faz uma pergunta de igualdade."
+                    },
+                    {
+                      "texto": "Uma instrução que mostra o valor automaticamente na página.",
+                      "correta": false,
+                      "feedback": "Guardar um valor não o exibe; neste exercício console.log é responsável por produzir a saída."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Use as entradas inicial = 12, doacoes = 3 e emprestimos = 4. Calcule aposDoacoes e depois saldo, sem escrever 11 diretamente como resposta. Mostre console.log(\"Saldo:\", saldo) e confira a mensagem Saldo: 11. Explique de qual entrada depende cada etapa.",
+              "variacao": "Mantenha a sequência, mas use inicial = 5, doacoes = 0 e emprestimos = 0. Preveja a saída antes de executar e justifique por que ela permanece 5.",
+              "resumo": "Decompor uma tarefa separa dados, transformações e resultado. Um caso conhecido e um caso sem movimento verificam a sequência.",
+              "pontosDificeis": [
+                "Não confundir associação com uma comparação de igualdade.",
+                "Conferir etapas intermediárias em vez de substituir o cálculo pela resposta pronta."
+              ],
+              "pistas": [
+                "Escreva a conta em linguagem comum antes do código.",
+                "Some as doações ao estoque inicial e guarde essa etapa.",
+                "Subtraia os empréstimos da quantidade que já inclui as doações."
+              ],
+              "arquivos": {
+                "html": "<h1>O caminho de uma conta</h1><p>Abra o console para acompanhar o estoque.</p>",
+                "css": "",
+                "js": "const inicial = 12;\nconst doacoes = 3;\nconst emprestimos = 4;\n// Calcule as duas etapas e mostre o saldo."
+              },
+              "competencia": "fundamentos-algoritmos-sequencia",
+              "linguagem": "javascript",
+              "rubrica": [
+                "Identifica entradas e saída antes de escrever as instruções.",
+                "Calcula o saldo a partir das entradas, sem fixar a resposta no console.",
+                "Confere o caso pedido e a variação com movimento zero."
+              ],
+              "testes": [
+                {
+                  "id": "saldo-calculado",
+                  "descricao": "O console apresenta Saldo: 11 para as entradas fornecidas.",
+                  "tipo": "javascript",
+                  "esperado": "Saldo: 11"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar algoritmos e decomposição em uma situação prática, justificar decisões e revisar erros."
@@ -537,8 +653,152 @@
         {
           "id": "html-03",
           "titulo": "Imagens e conteúdo estruturado",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "html-tabelas",
+              "titulo": "Tabelas que explicam a relação entre os dados",
+              "objetivo": "Representar uma agenda tabular com legenda e cabeçalhos associados a linhas e colunas.",
+              "preRequisitos": [
+                "html-listas-links"
+              ],
+              "blocos": [
+                "A programação da biblioteca tem três informações que sempre andam juntas: o nome da oficina, o dia e a sala. Uma lista já mostra os nomes, mas comparar o dia de cada atividade exige enxergar relações entre linhas e colunas. Uma tabela é adequada para esses dados. Ela não deve ser usada apenas para posicionar os blocos visuais de uma página; essa tarefa pertence ao CSS.",
+                "table envolve a estrutura. caption dá um nome à tabela e permite compreender seu assunto antes de percorrer as células. tr reúne uma linha; th identifica uma célula de cabeçalho e td guarda um dado comum. A primeira linha pode apresentar Oficina, Dia e Sala. Cada linha seguinte precisa preservar essa ordem para que uma sala não acabe aparecendo na coluna de dia.",
+                "thead agrupa a região dos cabeçalhos; tbody reúne as linhas de dados. Esses elementos tornam a estrutura explícita, mas sozinhos não dizem qual cabeçalho corresponde a cada célula. Use scope=\"col\" nos títulos das colunas. Quando o nome de uma oficina identifica toda uma linha, ele pode ser th com scope=\"row\". Essa associação ajuda tecnologias assistivas a manter o contexto durante a navegação.",
+                "Considere a linha Leitura, Sábado, Sala 1. Leitura é o cabeçalho daquela linha; Sábado e Sala 1 são dados relacionados a ela. A tabela simples desta aula não usa células mescladas: cada linha possui três células. Não adicione espaços, quebras de linha ou elementos vazios para simular colunas. O alinhamento visual não substitui as relações semânticas criadas por th e scope.",
+                "No laboratório, construa primeiro a tabela sem estilos e confira a legenda, os títulos e a quantidade de células por linha. Depois aplique bordas e espaçamento para facilitar a leitura. Em telas pequenas, uma tabela pode precisar de uma região com rolagem horizontal; esconder colunas sem explicar a perda de dados prejudica a comparação. A legenda deve continuar presente mesmo quando o título da página parece semelhante."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Uma agenda com cabeçalhos de coluna",
+                  "codigo": "<table>\n  <caption>Horários da biblioteca</caption>\n  <thead><tr><th scope=\"col\">Dia</th><th scope=\"col\">Abertura</th></tr></thead>\n  <tbody>\n    <tr><td>Sábado</td><td>9 horas</td></tr>\n  </tbody>\n</table>",
+                  "explicacao": [
+                    "Linha 1: Abre uma tabela de dados relacionados, sem definir layout de página.",
+                    "Linha 2: Nomeia o assunto de toda a tabela antes de seus cabeçalhos.",
+                    "Linha 3: Associa cada título às células de sua respectiva coluna.",
+                    "Linha 4: Agrupa os registros que pertencem ao corpo da tabela.",
+                    "Linha 5: Mantém o dia e seu horário na ordem definida pelo cabeçalho.",
+                    "Linha 6: Encerra os dados sem misturá-los à região de cabeçalhos.",
+                    "Linha 7: Fecha a estrutura completa que poderá receber estilos depois."
+                  ]
+                },
+                {
+                  "titulo": "Um nome que identifica a linha",
+                  "codigo": "<table>\n  <caption>Vagas por oficina</caption>\n  <thead><tr><th scope=\"col\">Oficina</th><th scope=\"col\">Vagas</th></tr></thead>\n  <tbody>\n    <tr><th scope=\"row\">Leitura</th><td>8</td></tr>\n    <tr><th scope=\"row\">Desenho</th><td>0</td></tr>\n  </tbody>\n</table>",
+                  "explicacao": [
+                    "Linha 1: Inicia uma segunda tabela independente da agenda anterior.",
+                    "Linha 2: Informa que os números abaixo representam disponibilidade de vagas.",
+                    "Linha 3: Declara os dois cabeçalhos responsáveis por organizar as colunas.",
+                    "Linha 4: Separa os dados das oficinas dos títulos das colunas.",
+                    "Linha 5: Usa o nome da oficina como cabeçalho para o valor da mesma linha.",
+                    "Linha 6: Preserva zero como um dado válido, sem esconder a oficina lotada.",
+                    "Linha 7: Conclui o conjunto de registros com uma linha por oficina.",
+                    "Linha 8: Fecha a tabela mantendo as associações de linhas e colunas."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "html-tabelas-q1",
+                  "enunciado": "Qual marcação associa um título a todas as células de uma coluna simples?",
+                  "alternativas": [
+                    {
+                      "texto": "th com scope=\"col\".",
+                      "correta": true,
+                      "feedback": "O elemento th identifica um cabeçalho e scope=\"col\" explicita sua relação com a coluna."
+                    },
+                    {
+                      "texto": "td com o texto em letras maiúsculas.",
+                      "correta": false,
+                      "feedback": "A aparência das letras não transforma uma célula comum em um cabeçalho semanticamente associado."
+                    },
+                    {
+                      "texto": "p posicionado acima da tabela com espaços.",
+                      "correta": false,
+                      "feedback": "A posição visual não estabelece uma relação de cabeçalho entre o parágrafo e as células."
+                    }
+                  ]
+                },
+                {
+                  "id": "html-tabelas-q2",
+                  "enunciado": "Para que serve caption nesta aula?",
+                  "alternativas": [
+                    {
+                      "texto": "Dar um nome que descreve o assunto da tabela.",
+                      "correta": true,
+                      "feedback": "A legenda permite identificar o conjunto de dados antes de percorrer suas linhas e colunas."
+                    },
+                    {
+                      "texto": "Substituir todos os cabeçalhos de linha e coluna.",
+                      "correta": false,
+                      "feedback": "Caption nomeia o conjunto; th e scope continuam responsáveis pelas relações internas dos dados."
+                    },
+                    {
+                      "texto": "Adicionar uma coluna vazia para ajustar a largura.",
+                      "correta": false,
+                      "feedback": "Legenda não é uma coluna; dimensões e alinhamento devem ser tratados com CSS quando necessário."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Crie uma tabela com caption “Agenda das oficinas”, thead e tbody. Os cabeçalhos de coluna devem ser Oficina, Dia e Sala, todos com scope=\"col\". Acrescente as linhas Leitura / Sábado / Sala 1 e Desenho / Domingo / Sala 2; os nomes das oficinas devem ser th com scope=\"row\". Mantenha três células em cada linha.",
+              "variacao": "Acrescente a coluna Vagas e informe 8 para Leitura e 0 para Desenho. Atualize o cabeçalho e as duas linhas; explique por que uma célula vazia não comunica o mesmo que zero.",
+              "resumo": "Tabelas representam relações de dados. Caption nomeia o conjunto; th e scope identificam os cabeçalhos de linhas e colunas.",
+              "pontosDificeis": [
+                "Distinguir uma tabela de dados de um arranjo visual de blocos.",
+                "Preservar a ordem e a quantidade de células quando uma coluna é acrescentada."
+              ],
+              "pistas": [
+                "Desenhe três colunas e duas linhas de dados antes de escrever a marcação.",
+                "Coloque os títulos em thead e as oficinas em tbody.",
+                "Use th scope=\"row\" no nome que identifica cada oficina."
+              ],
+              "arquivos": {
+                "html": "<h1>Agenda da biblioteca</h1>\n<!-- Construa a tabela de oficinas aqui. -->",
+                "css": "table { border-collapse: collapse; }\nth, td { border: 1px solid #777; padding: 8px; text-align: left; }\ncaption { text-align: left; font-weight: bold; padding: 8px 0; }",
+                "js": ""
+              },
+              "competencia": "html-tabelas-cabecalhos",
+              "linguagem": "html",
+              "rubrica": [
+                "Legenda descreve a agenda e a estrutura usa thead e tbody.",
+                "Cabeçalhos de coluna e de linha possuem scope apropriado.",
+                "As duas oficinas mantêm os dados alinhados nas três colunas.",
+                "A variação preserva zero como informação numérica significativa."
+              ],
+              "testes": [
+                {
+                  "id": "legenda",
+                  "descricao": "A tabela tem a legenda Agenda das oficinas.",
+                  "tipo": "texto",
+                  "seletor": "table > caption",
+                  "esperado": "Agenda das oficinas"
+                },
+                {
+                  "id": "cabecalho-coluna",
+                  "descricao": "O cabeçalho Dia está associado à coluna.",
+                  "tipo": "texto",
+                  "seletor": "thead th[scope=\"col\"]:nth-child(2)",
+                  "esperado": "Dia"
+                },
+                {
+                  "id": "cabecalho-linha",
+                  "descricao": "A primeira oficina é um cabeçalho de linha.",
+                  "tipo": "texto",
+                  "seletor": "tbody tr:first-child > th[scope=\"row\"]",
+                  "esperado": "Leitura"
+                },
+                {
+                  "id": "segunda-sala",
+                  "descricao": "A segunda oficina ocupa a Sala 2 na terceira coluna.",
+                  "tipo": "texto",
+                  "seletor": "tbody tr:nth-child(2) > td:last-child",
+                  "esperado": "Sala 2"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar imagens e conteúdo estruturado em uma situação prática, justificar decisões e revisar erros."
@@ -1146,8 +1406,144 @@
         {
           "id": "css-04",
           "titulo": "Grid e composição",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "css-grid",
+              "titulo": "Distribuir cartões com CSS Grid",
+              "objetivo": "Organizar uma coleção em duas colunas iguais e permitir que o conteúdo diminua sem criar overflow.",
+              "preRequisitos": [
+                "css-flexbox"
+              ],
+              "blocos": [
+                "A biblioteca quer apresentar quatro oficinas como uma pequena galeria: duas colunas com espaçamento uniforme e leitura da esquerda para a direita. Flexbox já ajuda a distribuir ações em um eixo. Grid permite declarar também as trilhas de colunas de uma composição. Os dois recursos resolvem necessidades diferentes e podem conviver; não é necessário trocar toda a página por Grid.",
+                "A propriedade display: grid pertence ao contêiner que reúne os cartões, não a cada cartão. grid-template-columns define as trilhas. Escrever 1fr 1fr distribui o espaço disponível em duas frações iguais depois de considerar o intervalo. gap separa os itens sem criar uma borda externa. A quantidade de cartões não precisa ser igual à quantidade de colunas: os próximos itens ocupam novas linhas automaticamente.",
+                "Um conteúdo comprido pode impedir uma coluna de encolher. minmax(0, 1fr) define um mínimo zero e uma fração como máximo de cada trilha; repeat(2, minmax(0, 1fr)) repete essa definição duas vezes. Isso permite que as duas colunas dividam o espaço do contêiner, mas o texto interno ainda precisa poder quebrar. overflow-wrap: anywhere ajuda nomes muito longos a permanecer legíveis sem empurrar a página.",
+                "A ordem visual normal acompanha a ordem do HTML, preservando uma leitura previsível no teclado e em tecnologias assistivas. Não reposicione cartões só para desenhar uma composição que contradiz essa sequência. Para conferir o comportamento responsivo desta prática, reduza a largura da prévia: as colunas continuam iguais e seus conteúdos passam a ocupar mais linhas. Uma regra de media query pode trocar para uma coluna em projetos futuros.",
+                "No laboratório, comece pela coleção existente e mude apenas as regras de .oficinas. Defina Grid, duas trilhas com minmax e intervalo de 16 pixels. Inspecione tanto os quatro cartões quanto um nome comprido. Trocar gap não altera a quantidade de colunas; trocar o primeiro argumento de repeat altera. O objetivo é justificar cada efeito observado e reconhecer quando o conteúdo precisa de uma composição mais simples."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Duas trilhas iguais",
+                  "codigo": ".agenda {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 12px;\n}",
+                  "explicacao": [
+                    "Linha 1: Seleciona o contêiner que já contém os cartões da agenda.",
+                    "Linha 2: Transforma os filhos diretos em itens de uma grade.",
+                    "Linha 3: Divide o espaço disponível em duas trilhas de mesma proporção.",
+                    "Linha 4: Cria doze pixels de intervalo entre linhas e colunas.",
+                    "Linha 5: Encerra as regras do contêiner sem reposicionar os filhos."
+                  ]
+                },
+                {
+                  "titulo": "Colunas que podem encolher",
+                  "codigo": ".grade {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 16px;\n}\n.grade > article { overflow-wrap: anywhere; }",
+                  "explicacao": [
+                    "Linha 1: Aplica a composição ao contêiner da segunda coleção.",
+                    "Linha 2: Ativa o algoritmo de Grid para organizar os filhos diretos.",
+                    "Linha 3: Repete duas trilhas iguais cujo mínimo permite encolhimento.",
+                    "Linha 4: Mantém um intervalo previsível, sem somar margens por item.",
+                    "Linha 5: Fecha a composição que controla as dimensões das trilhas.",
+                    "Linha 6: Permite quebrar nomes longos dentro da largura disponível."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "css-grid-q1",
+                  "enunciado": "Onde deve ser aplicado display: grid para organizar quatro cartões irmãos?",
+                  "alternativas": [
+                    {
+                      "texto": "No contêiner que contém os quatro cartões.",
+                      "correta": true,
+                      "feedback": "Grid organiza os filhos diretos do elemento que recebe display: grid."
+                    },
+                    {
+                      "texto": "Somente no último parágrafo da página.",
+                      "correta": false,
+                      "feedback": "A grade organiza filhos diretos; um parágrafo sem os cartões não controla a composição deles."
+                    },
+                    {
+                      "texto": "Em todos os elementos, incluindo cada letra do título.",
+                      "correta": false,
+                      "feedback": "A composição precisa de um contêiner bem definido, e não de uma regra indiscriminada para toda a árvore."
+                    }
+                  ]
+                },
+                {
+                  "id": "css-grid-q2",
+                  "enunciado": "O que repeat(2, minmax(0, 1fr)) define?",
+                  "alternativas": [
+                    {
+                      "texto": "Duas trilhas iguais que podem encolher até o mínimo zero.",
+                      "correta": true,
+                      "feedback": "Repeat duplica a definição e minmax permite que cada trilha diminua ao repartir o espaço disponível."
+                    },
+                    {
+                      "texto": "Exatamente dois cartões e nenhuma outra linha.",
+                      "correta": false,
+                      "feedback": "A regra define colunas; os demais cartões continuam sendo distribuídos em novas linhas."
+                    },
+                    {
+                      "texto": "Um intervalo obrigatório de dois pixels.",
+                      "correta": false,
+                      "feedback": "O número dois é a quantidade de repetições. O intervalo entre itens é responsabilidade de gap."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Transforme .oficinas em uma grade com duas colunas iguais usando repeat(2, minmax(0, 1fr)) e gap de 16px. Preserve os quatro cartões e sua ordem no HTML. Use overflow-wrap: anywhere nos cartões e confira a prévia estreita com o nome comprido fornecido.",
+              "variacao": "Mude repeat para uma única coluna, mantendo o mesmo gap. Compare a quantidade de linhas e explique por que não foi necessário remover cartões do HTML.",
+              "resumo": "Grid define trilhas no contêiner; gap separa os itens. Minmax e quebra de texto ajudam a composição a respeitar o espaço disponível.",
+              "pontosDificeis": [
+                "Aplicar a regra ao pai correto dos cartões.",
+                "Distinguir quantidade de trilhas de quantidade de elementos."
+              ],
+              "pistas": [
+                "Localize o elemento que contém os quatro articles.",
+                "Comece por display: grid e adicione a definição das duas colunas.",
+                "Mantenha gap no contêiner e a quebra de texto nos cartões."
+              ],
+              "arquivos": {
+                "html": "<h1>Oficinas em destaque</h1>\n<section class=\"oficinas\" aria-label=\"Oficinas\">\n  <article>Leitura compartilhada</article>\n  <article>Desenho de observação</article>\n  <article>EscritaCriativaComUmNomeMuitoComprido</article>\n  <article>Contação de histórias</article>\n</section>",
+                "css": "body { font-family: sans-serif; padding: 16px; }\n.oficinas { /* Defina a grade aqui. */ }\n.oficinas > article { border: 1px solid #777; padding: 12px; }",
+                "js": ""
+              },
+              "competencia": "css-grid-trilhas-responsivas",
+              "linguagem": "css",
+              "rubrica": [
+                "O contêiner usa Grid e intervalo de 16 pixels.",
+                "Duas trilhas minmax repartem a largura sem remover conteúdos.",
+                "Nomes longos quebram dentro dos cartões e a ordem de leitura é mantida.",
+                "A variação altera o número de colunas sem mexer nos dados."
+              ],
+              "testes": [
+                {
+                  "id": "contêiner-grid",
+                  "descricao": "O contêiner das oficinas usa Grid.",
+                  "tipo": "estilo",
+                  "seletor": ".oficinas",
+                  "propriedade": "display",
+                  "esperado": "grid"
+                },
+                {
+                  "id": "intervalo-grid",
+                  "descricao": "As colunas têm intervalo de 16 pixels.",
+                  "tipo": "estilo",
+                  "seletor": ".oficinas",
+                  "propriedade": "column-gap",
+                  "esperado": "16px"
+                },
+                {
+                  "id": "quebra-nomes",
+                  "descricao": "Os nomes longos podem quebrar dentro dos cartões.",
+                  "tipo": "estilo",
+                  "seletor": ".oficinas > article",
+                  "propriedade": "overflow-wrap",
+                  "esperado": "anywhere"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar grid e composição em uma situação prática, justificar decisões e revisar erros."
@@ -1597,8 +1993,147 @@
         {
           "id": "javascript-04",
           "titulo": "Módulos e escopo",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "js-escopo",
+              "titulo": "Escopo: cada contador guarda sua história",
+              "objetivo": "Distinguir escopo de bloco e escopo lexical ao criar contadores independentes com funções.",
+              "preRequisitos": [
+                "js-funcoes",
+                "js-arrays"
+              ],
+              "blocos": [
+                "Duas oficinas usam contadores de participantes. Se ambas alterarem uma única variável global, um clique na primeira também muda o número da segunda. Precisamos decidir quem pode acessar cada dado. Escopo é a região do código em que um nome está disponível; organizar essa região evita que partes independentes do programa compartilhem estado por acidente.",
+                "Uma declaração let pode receber outro valor. Const impede reatribuir o nome, mas não congela um objeto guardado nele. Ambas respeitam o bloco delimitado por chaves. Dentro de um if, uma nova declaração com o mesmo nome cria outra variável: isso é sombreamento. Alterar essa variável interna não altera a externa. Use nomes claros para não tornar esse efeito uma surpresa.",
+                "O escopo lexical depende de onde uma função foi escrita, e não de quem a chamou. Uma função interna pode ler e atualizar variáveis da função que a contém. Quando a função interna é devolvida e continua usando essas variáveis, temos um fechamento, também chamado closure. O valor continua acessível à função devolvida mesmo depois de terminar a chamada que o criou.",
+                "Uma fábrica de contadores recebe um início, declara um total local e devolve uma função que incrementa esse total. Cada chamada à fábrica cria um ambiente independente. Duas chamadas ao primeiro contador compartilham o mesmo total daquele contador; chamar a fábrica novamente cria outro total. Observe a diferença entre chamar criarContador(5) e chamar a função devolvida por ela.",
+                "Antes do laboratório, acompanhe as saídas dos dois exemplos. Depois escreva no papel o total esperado após cada chamada. Não coloque o total fora da fábrica e não declare total novamente dentro da função de incremento, pois isso o reiniciaria a cada chamada. Esta aula não carrega módulos externos; todos os arquivos executados continuam pertencendo ao laboratório isolado."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Um nome dentro e fora do bloco",
+                  "codigo": "let vagas = 10;\nif (true) {\n  let vagas = 3;\n  vagas += 1;\n  console.log(\"Dentro:\", vagas);\n}\nconsole.log(\"Fora:\", vagas);",
+                  "explicacao": [
+                    "Linha 1: Declara a contagem externa que continuará disponível após o bloco.",
+                    "Linha 2: Abre um bloco próprio para observar uma declaração independente.",
+                    "Linha 3: Cria outra variável chamada vagas, limitada a estas chaves.",
+                    "Linha 4: Incrementa somente a variável interna, que passa a valer quatro.",
+                    "Linha 5: Imprime quatro enquanto o nome interno ainda está disponível.",
+                    "Linha 6: Encerra o bloco e o acesso à declaração que existia somente nele.",
+                    "Linha 7: Imprime dez porque a variável externa não foi reatribuída."
+                  ]
+                },
+                {
+                  "titulo": "Uma função que preserva seu próprio total",
+                  "codigo": "function criarContador(inicio) {\n  let total = inicio;\n  return function incrementar() {\n    total += 1;\n    return total;\n  };\n}\nconst contadorDaSala = criarContador(2);\nconsole.log(contadorDaSala());\nconsole.log(contadorDaSala());",
+                  "explicacao": [
+                    "Linha 1: Abre uma fábrica; cada chamada recebe seu próprio valor inicial.",
+                    "Linha 2: Reserva o estado deste contador antes de criar sua função interna.",
+                    "Linha 3: Devolve uma função que conserva acesso ao total desta chamada.",
+                    "Linha 4: Atualiza o mesmo total preservado, sem reinicializá-lo aqui.",
+                    "Linha 5: Devolve o número atualizado para quem chamou o incremento.",
+                    "Linha 6: Fecha a função devolvida sem executá-la durante sua criação.",
+                    "Linha 7: Encerra a fábrica que será chamada separadamente para cada contador.",
+                    "Linha 8: Cria um ambiente cujo total inicial é dois e guarda o incremento.",
+                    "Linha 9: Executa a função guardada e mostra seu primeiro resultado: três.",
+                    "Linha 10: Executa novamente e mostra quatro, preservando o total anterior."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "js-escopo-q1",
+                  "enunciado": "Duas chamadas separadas a criarContador(0) devem produzir contadores que...",
+                  "alternativas": [
+                    {
+                      "texto": "Guardam totais independentes.",
+                      "correta": true,
+                      "feedback": "Cada chamada à fábrica cria seu próprio ambiente; o fechamento preserva apenas o total daquela chamada."
+                    },
+                    {
+                      "texto": "Compartilham obrigatoriamente uma variável global.",
+                      "correta": false,
+                      "feedback": "O total foi declarado dentro da fábrica, por isso não precisa ser global nem compartilhado entre as instâncias."
+                    },
+                    {
+                      "texto": "Voltam sempre a zero depois de cada incremento.",
+                      "correta": false,
+                      "feedback": "A função interna continua acessando o mesmo total. Reiniciá-lo no incremento destruiria a contagem acumulada."
+                    }
+                  ]
+                },
+                {
+                  "id": "js-escopo-q2",
+                  "enunciado": "Existe let vagas = 10 fora de um bloco e let vagas = 3 dentro dele. Ao incrementar a interna, a externa...",
+                  "alternativas": [
+                    {
+                      "texto": "Continua valendo 10.",
+                      "correta": true,
+                      "feedback": "A declaração interna cria outra variável. O sombreamento muda qual nome é acessado dentro das chaves."
+                    },
+                    {
+                      "texto": "Passa automaticamente a valer 4.",
+                      "correta": false,
+                      "feedback": "Isso ocorreria se a declaração interna não existisse e o programa alterasse a variável externa."
+                    },
+                    {
+                      "texto": "Deixa de existir no programa inteiro.",
+                      "correta": false,
+                      "feedback": "A variável externa continua em seu escopo; ela apenas fica sombreada enquanto o bloco interno usa o mesmo nome."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Implemente criarContador(inicio) com um total local e uma função devolvida que incrementa e retorna esse total. Crie primeiro com início 5 e segundo com início 0. Chame primeiro duas vezes, segundo uma vez e primeiro outra vez. Registre console.log({ primeiro: [a, b, c], segundo: d, externo }) com primeiro igual a [6, 7, 8], segundo igual a 1 e externo igual a 10. Demonstre um bloco com sua própria variável externo sem mudar a externa.",
+              "variacao": "Crie um terceiro contador começando em -1. Preveja e confira as duas primeiras saídas, depois chame o primeiro novamente e explique por que ele continua sua própria contagem.",
+              "resumo": "Escopo limita o acesso aos nomes; um fechamento mantém o estado do ambiente em que a função foi criada.",
+              "pontosDificeis": [
+                "Distinguir a criação da função de sua execução posterior.",
+                "Não reiniciar o estado dentro de cada chamada de incremento."
+              ],
+              "pistas": [
+                "Desenhe uma caixa para cada chamada da fábrica.",
+                "Declare total dentro de criarContador, antes de devolver a função.",
+                "Use return para entregar uma função; o incremento pertence ao corpo dessa função."
+              ],
+              "arquivos": {
+                "html": "<h1>Contadores independentes</h1><p>Acompanhe as chamadas no console.</p>",
+                "css": "",
+                "js": "function criarContador(inicio) {\n  // Guarde o total e devolva uma função de incremento.\n}\nconst externo = 10;\nconsole.log({ primeiro: [], segundo: null, externo });"
+              },
+              "competencia": "javascript-escopo-fechamentos",
+              "linguagem": "javascript",
+              "rubrica": [
+                "Cada contador preserva seu próprio total entre chamadas.",
+                "O relatório apresenta [6, 7, 8], 1 e 10 nos campos solicitados.",
+                "Explica por que o bloco interno não muda a variável externa."
+              ],
+              "testes": [
+                {
+                  "id": "contador-primeiro",
+                  "descricao": "O primeiro contador preserva a sequência 6, 7 e 8.",
+                  "tipo": "javascript",
+                  "propriedade": "json:primeiro",
+                  "esperado": "[6,7,8]"
+                },
+                {
+                  "id": "contador-segundo",
+                  "descricao": "O segundo contador começa de forma independente em 1.",
+                  "tipo": "javascript",
+                  "propriedade": "json:segundo",
+                  "esperado": "1"
+                },
+                {
+                  "id": "escopo-externo",
+                  "descricao": "A variável externa permanece igual a 10.",
+                  "tipo": "javascript",
+                  "propriedade": "json:externo",
+                  "esperado": "10"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar módulos e escopo em uma situação prática, justificar decisões e revisar erros."
@@ -2064,8 +2599,133 @@
         {
           "id": "dom-03",
           "titulo": "Formulários e validação",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "dom-formularios",
+              "titulo": "Ler um formulário e responder sem recarregar",
+              "objetivo": "Tratar o evento submit, extrair um campo nomeado e apresentar uma confirmação local com texto seguro.",
+              "preRequisitos": [
+                "dom-eventos",
+                "html-formulario"
+              ],
+              "blocos": [
+                "A pessoa preencheu seu nome para demonstrar interesse em uma oficina. Queremos conferir esse nome e mostrar uma mensagem perto do formulário, sem atualizar a página. Esta aula trata apenas uma confirmação local: nenhum cadastro será enviado à internet nem gravado num servidor. Esse limite precisa aparecer na interface para que uma demonstração não prometa uma inscrição real.",
+                "O evento submit pertence ao formulário e representa a intenção de enviar, inclusive quando a pessoa usa Enter no campo. Escutar apenas o click do botão deixa de cobrir outros caminhos de interação. Passe uma função a addEventListener(\"submit\", ...). Dentro dela, evento.preventDefault() cancela a navegação padrão que ocorreria depois do evento; ele não cancela o restante da nossa função.",
+                "FormData recebe o elemento form e reúne controles nomeados que participam do envio. new FormData(formulario).get(\"nome\") busca o valor pelo atributo name=\"nome\", não pelo id visual. O resultado pode ser texto, arquivo ou null; por isso, confirme typeof valor === \"string\" antes de usar métodos textuais. O id continua importante para ligar label e input, mas tem outra responsabilidade.",
+                "trim() devolve uma nova string sem os espaços das pontas. O campo pode conter apenas espaços e ainda assim parecer preenchido para uma validação simples, então confira se o nome tratado não ficou vazio. Nesse caso mostre uma orientação concreta e encerre a função com return. Para um nome válido, monte uma saudação usando textContent. Não use innerHTML com o texto fornecido pela pessoa.",
+                "Reserve uma saída com role=\"status\" para anunciar a mensagem sem mover o foco à força. O botão type=\"submit\" fica dentro do formulário; seu papel é oferecer uma ação explícita de conferência, e o evento continua pertencendo ao form. Teste um nome com espaços nas pontas, um campo vazio e o envio por Enter. Cada teste verifica uma parte do contrato e a mensagem deve continuar dizendo que se trata de uma demonstração local."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Escutar a intenção do formulário",
+                  "codigo": "const formularioExemplo = document.querySelector(\"#inscricao\");\nif (formularioExemplo) {\n  formularioExemplo.addEventListener(\"submit\", evento => {\n    evento.preventDefault();\n    console.log(\"Demonstração local: nenhum envio remoto.\");\n  });\n}",
+                  "explicacao": [
+                    "Linha 1: Seleciona o formulário que reúne os controles desta demonstração.",
+                    "Linha 2: Confere a existência do formulário antes de registrar o evento.",
+                    "Linha 3: Registra a função para qualquer intenção de envio do formulário.",
+                    "Linha 4: Impede a navegação padrão, preservando a execução da função local.",
+                    "Linha 5: Explica a limitação em vez de anunciar um cadastro inexistente.",
+                    "Linha 6: Fecha a função passada ao evento sem executá-la antecipadamente.",
+                    "Linha 7: Encerra a proteção usada quando o formulário não é encontrado."
+                  ]
+                },
+                {
+                  "titulo": "Tratar o valor antes de apresentar",
+                  "codigo": "const dadosExemplo = new FormData();\ndadosExemplo.set(\"nome\", \"  Bia  \");\nconst recebidoExemplo = dadosExemplo.get(\"nome\");\nconst nomeExemplo = typeof recebidoExemplo === \"string\" ? recebidoExemplo.trim() : \"\";\nconst saidaExemplo = document.querySelector(\"#mensagem\");\nif (saidaExemplo) {\n  saidaExemplo.textContent = nomeExemplo ? `Olá, ${nomeExemplo}! Demonstração local.` : \"Escreva seu nome.\";\n}",
+                  "explicacao": [
+                    "Linha 1: Cria um conjunto local para estudar a leitura de um campo nomeado.",
+                    "Linha 2: Simula o texto que um campo de nome forneceria ao formulário.",
+                    "Linha 3: Busca a informação pelo nome e não por um seletor de elemento.",
+                    "Linha 4: Verifica o tipo e remove somente espaços das pontas do texto.",
+                    "Linha 5: Localiza o destino textual que anunciará a orientação ao usuário.",
+                    "Linha 6: Confere a presença da saída antes de modificar seu conteúdo.",
+                    "Linha 7: Apresenta o nome como texto e oferece orientação quando ele está vazio.",
+                    "Linha 8: Conclui a atualização sem interpretar marcação fornecida como nome."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "dom-formularios-q1",
+                  "enunciado": "Por que escutar submit no formulário em vez de apenas click no botão?",
+                  "alternativas": [
+                    {
+                      "texto": "Para tratar a intenção de envio também por teclado.",
+                      "correta": true,
+                      "feedback": "Submit pertence ao formulário e cobre a ação sem depender exclusivamente de um clique no botão."
+                    },
+                    {
+                      "texto": "Para enviar automaticamente os dados a qualquer servidor.",
+                      "correta": false,
+                      "feedback": "Registrar o evento não configura um serviço remoto; esta prática cancela a navegação e responde localmente."
+                    },
+                    {
+                      "texto": "Para dispensar os atributos name dos campos.",
+                      "correta": false,
+                      "feedback": "FormData usa os nomes dos controles, independentemente do evento que iniciou a leitura."
+                    }
+                  ]
+                },
+                {
+                  "id": "dom-formularios-q2",
+                  "enunciado": "Qual é a forma adequada de mostrar um nome digitado pela pessoa?",
+                  "alternativas": [
+                    {
+                      "texto": "Validar o texto, aplicar trim e atribuir a textContent.",
+                      "correta": true,
+                      "feedback": "O tratamento confere o contrato e textContent apresenta os caracteres sem interpretá-los como HTML."
+                    },
+                    {
+                      "texto": "Copiar o valor diretamente para innerHTML.",
+                      "correta": false,
+                      "feedback": "InnerHTML interpreta marcação; um nome precisa ser apresentado como texto, sem criar elementos inesperados."
+                    },
+                    {
+                      "texto": "Procurar o valor com get usando apenas o id do campo, sem name.",
+                      "correta": false,
+                      "feedback": "FormData busca controles por name. Id serve para seleção e associação com o rótulo, mas não substitui name."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "No formulário #inscricao, trate submit com preventDefault. Leia o campo name=\"nome\" por FormData, confira que é string e aplique trim. Se ficar vazio, mostre “Escreva seu nome.” em #mensagem. Caso contrário mostre “Olá, Ana! Demonstração local.” para o valor inicial com espaços. Use textContent e preserve o anúncio role=\"status\". Nenhum dado deve ser enviado à rede.",
+              "variacao": "Apague o nome e teste também somente espaços. Depois digite <b>Bia</b>: a saudação deve exibir os símbolos literalmente, sem tornar Bia um elemento em negrito. Compare clique e Enter.",
+              "resumo": "Submit cobre a intenção de envio; FormData usa name; trim trata as pontas. A confirmação local usa textContent e não equivale a cadastro remoto.",
+              "pontosDificeis": [
+                "Distinguir name usado no envio de id usado pelo rótulo.",
+                "Evitar anunciar sucesso quando o valor tratado está vazio."
+              ],
+              "pistas": [
+                "Selecione o formulário e a região de mensagem antes de registrar o evento.",
+                "Dentro do submit, cancele a navegação e obtenha FormData do formulário.",
+                "Confira o tipo, trate os espaços e escolha uma mensagem antes de alterar textContent."
+              ],
+              "arquivos": {
+                "html": "<h1>Interesse na oficina</h1>\n<p>Demonstração local: nenhum dado é enviado.</p>\n<form id=\"inscricao\">\n  <label for=\"nome\">Seu nome</label>\n  <input id=\"nome\" name=\"nome\" value=\"  Ana  \">\n  <button type=\"submit\" id=\"conferir\">Conferir nome</button>\n</form>\n<p id=\"mensagem\" role=\"status\"></p>",
+                "css": "",
+                "js": "const formulario = document.querySelector(\"#inscricao\");\nconst mensagem = document.querySelector(\"#mensagem\");\n// Registre o evento submit e apresente a orientação local."
+              },
+              "competencia": "dom-formularios-envio-local",
+              "linguagem": "dom",
+              "rubrica": [
+                "Trata submit e cancela a navegação sem inventar recebimento remoto.",
+                "Lê name por FormData, verifica o tipo e remove espaços das pontas.",
+                "Campo vazio produz orientação e o nome válido aparece via textContent.",
+                "Clique e teclado preservam o fluxo e a região de status."
+              ],
+              "testes": [
+                {
+                  "id": "saudacao-submit",
+                  "descricao": "Enviar o formulário apresenta o nome sem espaços nas pontas.",
+                  "tipo": "evento",
+                  "seletor": "#conferir",
+                  "propriedade": "#mensagem",
+                  "esperado": "Olá, Ana! Demonstração local."
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar formulários e validação em uma situação prática, justificar decisões e revisar erros."
@@ -2519,8 +3179,145 @@
         {
           "id": "python-04",
           "titulo": "Arquivos e módulos",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "python-arquivos",
+              "titulo": "Arquivos: escrever, fechar e ler de volta",
+              "objetivo": "Serializar uma lista de oficinas em JSON, reler um arquivo UTF-8 e conferir seus dados sem acessar a rede.",
+              "preRequisitos": [
+                "python-dicionarios"
+              ],
+              "blocos": [
+                "Um relatório que existe apenas numa variável desaparece quando o programa termina. Um arquivo permite representar os dados fora daquela variável, desde que exista um sistema de arquivos para guardá-lo. No laboratório Python, esse sistema é virtual e pertence ao runtime WebAssembly; escrever nele não cria um arquivo pessoal na pasta Downloads do celular nem envia nada para a internet.",
+                "Open recebe um caminho e um modo de acesso. O modo \"w\" cria ou substitui o conteúdo de um arquivo; use-o com cuidado para não apagar um documento existente. O modo \"r\" lê um arquivo que precisa existir. Encoding=\"utf-8\" define como o texto será convertido em bytes e recuperado, preservando acentos. Arquivo de texto e lista Python são representações diferentes.",
+                "With abre uma região de gerenciamento de recurso. Ao sair dessa região, o arquivo é fechado mesmo se ocorrer uma exceção. Não tente ler do objeto arquivo depois desse fechamento. Para conferir o conteúdo salvo, abra o mesmo caminho novamente em outro with. A indentação mostra exatamente quais instruções podem usar cada arquivo aberto.",
+                "JSON é um formato textual para dados como listas, objetos, números e strings. Importe o módulo json da biblioteca padrão. Json.dump escreve os dados num arquivo aberto; json.load lê o arquivo e reconstrói os valores compatíveis. Ensure_ascii=False mantém os caracteres acentuados legíveis no texto salvo. Dump e load não validam as regras de negócio das oficinas.",
+                "Para praticar sem deixar arquivos de exemplo espalhados, importe TemporaryDirectory do módulo tempfile e use outro with para criar uma pasta temporária. Monte o caminho com uma f-string e faça a escrita e a leitura dentro desse bloco. A pasta será removida no final. Fora dessa prática, o runtime pode descartar seus arquivos ao ser encerrado: o código salvo pelo Flow e o sistema de arquivos Python são mecanismos diferentes."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Um aviso com acentos",
+                  "codigo": "from tempfile import TemporaryDirectory\nwith TemporaryDirectory() as pasta:\n    caminho_aviso = f\"{pasta}/aviso.txt\"\n    with open(caminho_aviso, \"w\", encoding=\"utf-8\") as arquivo:\n        arquivo.write(\"Inscrições abertas\")\n    with open(caminho_aviso, \"r\", encoding=\"utf-8\") as arquivo:\n        aviso_lido = arquivo.read()\n    print(aviso_lido)",
+                  "explicacao": [
+                    "Linha 1: Importa um gerenciador de pasta temporária da biblioteca padrão.",
+                    "Linha 2: Cria uma pasta isolada que será removida quando este bloco terminar.",
+                    "Linha 3: Monta o caminho dentro da pasta temporária, sem usar pastas pessoais.",
+                    "Linha 4: Abre o aviso para escrita em UTF-8 e garante seu fechamento depois.",
+                    "Linha 5: Escreve texto acentuado no arquivo, sem convertê-lo numa lista.",
+                    "Linha 6: Reabre o mesmo caminho para leitura depois do fechamento da escrita.",
+                    "Linha 7: Recupera o conteúdo textual enquanto o arquivo continua aberto.",
+                    "Linha 8: Exibe o texto que veio do arquivo e permite conferir os acentos."
+                  ]
+                },
+                {
+                  "titulo": "Uma lista volta a ser dados",
+                  "codigo": "import json\nfrom tempfile import TemporaryDirectory\nwith TemporaryDirectory() as pasta_dados:\n    caminho_dados = f\"{pasta_dados}/oficinas.json\"\n    oficinas = [{\"nome\": \"Desenho\", \"vagas\": 2}]\n    with open(caminho_dados, \"w\", encoding=\"utf-8\") as arquivo:\n        json.dump(oficinas, arquivo, ensure_ascii=False)\n    with open(caminho_dados, \"r\", encoding=\"utf-8\") as arquivo:\n        recuperadas = json.load(arquivo)\n    print(recuperadas[0][\"nome\"], recuperadas[0][\"vagas\"])",
+                  "explicacao": [
+                    "Linha 1: Disponibiliza a serialização e a leitura de dados no formato JSON.",
+                    "Linha 2: Importa novamente o recurso para este exemplo funcionar sozinho.",
+                    "Linha 3: Cria outra pasta para separar o exemplo de dados do aviso anterior.",
+                    "Linha 4: Define um arquivo de texto JSON dentro da pasta temporária atual.",
+                    "Linha 5: Prepara uma lista Python com um dicionário e uma quantidade numérica.",
+                    "Linha 6: Abre o destino de escrita explicitando a codificação do texto.",
+                    "Linha 7: Serializa a lista no arquivo sem transformar acentos em escapes.",
+                    "Linha 8: Abre o arquivo salvo para recuperar sua representação de dados.",
+                    "Linha 9: Reconstrói a lista e os dicionários a partir do conteúdo JSON lido.",
+                    "Linha 10: Consulta os campos da lista recuperada e mostra Desenho e dois."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "python-arquivos-q1",
+                  "enunciado": "O que open(caminho, \"w\", encoding=\"utf-8\") pode fazer se o arquivo já existir?",
+                  "alternativas": [
+                    {
+                      "texto": "Substituir o conteúdo anterior.",
+                      "correta": true,
+                      "feedback": "O modo w abre para escrita e trunca o arquivo existente; o exemplo usa uma pasta temporária para limitar esse efeito."
+                    },
+                    {
+                      "texto": "Ler sem alterar nenhum byte.",
+                      "correta": false,
+                      "feedback": "A leitura usa r. Escolher w quando se queria apenas conferir o conteúdo pode apagar dados."
+                    },
+                    {
+                      "texto": "Enviar automaticamente o arquivo para um servidor.",
+                      "correta": false,
+                      "feedback": "Open trabalha com o sistema de arquivos disponível; ele não realiza uma requisição de rede."
+                    }
+                  ]
+                },
+                {
+                  "id": "python-arquivos-q2",
+                  "enunciado": "Qual operação reconstrói uma lista Python a partir de um arquivo JSON aberto para leitura?",
+                  "alternativas": [
+                    {
+                      "texto": "json.load(arquivo).",
+                      "correta": true,
+                      "feedback": "Load interpreta o JSON do arquivo e devolve os valores Python compatíveis para consulta."
+                    },
+                    {
+                      "texto": "json.dump(lista, arquivo).",
+                      "correta": false,
+                      "feedback": "Dump escreve dados no destino. Ele faz o caminho contrário ao da leitura solicitada."
+                    },
+                    {
+                      "texto": "Escrever o nome do arquivo dentro de print.",
+                      "correta": false,
+                      "feedback": "Imprimir um caminho mostra só seu nome; isso não abre nem interpreta o conteúdo salvo."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Dentro de uma TemporaryDirectory, salve em oficinas.json a lista inicial com json.dump e ensure_ascii=False. Feche a escrita e reabra em modo r com UTF-8. Use exclusivamente a lista relida para imprimir \"Leitura: 0 vagas\", \"Escrita: 3 vagas\" e \"Total: 3 vagas\". Preserve o valor zero e calcule o total a partir dos registros recuperados, sem fixá-lo como texto.",
+              "variacao": "Acrescente uma oficina chamada \"Criação\" com 2 vagas antes de salvar. Leia novamente o arquivo, confirme o acento e confira que o total passou a 5. Explique por que a pasta temporária desaparece ao sair do bloco.",
+              "resumo": "With fecha recursos; UTF-8 preserva texto; dump escreve JSON e load reconstrói dados a partir do arquivo.",
+              "pontosDificeis": [
+                "Distinguir o arquivo virtual do laboratório de um download no dispositivo.",
+                "Não tentar ler usando um arquivo de escrita já fechado."
+              ],
+              "pistas": [
+                "Primeiro desenhe os dois blocos: escrever e depois ler.",
+                "Reutilize o mesmo caminho e a codificação UTF-8 nas duas aberturas.",
+                "O relatório deve percorrer recuperadas, não somente a lista original."
+              ],
+              "arquivos": {
+                "html": "",
+                "css": "",
+                "js": "",
+                "python": "import json\nfrom tempfile import TemporaryDirectory\n\noficinas = [{\"nome\": \"Leitura\", \"vagas\": 0}, {\"nome\": \"Escrita\", \"vagas\": 3}]\n# Salve e releia a lista numa pasta temporária antes de montar o relatório.\nprint(\"Relatório ainda não foi recuperado do arquivo.\")"
+              },
+              "competencia": "python-arquivos-json-utf8",
+              "linguagem": "python",
+              "rubrica": [
+                "Escrita e leitura usam o mesmo caminho com UTF-8 e recursos fechados por with.",
+                "O relatório vem da lista relida e preserva zero vagas.",
+                "A variação calcula o novo total e explica a duração do arquivo virtual."
+              ],
+              "testes": [
+                {
+                  "id": "arquivo-leitura",
+                  "descricao": "O relatório recuperado preserva Leitura com zero vagas.",
+                  "tipo": "python",
+                  "esperado": "Leitura: 0 vagas"
+                },
+                {
+                  "id": "arquivo-escrita",
+                  "descricao": "O relatório recuperado apresenta Escrita com três vagas.",
+                  "tipo": "python",
+                  "esperado": "Escrita: 3 vagas"
+                },
+                {
+                  "id": "arquivo-total",
+                  "descricao": "O total calculado dos registros recuperados é três.",
+                  "tipo": "python",
+                  "esperado": "Total: 3 vagas"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar arquivos e módulos em uma situação prática, justificar decisões e revisar erros."
@@ -2707,8 +3504,152 @@
         {
           "id": "frontend-02",
           "titulo": "Estado e fluxo de dados",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "frontend-estado",
+              "titulo": "Estado: uma fonte para toda a tela",
+              "objetivo": "Separar o número de lugares selecionados da apresentação e atualizar duas regiões da interface a partir do mesmo estado.",
+              "preRequisitos": [
+                "frontend-componentes",
+                "dom-eventos"
+              ],
+              "blocos": [
+                "Uma família escolhe quantos lugares deseja numa visita à biblioteca. O total aparece num resumo e num cartão. Se cada região guardar sua própria contagem, uma delas pode esquecer uma atualização. O estado é o dado que descreve a seleção atual; a interface é uma representação desse dado. Nesta aula usamos JavaScript e DOM, sem depender de uma biblioteca de componentes.",
+                "Declare lugares com let porque a seleção pode mudar. A função renderizar lê esse valor e atualiza todas as regiões necessárias, sem incrementá-lo. Ler um texto como “2 lugares” para descobrir o estado mistura apresentação e regra; amanhã a frase pode mudar. Guarde o número no programa e converta-o em texto somente ao apresentar o resultado.",
+                "Uma ação segue uma ordem: receber a intenção, calcular o próximo estado, então renderizar. Math.min(5, quantidade) limita o teto e Math.max(0, quantidade) limita o piso. Juntos, eles mantêm a seleção entre zero e cinco. Não precisamos desativar a compreensão de teclado para aplicar essa regra: botões nativos acionam o mesmo evento por clique, Enter ou espaço.",
+                "Renderizar novamente não deve duplicar cartões nem registrar mais ouvintes de evento. Use replaceChildren para substituir o conteúdo anterior do contêiner. Registre addEventListener uma vez, fora da renderização. Assim, chamar renderizar duas vezes com os mesmos dados produz a mesma apresentação, e um clique continua representando exatamente uma ação.",
+                "Antes de implementar, trace no papel: zero, adicionar, um, remover, zero. Teste também remover em zero e adicionar em cinco. O resumo e o cartão devem concordar em todas as etapas. Esta prática modifica apenas a seleção local; nenhuma reserva é enviada a um servidor e nenhum lugar real é ocupado. Persistência e confirmação remota exigiriam outros contratos."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Atualizar dados antes de apresentar",
+                  "codigo": "{\n  let quantidade = 0;\n  function proximoValor(atual, delta) {\n    return Math.max(0, Math.min(5, atual + delta));\n  }\n  quantidade = proximoValor(quantidade, 1);\n  console.log(`${quantidade} lugares selecionados`);\n}",
+                  "explicacao": [
+                    "Linha 1: Abre um bloco independente para os nomes deste exemplo.",
+                    "Linha 2: Guarda a seleção como número, fora do texto da interface.",
+                    "Linha 3: Recebe estado e intenção sem ler nenhuma região da página.",
+                    "Linha 4: Restringe o próximo valor ao intervalo de zero a cinco.",
+                    "Linha 5: Encerra a função de transição de estado sem alterar o DOM.",
+                    "Linha 6: Aplica uma única intenção de adicionar à seleção anterior.",
+                    "Linha 7: Converte o novo estado em uma mensagem de apresentação.",
+                    "Linha 8: Fecha o bloco para não compartilhar nomes com outro exemplo."
+                  ]
+                },
+                {
+                  "titulo": "Substituir o cartão sem acumular cópias",
+                  "codigo": "{\n  const area = document.createElement(\"div\");\n  function desenhar(total) {\n    const artigo = document.createElement(\"article\");\n    artigo.textContent = `${total} de 5 lugares`;\n    area.replaceChildren(artigo);\n  }\n  desenhar(2);\n  desenhar(2);\n  console.log(area.children.length);\n}",
+                  "explicacao": [
+                    "Linha 1: Isola as declarações locais desta demonstração de renderização.",
+                    "Linha 2: Cria um contêiner de demonstração sem depender do HTML inicial.",
+                    "Linha 3: Define uma apresentação que recebe um valor já calculado.",
+                    "Linha 4: Cria a estrutura de um novo cartão para a seleção atual.",
+                    "Linha 5: Apresenta o dado como texto sem interpretar marcação recebida.",
+                    "Linha 6: Troca os filhos existentes em vez de acrescentar outra cópia.",
+                    "Linha 7: Conclui a montagem do cartão sem alterar o total selecionado.",
+                    "Linha 8: Realiza a primeira apresentação da seleção com dois lugares.",
+                    "Linha 9: Repete a mesma apresentação para verificar sua estabilidade.",
+                    "Linha 10: Confirma que continua existindo um cartão, e não dois.",
+                    "Linha 11: Fecha o bloco mantendo a demonstração independente das demais."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "frontend-estado-q1",
+                  "enunciado": "O resumo mostra 2 e o cartão mostra 1 após um clique. Qual organização ajuda a evitar essa divergência?",
+                  "alternativas": [
+                    {
+                      "texto": "Guardar um total numérico e renderizar as duas regiões a partir dele.",
+                      "correta": true,
+                      "feedback": "Uma fonte de estado permite atualizar todas as apresentações com o mesmo valor depois de cada ação."
+                    },
+                    {
+                      "texto": "Incrementar separadamente o texto de cada região sempre que possível.",
+                      "correta": false,
+                      "feedback": "Duas contagens independentes podem se separar quando uma ação atualiza apenas uma das regiões."
+                    },
+                    {
+                      "texto": "Registrar novamente todos os cliques sempre que renderizar.",
+                      "correta": false,
+                      "feedback": "Ouvintes repetidos acumulam ações: um único clique pode executar o mesmo incremento várias vezes."
+                    }
+                  ]
+                },
+                {
+                  "id": "frontend-estado-q2",
+                  "enunciado": "Qual deve ser o efeito de renderizar duas vezes com o estado 3?",
+                  "alternativas": [
+                    {
+                      "texto": "Apresentar 3 nas duas vezes, mantendo somente um cartão.",
+                      "correta": true,
+                      "feedback": "Renderização apresenta o estado atual; não deve criar uma nova seleção nem duplicar os filhos do contêiner."
+                    },
+                    {
+                      "texto": "Aumentar automaticamente o estado para 5.",
+                      "correta": false,
+                      "feedback": "Atualizar o estado pertence à ação de selecionar. Renderizar não deve alterar a quantidade escolhida."
+                    },
+                    {
+                      "texto": "Criar dois cartões para registrar o histórico de chamadas.",
+                      "correta": false,
+                      "feedback": "O cartão representa a seleção atual, não um histórico. replaceChildren permite substituir a apresentação."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "No JS, guarde lugares começando em zero. Implemente renderizar para atualizar #resumo com “N lugares selecionados” e produzir um único article dentro de #cartao, contendo h2 “Sua seleção” e p “N de 5 lugares”. Ligue #adicionar e #remover a mudanças limitadas entre 0 e 5 e renderize inicialmente. Teste os dois limites e confira que o cartão nunca se duplica.",
+              "variacao": "Adicione um botão “Limpar seleção” que define lugares como zero e chama a mesma renderização. Selecione três lugares, limpe e explique por que o botão não precisa escrever diretamente em cada região.",
+              "resumo": "Uma ação atualiza o estado; a renderização apresenta esse estado em todas as regiões sem duplicar dados, elementos ou ouvintes.",
+              "pontosDificeis": [
+                "Manter a regra de seleção fora do texto apresentado.",
+                "Registrar eventos uma vez e substituir, em vez de acumular, os cartões."
+              ],
+              "pistas": [
+                "Desenhe a sequência estado anterior → ação → novo estado → renderizar.",
+                "Use Math.max e Math.min para limitar o número antes de apresentá-lo.",
+                "Monte o article e substitua os filhos de #cartao com replaceChildren."
+              ],
+              "arquivos": {
+                "html": "<h1>Reserva de lugares</h1>\n<p>Escolha de zero a cinco lugares para sua visita.</p>\n<button id=\"adicionar\" type=\"button\">Adicionar lugar</button>\n<button id=\"remover\" type=\"button\">Remover lugar</button>\n<p id=\"resumo\" role=\"status\" aria-live=\"polite\">Nenhum lugar selecionado.</p>\n<div id=\"cartao\"></div>",
+                "css": "button { margin: 4px; padding: 10px; } article { border: 1px solid #8f2d4a; padding: 16px; }",
+                "js": "let lugares = 0;\n// Implemente a transição, a renderização e os eventos.\n"
+              },
+              "competencia": "frontend-estado-renderizacao-unica",
+              "linguagem": "dom",
+              "rubrica": [
+                "Resumo e cartão derivam do mesmo estado numérico.",
+                "Adicionar e remover respeitam os limites de zero e cinco.",
+                "Renderizações repetidas mantêm um único cartão e um ouvinte por ação.",
+                "Uso por teclado e mensagem de atualização permanecem disponíveis."
+              ],
+              "testes": [
+                {
+                  "id": "estado-adicionar",
+                  "descricao": "Adicionar seleciona um lugar partindo do estado inicial zero.",
+                  "tipo": "evento",
+                  "seletor": "#adicionar",
+                  "propriedade": "#resumo",
+                  "esperado": "1 lugares selecionados"
+                },
+                {
+                  "id": "estado-remover",
+                  "descricao": "Remover volta a zero depois da adição de um lugar.",
+                  "tipo": "evento",
+                  "seletor": "#remover",
+                  "propriedade": "#resumo",
+                  "esperado": "0 lugares selecionados"
+                },
+                {
+                  "id": "estado-cartao",
+                  "descricao": "A renderização cria o título do cartão de seleção.",
+                  "tipo": "texto",
+                  "seletor": "#cartao > article > h2",
+                  "esperado": "Sua seleção"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar estado e fluxo de dados em uma situação prática, justificar decisões e revisar erros."
@@ -2913,8 +3854,178 @@
         {
           "id": "backend-02",
           "titulo": "Validação e erros",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "api-validacao",
+              "titulo": "Validação: responder sem inventar dados",
+              "objetivo": "Validar um corpo desconhecido antes de criar uma resposta JSON local com status de sucesso ou erro.",
+              "preRequisitos": [
+                "api-http",
+                "js-funcoes"
+              ],
+              "blocos": [
+                "Uma tela pode oferecer somente números positivos, mas um cliente diferente pode enviar texto, campos ausentes ou uma lista inteira no lugar do objeto esperado. A fronteira do backend deve conferir esses dados antes de realizar uma operação. Neste laboratório montaremos Request e Response locais; isso ensina o contrato, mas não cria um servidor, um cadastro remoto ou uma autorização real.",
+                "Comece pelo formato geral: typeof entrada === \"object\" não basta, porque null também possui esse resultado e arrays são objetos. Rejeite null e Array.isArray(entrada) antes de consultar os campos. Validar a estrutura primeiro evita uma exceção ao tentar ler entrada.nome de um valor inexistente. Uma falha esperada de validação deve produzir uma resposta compreensível.",
+                "Confira typeof entrada.nome === \"string\" antes de chamar trim. Trim remove espaços das pontas; uma string só de espaços vira vazia e deve ser rejeitada. Para vagas, Number.isInteger exige um número inteiro, e a comparação com zero impede negativos. A string \"3\" não satisfaz esse contrato numérico. Converter silenciosamente esconderia um erro do cliente que precisamos explicar.",
+                "Uma resposta JSON combina um status, Content-Type e um corpo serializado com JSON.stringify. Neste contrato, 201 confirma uma criação aceita no modelo e 422 representa um conteúdo compreendido cujo formato ou valores não atendem às regras. Retorne { erro: \"nome inválido\" } ou { erro: \"vagas inválidas\" } conforme o campo. Esse status é uma escolha documentada do contrato, não uma regra universal para toda API.",
+                "Uma função de validação não deve preencher nome obrigatório com um valor fictício nem alterar o objeto recebido. No sucesso, construa um novo objeto com nome aparado e vagas, descartando campos extras. Para ler os corpos das respostas, use await resposta.json() dentro de uma função async. Teste zero vagas, texto numérico, nome vazio, array e null; observe cada caminho sem fazer fetch nem declarar persistência."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Uma guarda antes de acessar campos",
+                  "codigo": "function lerNome(entrada) {\n  if (!entrada || typeof entrada !== \"object\" || Array.isArray(entrada)) {\n    return { erro: \"objeto inválido\" };\n  }\n  if (typeof entrada.nome !== \"string\" || !entrada.nome.trim()) {\n    return { erro: \"nome inválido\" };\n  }\n  return { nome: entrada.nome.trim() };\n}\nconsole.log(lerNome({ nome: \"  Leitura  \" }));\nconsole.log(lerNome(null));",
+                  "explicacao": [
+                    "Linha 1: Recebe um valor desconhecido que ainda não possui contrato garantido.",
+                    "Linha 2: Rejeita valores ausentes, tipos primitivos e arrays antes do acesso.",
+                    "Linha 3: Devolve um erro descritivo sem tentar consultar um campo inexistente.",
+                    "Linha 4: Fecha a guarda inicial e permite seguir apenas com um objeto aceitável.",
+                    "Linha 5: Verifica o tipo antes de aparar espaços e exige um nome não vazio.",
+                    "Linha 6: Explica a falha do campo em vez de fabricar um nome substituto.",
+                    "Linha 7: Encerra a rejeição dos nomes e preserva o objeto recebido sem alteração.",
+                    "Linha 8: Cria um novo resultado usando apenas o campo permitido e normalizado.",
+                    "Linha 9: Fecha a função que pode ser exercitada sem depender de uma interface.",
+                    "Linha 10: Confirma a normalização das bordas sem modificar o registro original.",
+                    "Linha 11: Demonstra que a ausência vira erro esperado em vez de uma exceção."
+                  ]
+                },
+                {
+                  "titulo": "O erro também tem um contrato HTTP",
+                  "codigo": "async function observarErro() {\n  const resposta = new Response(JSON.stringify({ erro: \"vagas inválidas\" }), {\n    status: 422,\n    headers: { \"Content-Type\": \"application/json\" }\n  });\n  console.log(resposta.status, resposta.ok);\n  console.log(await resposta.json());\n}\nobservarErro();",
+                  "explicacao": [
+                    "Linha 1: Abre uma função assíncrona para permitir a leitura posterior do corpo.",
+                    "Linha 2: Cria uma resposta local cujo corpo já foi serializado como JSON.",
+                    "Linha 3: Identifica a rejeição de dados segundo a convenção desta atividade.",
+                    "Linha 4: Declara o formato que o cliente encontrará ao interpretar o corpo.",
+                    "Linha 5: Conclui o objeto Response sem enviar nenhuma chamada pela internet.",
+                    "Linha 6: Mostra 422 e false, pois o status de erro fica fora da faixa de sucesso.",
+                    "Linha 7: Interpreta o texto JSON do corpo como um objeto JavaScript utilizável.",
+                    "Linha 8: Encerra a função de observação e separa sua declaração da chamada.",
+                    "Linha 9: Inicia a demonstração local sem solicitar qualquer recurso remoto."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "api-validacao-q1",
+                  "enunciado": "O contrato exige vagas como número inteiro não negativo. A entrada { nome: \"Leitura\", vagas: \"3\" } deve...",
+                  "alternativas": [
+                    {
+                      "texto": "Ser rejeitada com erro de vagas.",
+                      "correta": true,
+                      "feedback": "A string numérica não é um inteiro JavaScript. O contrato exige tipo correto antes da criação."
+                    },
+                    {
+                      "texto": "Ser aceita só porque contém um algarismo.",
+                      "correta": false,
+                      "feedback": "A aparência do texto não muda seu tipo. Uma conversão silenciosa ocultaria o descumprimento do contrato."
+                    },
+                    {
+                      "texto": "Receber zero vagas automaticamente.",
+                      "correta": false,
+                      "feedback": "Substituir um dado inválido por zero inventa uma decisão de negócio que o cliente não solicitou."
+                    }
+                  ]
+                },
+                {
+                  "id": "api-validacao-q2",
+                  "enunciado": "Por que testar null e Array.isArray antes de ler entrada.nome?",
+                  "alternativas": [
+                    {
+                      "texto": "Para rejeitar formatos inesperados antes de acessar os campos.",
+                      "correta": true,
+                      "feedback": "Null não pode ser consultado como objeto, e uma lista não representa o registro exigido pelo contrato."
+                    },
+                    {
+                      "texto": "Para comprovar que o usuário está autenticado.",
+                      "correta": false,
+                      "feedback": "Validação de dados não comprova identidade; autenticação e autorização são verificações diferentes."
+                    },
+                    {
+                      "texto": "Para salvar o objeto automaticamente num banco.",
+                      "correta": false,
+                      "feedback": "Uma guarda só decide se os dados podem avançar. O laboratório não possui persistência remota."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Implemente criarResposta(entrada) retornando Response JSON: null, array ou tipo não objeto recebem 422 e erro \"objeto inválido\"; nome não textual ou vazio recebe 422 e erro \"nome inválido\"; vagas não inteiras ou negativas recebem 422 e erro \"vagas inválidas\". Sucesso retorna 201 e somente { nome: nome aparado, vagas }. Em async conferir(), registre um objeto com statusValido, statusTexto, statusNome, statusArray e statusAusente para os casos fornecidos; registre também corpoValido e erroTexto obtidos com await resposta.json(). Não use fetch e não altere as entradas.",
+              "variacao": "Teste vagas igual a -1, 1.5 e 0. Acrescente um campo admin: true à entrada válida e confirme que ele não aparece na resposta. Explique por que remover esse campo não substitui a autorização de um servidor real.",
+              "resumo": "Valide formato, tipo e regra antes de produzir um novo resultado; respostas locais demonstram um contrato sem criar um servidor.",
+              "pontosDificeis": [
+                "Null passa por typeof objeto, mas não admite acesso a propriedades.",
+                "Dados válidos, identidade e permissão são responsabilidades distintas."
+              ],
+              "pistas": [
+                "Rejeite primeiro o formato geral, depois nome e finalmente vagas.",
+                "Uma pequena função auxiliar pode construir Response JSON com status e Content-Type.",
+                "Leia o corpo uma vez com await json() e registre campos estruturados para conferir os testes."
+              ],
+              "arquivos": {
+                "html": "<h1>Contrato de criação de oficina</h1><p>Respostas locais, sem envio ou cadastro remoto.</p>",
+                "css": "",
+                "js": "function criarResposta(entrada) {\n  // Valide a entrada e devolva uma Response JSON apropriada.\n}\nasync function conferir() {\n  const valida = { nome: \"  Leitura  \", vagas: 0, extra: true };\n  const texto = { nome: \"Leitura\", vagas: \"3\" };\n  const nomeVazio = { nome: \"   \", vagas: 3 };\n  const lista = [];\n  const ausente = null;\n  // Execute os casos e leia os corpos antes de montar o relatório.\n  console.log({ statusValido: null, statusTexto: null, statusNome: null, statusArray: null, statusAusente: null });\n}\nconferir();"
+              },
+              "competencia": "backend-validacao-resposta-json",
+              "linguagem": "api",
+              "rubrica": [
+                "Guardas rejeitam formatos, nomes e vagas inválidos sem lançar exceções acidentais.",
+                "Status e corpos representam cada caminho do contrato local.",
+                "O sucesso mantém zero, apara o nome e descarta campos extras sem mutação."
+              ],
+              "testes": [
+                {
+                  "id": "validacao-sucesso",
+                  "descricao": "Zero vagas recebe status 201 no contrato local.",
+                  "tipo": "javascript",
+                  "propriedade": "json:statusValido",
+                  "esperado": "201"
+                },
+                {
+                  "id": "validacao-texto",
+                  "descricao": "Vagas textuais recebem status 422.",
+                  "tipo": "javascript",
+                  "propriedade": "json:statusTexto",
+                  "esperado": "422"
+                },
+                {
+                  "id": "validacao-nome",
+                  "descricao": "Nome só com espaços recebe status 422.",
+                  "tipo": "javascript",
+                  "propriedade": "json:statusNome",
+                  "esperado": "422"
+                },
+                {
+                  "id": "validacao-lista",
+                  "descricao": "Uma lista no lugar do registro recebe status 422.",
+                  "tipo": "javascript",
+                  "propriedade": "json:statusArray",
+                  "esperado": "422"
+                },
+                {
+                  "id": "validacao-ausencia",
+                  "descricao": "Uma entrada null recebe status 422 sem quebrar a execução.",
+                  "tipo": "javascript",
+                  "propriedade": "json:statusAusente",
+                  "esperado": "422"
+                },
+                {
+                  "id": "validacao-corpo",
+                  "descricao": "O sucesso contém só o nome aparado e zero vagas.",
+                  "tipo": "javascript",
+                  "propriedade": "json:corpoValido",
+                  "esperado": "{\"nome\":\"Leitura\",\"vagas\":0}"
+                },
+                {
+                  "id": "validacao-erro",
+                  "descricao": "O corpo de erro explica o problema de vagas.",
+                  "tipo": "javascript",
+                  "propriedade": "json:erroTexto",
+                  "esperado": "{\"erro\":\"vagas inválidas\"}"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar validação e erros em uma situação prática, justificar decisões e revisar erros."
@@ -3152,8 +4263,167 @@
         {
           "id": "fullstack-02",
           "titulo": "Login e sessão",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "fullstack-sessao",
+              "titulo": "Sessão e permissão são decisões diferentes",
+              "objetivo": "Distinguir identidade validada de permissão numa simulação local de sessão, expiração e respostas HTTP 401 e 403.",
+              "preRequisitos": [
+                "fullstack-contratos",
+                "api-http"
+              ],
+              "blocos": [
+                "O catálogo de oficinas possui uma área do aluno e outra de administração. Reconhecer quem fez uma requisição não significa permitir todas as ações. Autenticação verifica a identidade; autorização verifica o que essa identidade pode fazer. Vamos modelar essas decisões com funções e objetos locais, sem criar um serviço de login e sem enviar credenciais pela internet.",
+                "Numa sessão real, o servidor confere uma credencial recebida, procura o registro correspondente e verifica se ainda está válido. Um cabeçalho Authorization pode usar o formato Bearer seguido de uma credencial. Nesta demonstração, “ficha-local” é somente uma etiqueta pública e fictícia. Não copie esta comparação simples para proteger um produto: o aplicativo real exige credenciais imprevisíveis e validação no servidor.",
+                "A sessão do simulador contém identificador, papel, instante de expiração e indicação de revogação. O parâmetro agora é recebido explicitamente, tornando possível testar o tempo sem esperar. Se expiraEm for menor ou igual a agora, a sessão acabou. Uma sessão revogada também é recusada, mesmo antes do prazo. Fechar uma tela não revoga uma sessão no servidor.",
+                "Use 401 quando não houver uma sessão válida: cabeçalho ausente, etiqueta incorreta, expiração ou revogação. Use 403 quando a sessão estiver válida, mas o papel não permitir a ação. Um aluno identificado pode receber 200 numa rota comum e 403 numa rota administrativa. Esconder um botão não substitui essa autorização em cada requisição do servidor real.",
+                "Crie objetos Response para observar os status no console. Isso constrói respostas locais; nenhum servidor, senha, cookie ou conta é criado. Teste o instante imediatamente anterior à expiração e o instante exato do vencimento. No produto real, logout e banimento precisam invalidar registros no servidor; reativar uma conta não deve ressuscitar uma credencial já revogada. Aqui verificamos apenas a lógica do modelo."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Expiração testável sem esperar",
+                  "codigo": "{\n  const sessao = { expiraEm: 100, revogada: false };\n  function estaValida(ficha, agora) {\n    return !ficha.revogada && ficha.expiraEm > agora;\n  }\n  console.log(estaValida(sessao, 99));\n  console.log(estaValida(sessao, 100));\n}",
+                  "explicacao": [
+                    "Linha 1: Isola as constantes desta demonstração de tempo de sessão.",
+                    "Linha 2: Representa o prazo e a revogação por dados fictícios locais.",
+                    "Linha 3: Recebe o relógio explicitamente para testar a fronteira temporal.",
+                    "Linha 4: Exige ausência de revogação e prazo estritamente no futuro.",
+                    "Linha 5: Encerra a regra de validade sem realizar uma requisição real.",
+                    "Linha 6: Mostra true no último instante anterior ao vencimento definido.",
+                    "Linha 7: Mostra false exatamente no prazo, sem aguardar um temporizador.",
+                    "Linha 8: Fecha o bloco mantendo seus dados fora das outras demonstrações."
+                  ]
+                },
+                {
+                  "titulo": "Identidade aceita, ação recusada",
+                  "codigo": "{\n  const papel = \"aluno\";\n  const exigeAdmin = true;\n  const status = exigeAdmin && papel !== \"admin\" ? 403 : 200;\n  const resposta = new Response(\"Resposta local\", { status });\n  console.log(resposta.status);\n}",
+                  "explicacao": [
+                    "Linha 1: Abre um bloco para o exemplo de autorização administrativa.",
+                    "Linha 2: Representa o papel de uma identidade já reconhecida no modelo.",
+                    "Linha 3: Descreve uma ação que precisa de permissão administrativa.",
+                    "Linha 4: Diferencia permissão insuficiente de uma consulta permitida.",
+                    "Linha 5: Constrói uma resposta em memória sem publicar uma API real.",
+                    "Linha 6: Mostra 403 porque a identidade existe e não possui esse papel.",
+                    "Linha 7: Conclui o exemplo sem armazenar uma credencial de verdade."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "fullstack-sessao-q1",
+                  "enunciado": "Uma sessão válida de aluno tenta uma ação exclusiva de administrador. Qual status expressa a decisão?",
+                  "alternativas": [
+                    {
+                      "texto": "403, porque a identidade foi aceita e a permissão é insuficiente.",
+                      "correta": true,
+                      "feedback": "A falha é de autorização. A pessoa possui sessão válida, mas não pode realizar essa ação administrativa."
+                    },
+                    {
+                      "texto": "401, porque qualquer ação proibida indica que ninguém entrou.",
+                      "correta": false,
+                      "feedback": "401 representa ausência de autenticação válida. O caso já confirmou a identidade e falhou na permissão."
+                    },
+                    {
+                      "texto": "200, desde que o botão administrativo esteja escondido.",
+                      "correta": false,
+                      "feedback": "Ocultar a interface não protege a API. A requisição deve ser recusada pela autorização do servidor."
+                    }
+                  ]
+                },
+                {
+                  "id": "fullstack-sessao-q2",
+                  "enunciado": "O prazo expiraEm vale 100 e agora também vale 100. O que o modelo deve fazer?",
+                  "alternativas": [
+                    {
+                      "texto": "Recusar a sessão com 401 porque o prazo já foi atingido.",
+                      "correta": true,
+                      "feedback": "A validade exige expiraEm maior que agora. A igualdade pertence ao caminho expirado, que deve ser testado."
+                    },
+                    {
+                      "texto": "Aceitar para sempre, pois o identificador ainda é o mesmo.",
+                      "correta": false,
+                      "feedback": "Reconhecer o identificador não elimina a verificação do prazo nem a possibilidade de revogação."
+                    },
+                    {
+                      "texto": "Trocar o papel para administrador antes de verificar o prazo.",
+                      "correta": false,
+                      "feedback": "Permissões não renovam sessão nem surgem durante a verificação. Uma sessão expirada precisa ser recusada."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Implemente avaliarAcesso(autorizacao, sessao, agora, requerAdmin = false), devolvendo Response local. Recuse com 401 sessão ausente, cabeçalho diferente de `Bearer ${sessao.id}`, revogação ou expiraEm <= agora. Com sessão válida, devolva 403 quando requerAdmin for true e papel não for admin; nos demais casos, 200. Use a ficha inicial e imprima um objeto com status nas chaves ausente, expirada, revogada, aluno, proibido e admin. Não envie nenhuma requisição real.",
+              "variacao": "Acrescente um caso com etiqueta incorreta e outro com agora 99. Compare-os ao caso agora 100. Explique por que renovar o prazo não deveria revalidar uma sessão cujo campo revogada continua true.",
+              "resumo": "Uma sessão válida identifica a pessoa; a autorização decide a ação. Expiração e revogação são verificadas antes da permissão.",
+              "pontosDificeis": [
+                "Distinguir 401 de 403 sem usar a visibilidade do botão como segurança.",
+                "Tratar o instante de expiração como inválido e manter a revogação independente do prazo."
+              ],
+              "pistas": [
+                "Verifique a existência de sessao antes de ler suas propriedades.",
+                "Agrupe as causas de autenticação inválida antes da regra de papel.",
+                "Crie Response com status explícito e imprima somente os códigos do modelo, nunca credenciais reais."
+              ],
+              "arquivos": {
+                "html": "<h1>Contrato local de sessão</h1><p>Simulador didático: nenhum login real ou envio de credenciais. Veja os status no console.</p>",
+                "css": "",
+                "js": "function avaliarAcesso(autorizacao, sessao, agora, requerAdmin = false) {\n  // Confira identidade, validade e, depois, permissão.\n}\nconst ficha = { id: \"ficha-local\", expiraEm: 100, revogada: false, papel: \"aluno\" };\n// Imprima o objeto de resultados solicitado depois de implementar a função.\n"
+              },
+              "competencia": "fullstack-sessao-validade-autorizacao",
+              "linguagem": "api",
+              "rubrica": [
+                "Sessão ausente, errada, expirada ou revogada produz 401.",
+                "Aluno pode consultar rota comum, mas recebe 403 em ação administrativa.",
+                "Administrador válido recebe 200 somente após as verificações da sessão.",
+                "Explica a diferença entre este modelo local e autenticação segura no servidor."
+              ],
+              "testes": [
+                {
+                  "id": "sessao-ausente",
+                  "descricao": "Cabeçalho ausente produz 401 no modelo.",
+                  "tipo": "javascript",
+                  "propriedade": "json:ausente",
+                  "esperado": "401"
+                },
+                {
+                  "id": "sessao-expirada",
+                  "descricao": "A igualdade no prazo de expiração produz 401.",
+                  "tipo": "javascript",
+                  "propriedade": "json:expirada",
+                  "esperado": "401"
+                },
+                {
+                  "id": "sessao-revogada",
+                  "descricao": "Uma sessão revogada continua recusada antes do prazo.",
+                  "tipo": "javascript",
+                  "propriedade": "json:revogada",
+                  "esperado": "401"
+                },
+                {
+                  "id": "sessao-aluno",
+                  "descricao": "Um aluno válido pode acessar a ação comum.",
+                  "tipo": "javascript",
+                  "propriedade": "json:aluno",
+                  "esperado": "200"
+                },
+                {
+                  "id": "sessao-proibido",
+                  "descricao": "Aluno autenticado recebe 403 na ação administrativa.",
+                  "tipo": "javascript",
+                  "propriedade": "json:proibido",
+                  "esperado": "403"
+                },
+                {
+                  "id": "sessao-admin",
+                  "descricao": "Administrador válido pode acessar a ação administrativa.",
+                  "tipo": "javascript",
+                  "propriedade": "json:admin",
+                  "esperado": "200"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar login e sessão em uma situação prática, justificar decisões e revisar erros."
@@ -3385,8 +4655,157 @@
         {
           "id": "projetos-02",
           "titulo": "Calculadora acessível",
-          "estado": "em_producao",
-          "aulas": [],
+          "estado": "publicado",
+          "aulas": [
+            {
+              "id": "projeto-calculadora",
+              "titulo": "Projeto: calculadora que explica as entradas",
+              "objetivo": "Construir uma calculadora acessível com soma, subtração, validação de entradas e feedback que orienta a correção.",
+              "preRequisitos": [
+                "js-funcoes",
+                "dom-eventos",
+                "html-formulario"
+              ],
+              "blocos": [
+                "A organização de uma oficina precisa somar materiais e comparar quantidades. Uma calculadora pequena permite praticar uma jornada inteira: entender a entrada, validar, calcular e apresentar o resultado. O objetivo não é apenas fazer aparecer um número; a pessoa precisa compreender o que preencher e conseguir corrigir um campo sem perder o restante do trabalho.",
+                "Os valores de input chegam como texto. Antes de Number, use trim e recuse a string vazia: Number(\"\") produz zero, mas campo esquecido não significa que a pessoa escolheu zero. Nesta calculadora, aceite vírgula ou ponto decimal substituindo uma vírgula por ponto antes da conversão. Depois exija Number.isFinite; palavras, infinitos e formatos com mais de um separador não são entradas válidas.",
+                "Separe a função calcular da leitura dos campos. Ela recebe duas strings e a operação e devolve { ok: true, valor } quando consegue calcular, ou { ok: false, erro, campo } quando precisa de correção. Esse retorno permite testar regras no console sem clicar na interface. Somar usa dois números já convertidos; subtrair preserva a ordem: primeiro menos segundo.",
+                "Os botões Somar e Subtrair leem os mesmos campos e chamam a mesma função. Atualize #resultado com textContent. Um parágrafo com role=\"status\" anuncia mudanças sem exigir que toda a página seja relida. Cada campo possui label associado e instrução sobre decimais. Ao encontrar erro, marque aria-invalid no campo e devolva o foco para ele; preserve os valores digitados para facilitar a correção.",
+                "Planeje casos antes de escrever os eventos: 12,5 mais 2,5 resulta em 15; a subtração resulta em 10; zero é válido; vazio e “livros” devem ser recusados. Teste também resultado negativo e um número excessivamente grande. A representação Number tem limites de precisão; esta é uma prática geral de aritmética, não uma calculadora financeira com garantia de centavos. Nenhuma informação é enviada ao servidor."
+              ],
+              "exemplos": [
+                {
+                  "titulo": "Converter somente depois de conferir o vazio",
+                  "codigo": "{\n  const texto = \" 12,5 \".trim();\n  if (texto === \"\") {\n    console.log(\"Preencha o número.\");\n  } else {\n    const numero = Number(texto.replace(\",\", \".\"));\n    console.log(Number.isFinite(numero), numero);\n  }\n}",
+                  "explicacao": [
+                    "Linha 1: Abre um bloco independente para a preparação de entrada.",
+                    "Linha 2: Remove espaços ao redor sem transformar campo vazio em zero.",
+                    "Linha 3: Separa a ausência de entrada de um zero fornecido de propósito.",
+                    "Linha 4: Produz uma instrução útil em vez de inventar um valor padrão.",
+                    "Linha 5: Só segue para a conversão quando existe conteúdo para analisar.",
+                    "Linha 6: Normaliza a vírgula decimal deste contrato e converte o texto.",
+                    "Linha 7: Mostra a validade e o valor 12.5 para conferir a conversão.",
+                    "Linha 8: Conclui a separação dos caminhos vazio e preenchido.",
+                    "Linha 9: Fecha o bloco sem misturar seus nomes aos outros exemplos."
+                  ]
+                },
+                {
+                  "titulo": "A regra de cálculo pode ser testada sozinha",
+                  "codigo": "{\n  function operar(a, b, operacao) {\n    return operacao === \"somar\" ? a + b : a - b;\n  }\n  console.log(operar(12.5, 2.5, \"somar\"));\n  console.log(operar(2, 5, \"subtrair\"));\n}",
+                  "explicacao": [
+                    "Linha 1: Isola a função aritmética usada nesta demonstração numérica.",
+                    "Linha 2: Recebe números que já foram convertidos e validados antes.",
+                    "Linha 3: Escolhe soma ou subtração dentro do contrato deste exemplo.",
+                    "Linha 4: Encerra a função sem ler um campo nem alterar a interface.",
+                    "Linha 5: Verifica a soma conhecida que deve produzir o número quinze.",
+                    "Linha 6: Confere a ordem da subtração e permite o resultado negativo.",
+                    "Linha 7: Conclui a demonstração antes de conectar os eventos da tela."
+                  ]
+                }
+              ],
+              "questoes": [
+                {
+                  "id": "projeto-calculadora-q1",
+                  "enunciado": "Por que conferir a string vazia antes de usar Number?",
+                  "alternativas": [
+                    {
+                      "texto": "Porque Number(\"\") vira zero, mas ausência de entrada deve pedir preenchimento.",
+                      "correta": true,
+                      "feedback": "O contrato diferencia uma informação esquecida do número zero, que é um valor válido para esta calculadora."
+                    },
+                    {
+                      "texto": "Porque trim transforma todos os números em valores inválidos.",
+                      "correta": false,
+                      "feedback": "Trim apenas remove espaços externos. A verificação de vazio impede interpretar uma ausência como zero."
+                    },
+                    {
+                      "texto": "Porque qualquer zero deveria ser proibido numa soma.",
+                      "correta": false,
+                      "feedback": "Zero é um operando válido. O erro é aceitar campo vazio sem confirmar a intenção de quem preencheu."
+                    }
+                  ]
+                },
+                {
+                  "id": "projeto-calculadora-q2",
+                  "enunciado": "Qual comportamento orienta melhor quem escreveu “livros” no primeiro campo?",
+                  "alternativas": [
+                    {
+                      "texto": "Explicar o erro, marcar o campo e levar o foco até ele, preservando os textos.",
+                      "correta": true,
+                      "feedback": "A pessoa recebe uma indicação concreta de onde corrigir e não precisa preencher novamente o outro valor."
+                    },
+                    {
+                      "texto": "Apagar os dois campos e mostrar somente NaN.",
+                      "correta": false,
+                      "feedback": "A mensagem não explica a correção necessária e apagar dados válidos torna a recuperação mais difícil."
+                    },
+                    {
+                      "texto": "Trocar “livros” por zero e exibir o resultado como correto.",
+                      "correta": false,
+                      "feedback": "Inventar um número oculta a falha da entrada e produz uma resposta que a pessoa não solicitou."
+                    }
+                  ]
+                }
+              ],
+              "desafio": "Implemente calcular(primeiro, segundo, operacao) recebendo strings, normalizando vírgula decimal, recusando vazio e valores não finitos e devolvendo objeto com ok e valor ou erro e campo (0 ou 1). Ligue os botões #somar e #subtrair aos campos existentes e apresente “Resultado: N” em #resultado; em erro, explique, marque aria-invalid e foque o campo. Com 12,5 e 2,5, confira 15 na soma e 10 na subtração. Imprima no console um relatório com chaves soma, subtracao, vazio e invalido contendo o retorno da função nesses casos.",
+              "variacao": "Adicione a operação multiplicar preservando a mesma validação e apresentação. Teste -3 por 2, zero por 8 e um campo vazio. Explique quais partes da aplicação puderam ser reutilizadas sem copiar a lógica de erro.",
+              "resumo": "Uma calculadora confiável distingue texto de número, valida antes de calcular e oferece uma correção acessível sem apagar o trabalho.",
+              "pontosDificeis": [
+                "Campo vazio não equivale a zero informado.",
+                "Validar entrada e resultado sem misturar regra aritmética com manipulação da tela."
+              ],
+              "pistas": [
+                "Teste a função no console antes de adicionar ouvintes aos botões.",
+                "Guarde as duas strings e verifique trim antes de Number.",
+                "Retorne o índice do campo inválido para a apresentação definir foco e aria-invalid."
+              ],
+              "arquivos": {
+                "html": "<h1>Calculadora da oficina</h1>\n<p id=\"instrucoes\">Informe dois números. Use vírgula ou ponto para decimais.</p>\n<p><label for=\"primeiro\">Primeiro número</label>\n<input id=\"primeiro\" inputmode=\"decimal\" value=\"12,5\" aria-describedby=\"instrucoes\"></p>\n<p><label for=\"segundo\">Segundo número</label>\n<input id=\"segundo\" inputmode=\"decimal\" value=\"2,5\" aria-describedby=\"instrucoes\"></p>\n<button id=\"somar\" type=\"button\">Somar</button>\n<button id=\"subtrair\" type=\"button\">Subtrair</button>\n<p id=\"resultado\" role=\"status\" aria-live=\"polite\">Escolha uma operação.</p>",
+                "css": "input { max-width: 100%; padding: 10px; } button { padding: 10px; margin: 4px; } [aria-invalid=\"true\"] { outline: 2px solid #8f2d4a; }",
+                "js": "function calcular(primeiro, segundo, operacao) {\n  // Valide, converta e devolva um resultado explicado.\n}\n// Conecte os dois botões à função e à região de resultado.\n"
+              },
+              "competencia": "projeto-calculadora-validacao-feedback",
+              "linguagem": "dom",
+              "rubrica": [
+                "Soma e subtração funcionam com zero, negativos e decimais do contrato.",
+                "Vazio e texto inválido não são silenciosamente substituídos por zero.",
+                "Rótulos, teclado, anúncio de resultado e foco de correção são utilizáveis.",
+                "Função de regra pode ser verificada independentemente do DOM."
+              ],
+              "testes": [
+                {
+                  "id": "calculadora-soma-tela",
+                  "descricao": "O botão Somar calcula os valores iniciais e apresenta 15.",
+                  "tipo": "evento",
+                  "seletor": "#somar",
+                  "propriedade": "#resultado",
+                  "esperado": "Resultado: 15"
+                },
+                {
+                  "id": "calculadora-subtracao-tela",
+                  "descricao": "O botão Subtrair apresenta 10 para os valores iniciais.",
+                  "tipo": "evento",
+                  "seletor": "#subtrair",
+                  "propriedade": "#resultado",
+                  "esperado": "Resultado: 10"
+                },
+                {
+                  "id": "calculadora-vazio",
+                  "descricao": "O relatório recusa campo vazio sem tratá-lo como zero.",
+                  "tipo": "javascript",
+                  "propriedade": "json:vazio.ok",
+                  "esperado": "false"
+                },
+                {
+                  "id": "calculadora-invalido",
+                  "descricao": "O relatório recusa entrada não numérica.",
+                  "tipo": "javascript",
+                  "propriedade": "json:invalido.ok",
+                  "esperado": "false"
+                }
+              ]
+            }
+          ],
           "planejamento": {
             "objetivos": [
               "Aplicar calculadora acessível em uma situação prática, justificar decisões e revisar erros."

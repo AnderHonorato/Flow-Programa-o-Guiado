@@ -1,8 +1,13 @@
 """Fonte editorial autoral. Rode python3 conteudos/fontes/gerar_catalogo.py na raiz."""
 import json
+import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(RAIZ))
+from conteudos.fontes.expansao_web import registrar as registrar_web
+from conteudos.fontes.expansao_logica import registrar as registrar_logica
+from conteudos.fontes.expansao_apps import registrar as registrar_apps
 TRILHAS = [
 ('fundamentos','Fundamentos da programação','Entenda arquivos, algoritmos e o caminho de uma página até a tela.',[],['Web, arquivos e ferramentas','Algoritmos e decomposição','Variáveis e tipos','Decisões e repetições','Funções e depuração','Terminal, Git e colaboração']),
 ('html','HTML: conteúdo com significado','Construa páginas semânticas, navegáveis e acessíveis.',['fundamentos'],['Minha primeira página','Texto, listas e navegação','Imagens e conteúdo estruturado','Formulários acessíveis','Semântica e acessibilidade','SEO e projeto editorial']),
@@ -314,6 +319,9 @@ TESTES = {
 {'id':'chamada','descricao':'Uma chamada aponta para a seção de interesse.','tipo':'atributo','seletor':'a[href="#interesse"]','propriedade':'href','esperado':'#interesse'},
 {'id':'formulario','descricao':'Existe um formulário com campo rotulado de nome.','tipo':'elemento','seletor':'form input#nome'}]
 }
+for registrar in [registrar_web, registrar_logica, registrar_apps]:
+    TESTES.update(registrar(aula, exemplo))
+
 for trilha in catalogo['trilhas']:
     for modulo in trilha['modulos']:
         for registro in modulo['aulas']:

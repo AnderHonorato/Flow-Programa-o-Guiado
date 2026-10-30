@@ -607,7 +607,7 @@ export default function App() {
         <footer className="rodape-app">
           <span>Flow Programação Guiada</span>
           <span>Pequenos passos. Conhecimento que fica.</span>
-          <small>v0.5.0</small>
+          <small>v0.6.0</small>
         </footer>
       </div>
       <nav className="navegacao-inferior" aria-label="Atalhos do aplicativo" inert={conta || menu}>

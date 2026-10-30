@@ -102,7 +102,7 @@ export default function Aula({
               <strong>O que você vai aprender</strong>
               <p>{aula.objetivo}</p>
               {aula.preRequisitos.length > 0 && (
-                <small>Antes desta aula: {aula.preRequisitos.join(", ")}</small>
+                <small>Antes desta aula: {aula.preRequisitos.map(id => flow.aulas.find(a => a.id === id)?.titulo || id).join(" · ")}</small>
               )}
             </div>
           </div>

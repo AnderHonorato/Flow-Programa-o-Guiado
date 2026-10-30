@@ -27,7 +27,7 @@ cd aplicativos/web
 npx --no-install cap sync android
 cd ../android
 ./gradlew --no-daemon --console=plain assembleDebug lintDebug 2>&1 | tee "$raiz/artefatos/android-build.log"
-cp app/build/outputs/apk/debug/app-debug.apk "$raiz/artefatos/Flow-Programacao-Guiada-0.5.0-debug.apk"
+cp app/build/outputs/apk/debug/app-debug.apk "$raiz/artefatos/Flow-Programacao-Guiada-0.6.0-debug.apk"
 cd "$raiz/artefatos"
-sha256sum Flow-Programacao-Guiada-0.5.0-debug.apk > Flow-Programacao-Guiada-0.5.0-debug.apk.sha256
-cat Flow-Programacao-Guiada-0.5.0-debug.apk.sha256
+sha256sum Flow-Programacao-Guiada-0.6.0-debug.apk > Flow-Programacao-Guiada-0.6.0-debug.apk.sha256
+cat Flow-Programacao-Guiada-0.6.0-debug.apk.sha256

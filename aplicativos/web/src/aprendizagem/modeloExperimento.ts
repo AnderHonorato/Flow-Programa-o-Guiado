@@ -1,4 +1,5 @@
 import type { Aula } from '../../../../contratos/tipos';
+import { calcularExpansao, modelosExpansao } from './experimentosExpansao';
 
 export interface ControleExperimento {
   id: string;
@@ -42,7 +43,7 @@ const modelos: Record<string, ModeloExperimento> = {
 };
 
 export function modeloDaAula(aula: Pick<Aula, 'id' | 'linguagem'>): ModeloExperimento {
-  return modelos[aula.id] || modelos[({ html: 'html-primeira-pagina', css: 'css-box-model', javascript: 'js-valores', dom: 'dom-eventos', python: 'python-tipos', api: 'api-http' })[aula.linguagem]];
+  return modelosExpansao[aula.id] || modelos[aula.id] || modelos[({ html: 'html-primeira-pagina', css: 'css-box-model', javascript: 'js-valores', dom: 'dom-eventos', python: 'python-tipos', api: 'api-http' })[aula.linguagem]];
 }
 export const valoresIniciais = (modelo: ModeloExperimento): Record<string, string> => Object.fromEntries(modelo.controles.map(c => [c.id, c.inicial]));
 const escapar = (valor: string) => valor.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -51,6 +52,8 @@ const documento = (html: string, css = '') => `<!doctype html><html lang="pt-BR"
 
 /** Programas fixos e parâmetros limitados; nenhum código fornecido pelo usuário é avaliado. */
 export function calcularExperimento(aula: Pick<Aula, 'id' | 'linguagem'>, valores: Record<string, string>, cliques = 0): ResultadoExperimento {
+  const expansao = calcularExpansao(aula.id, valores);
+  if (expansao) return expansao;
   const id = modelos[aula.id] ? aula.id : ({ html: 'html-primeira-pagina', css: 'css-box-model', javascript: 'js-valores', dom: 'dom-eventos', python: 'python-tipos', api: 'api-http' })[aula.linguagem];
   const modelo = modeloDaAula(aula);
   const v = { ...valoresIniciais(modelo), ...valores };

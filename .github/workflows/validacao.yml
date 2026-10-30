@@ -76,7 +76,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Flow-0.5.0-debug
+          name: Flow-0.6.0-debug
           if-no-files-found: warn
           retention-days: 14
           path: |
@@ -97,4 +97,9 @@ jobs:
           cache: pip
           cache-dependency-path: servidor/requirements*.txt
       - run: python -m pip install -r servidor/requirements-desenvolvimento.txt
+      - name: Auditar currículo e reprodução das fontes
+        run: |
+          python conteudos/fontes/gerar_catalogo.py
+          python conteudos/verificadores/auditar_catalogo.py
+          git diff --exit-code -- conteudos/catalogo.json conteudos/inventario.json
       - run: python -m pytest servidor/testes -q

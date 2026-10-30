@@ -19,7 +19,7 @@ afterEach(async () => { await act(async () => raiz.unmount()); elemento.remove()
 const botao = (texto: string) => [...elemento.querySelectorAll('button')].find(b => b.textContent?.includes(texto))!;
 
 it('cobre cada aula publicada com modelo ligado ao conteúdo e código correspondente', () => {
-  expect(aulas).toHaveLength(20);
+  expect(aulas).toHaveLength(30);
   const titulos = new Set<string>();
   for (const a of aulas) {
     const modelo = modeloDaAula(a);
@@ -35,7 +35,7 @@ it('cobre cada aula publicada com modelo ligado ao conteúdo e código correspon
       expect(calcularExperimento(a, { [c.id]: 'Infinity' }).resultado).not.toContain('Infinity');
     }
   }
-  expect(titulos.size).toBe(20);
+  expect(titulos.size).toBe(30);
 });
 
 it('calcula condições de fronteira, tipos e dados ausentes sem avaliar código arbitrário', () => {

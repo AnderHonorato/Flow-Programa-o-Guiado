@@ -62,7 +62,7 @@ test('perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e pr
   await visualizar(page);
   const previa = page.frameLocator('.laboratorio iframe');
   await expect(previa.getByRole('heading', { name: 'Biblioteca da Ana' })).toBeVisible();
-  await expect(page.locator('.laboratorio iframe')).toHaveAttribute('sandbox', 'allow-scripts');
+  await expect(page.locator('.laboratorio iframe')).toHaveAttribute('sandbox', 'allow-scripts allow-forms');
   await editar(page, 'CSS', 'h1 { color: rgb(120, 30, 50); }');
   await visualizar(page);
   await expect(previa.locator('h1')).toHaveCSS('color', 'rgb(120, 30, 50)');
