@@ -31,8 +31,16 @@ O laboratório permite eventos nativos de formulário (`allow-forms`) e execuç�
 
 As fontes estão em `conteudos/fontes/expansao_{web,logica,apps}.py`; o gerador principal produz o catálogo estático. Soluções de referência são carregadas pelo processo Node/Python de QA, sem importação no aplicativo ou rota de respostas. O inventário separa conteúdo real de planejamento.
 
+O cache dos pacotes públicos é consultado pela mesma URL usada no download. Isso corrige importações de módulos do worker com cabeçalho Origin diferente do download, sem ignorar Vary nem permitir API/autorização no cache. O teste offline limpa o cache HTTP, fecha a aba e reabre sem internet, exigindo a solução salva e as três verificações Python realmente executadas.
+
 A CI regenera catálogo/inventário e exige ausência de diferenças com os arquivos versionados. O auditor verifica dependências, duplicações, estrutura editorial, exemplos Python e sintaxe JavaScript. A nova validação em navegador usa cada aula no aplicativo completo: o inicial incompleto precisa falhar um objetivo, e a solução executada precisa passar todos.
 
-187 testes frontend e78 testes da API passaram. Evidências e resultados complementares deste lote ficam em `docs/evidencias/curriculo-0.6.0`. Nenhuma migração de banco é necessária; sessões, bloqueios, avaliações, ranking e certificados da0.5 mantêm a mesma estrutura.
+188 testes frontend,78 testes da API e58 fluxos E2E desktop/celular passaram. A CI completa também concluiu web, API, build e lint Android com sucesso. Evidências e resultados complementares deste lote ficam em `docs/evidencias/curriculo-0.6.0`. Nenhuma migração de banco é necessária; sessões, bloqueios, avaliações, ranking e certificados da0.5 mantêm a mesma estrutura.
 
 O APK0.6/code6 continua uma compilação de depuração. Instalação sobre a versão anterior requer a mesma assinatura para preservar dados. Validação em aparelho Android físico e audição das vozes continuam pendentes; o funcionamento web do runtime não é evidência de execução nativa.
+
+## Publicação e entrega
+
+Aplicação2bb7204952ea3534be362d5a8154969c0c0f25e6, deployment `dpl_5hbjmubPeoGPjWgW2ti153cv8uhU` READY. URL pública e API0.6.0 conferidas com30 aulas/120 atividades. Auditoria local40 telas e pública12 telas: axe0, overflow0, errosJavaScript0. O APK final foi novamente baixado da Release e o SHA256 corresponde ao arquivo local.
+
+[App](https://flow-programacao-guiada-anderhonoratos-projects.vercel.app) · [APK0.6.0 de teste](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/releases/tag/v0.6.0-teste) · [CI](https://github.com/AnderHonorato/Flow-Programa-o-Guiado/actions/runs/40998313154).

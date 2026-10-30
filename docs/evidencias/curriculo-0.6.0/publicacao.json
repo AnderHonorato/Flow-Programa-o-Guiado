@@ -1,0 +1,14 @@
+{
+  "url": "https://flow-programacao-guiada-anderhonoratos-projects.vercel.app",
+  "deployment": "dpl_5hbjmubPeoGPjWgW2ti153cv8uhU",
+  "aplicacao": "2bb7204952ea3534be362d5a8154969c0c0f25e6",
+  "estado": "READY",
+  "saude": {
+    "status": "disponivel",
+    "versao": "0.6.0",
+    "gptConfigurado": false
+  },
+  "aulasPublicadas": 30,
+  "atividades": 120,
+  "migracaoDeBanco": false
+}

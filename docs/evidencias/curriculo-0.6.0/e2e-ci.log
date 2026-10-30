@@ -1,0 +1,93 @@
+﻿2026-10-30T03:38:32.6900287Z ##[group]Run python -m uvicorn servidor.principal:app --host 127.0.0.1 --port 8000 > /tmp/flow-api.log 2>&1 &
+2026-10-30T03:38:32.6900773Z [36;1mpython -m uvicorn servidor.principal:app --host 127.0.0.1 --port 8000 > /tmp/flow-api.log 2>&1 &[0m
+2026-10-30T03:38:32.6901067Z [36;1mapi_pid=$![0m
+2026-10-30T03:38:32.6901342Z [36;1mnpm run preview --workspace aplicativos/web -- --host 127.0.0.1 --port 4173 > /tmp/flow-preview.log 2>&1 &[0m
+2026-10-30T03:38:32.6901638Z [36;1mpreview_pid=$![0m
+2026-10-30T03:38:32.6901830Z [36;1mtrap 'kill "$api_pid" "$preview_pid" 2>/dev/null || true' EXIT[0m
+2026-10-30T03:38:32.6902196Z [36;1mfor tentativa in $(seq 1 30); do[0m
+2026-10-30T03:38:32.6902571Z [36;1m  if curl -fsS http://127.0.0.1:4173/ > /dev/null && curl -fsS http://127.0.0.1:4173/api/saude > /dev/null; then[0m
+2026-10-30T03:38:32.6902853Z [36;1m    break[0m
+2026-10-30T03:38:32.6902977Z [36;1m  fi[0m
+2026-10-30T03:38:32.6903098Z [36;1m  sleep 1[0m
+2026-10-30T03:38:32.6903218Z [36;1mdone[0m
+2026-10-30T03:38:32.6903385Z [36;1mcurl -fsS http://127.0.0.1:4173/api/saude[0m
+2026-10-30T03:38:32.6903567Z [36;1mnpm run test:e2e[0m
+2026-10-30T03:38:32.6921595Z shell: /usr/bin/bash -e {0}
+2026-10-30T03:38:32.6921745Z env:
+2026-10-30T03:38:32.6921908Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-30T03:38:32.6922296Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-30T03:38:32.6922550Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-30T03:38:32.6922780Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-30T03:38:32.6923007Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-30T03:38:32.6923240Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-30T03:38:32.6923451Z   DATABASE_URL: sqlite:////tmp/flow-e2e.db
+2026-10-30T03:38:32.6923617Z ##[endgroup]
+2026-10-30T03:38:32.7041461Z curl: (7) Failed to connect to 127.0.0.1 port 4173 after 0 ms: Couldn't connect to server
+2026-10-30T03:38:33.7365772Z curl: (22) The requested URL returned error: 500
+2026-10-30T03:38:34.8298194Z {"status":"disponivel","versao":"0.6.0","gptConfigurado":false}
+2026-10-30T03:38:34.8298570Z > flow-programacao-guiada@0.6.0 test:e2e
+2026-10-30T03:38:34.8299024Z > playwright test
+2026-10-30T03:38:34.8299114Z 
+2026-10-30T03:38:35.8100853Z 
+2026-10-30T03:38:35.8101597Z Running 58 tests using 2 workers
+2026-10-30T03:38:35.8101874Z 
+2026-10-30T03:38:40.2899359Z   ✓   1 [desktop] › testes/ponta-a-ponta/comunidade-admin.spec.ts:28:5 › opinião e leitura chegam ao servidor e à administração; ranking protege dados privados (3.3s)
+2026-10-30T03:38:42.9943607Z   ✓   2 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula fundamentos-algoritmos: ensino, código inicial incompleto e solução executável (6.8s)
+2026-10-30T03:38:45.2686431Z   ✓   3 [desktop] › testes/ponta-a-ponta/comunidade-admin.spec.ts:39:5 › banimento revoga sessão ativa, informa motivo no login e reativar exige nova sessão (5.0s)
+2026-10-30T03:38:47.1824364Z   ✓   5 [desktop] › testes/ponta-a-ponta/comunidade-admin.spec.ts:51:5 › exclusão confirmada remove usuário e invalida acesso; administrador não pode excluir a si mesmo (1.9s)
+2026-10-30T03:38:49.6784372Z   ✓   6 [desktop] › testes/ponta-a-ponta/comunidade-admin.spec.ts:57:5 › entrada visual autentica com etapas reais e abre o perfil sem repetir formulário (2.5s)
+2026-10-30T03:38:49.7914597Z   ✓   4 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula html-tabelas: ensino, código inicial incompleto e solução executável (6.8s)
+2026-10-30T03:38:51.0285462Z   ✓   7 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (1.3s)
+2026-10-30T03:38:55.2104604Z   ✓   8 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula css-grid: ensino, código inicial incompleto e solução executável (5.4s)
+2026-10-30T03:38:59.6553013Z   ✓  10 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula js-escopo: ensino, código inicial incompleto e solução executável (4.4s)
+2026-10-30T03:39:04.8598246Z   ✓  11 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula dom-formularios: ensino, código inicial incompleto e solução executável (5.2s)
+2026-10-30T03:39:05.6690342Z   ✓   9 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (14.6s)
+2026-10-30T03:39:07.0903742Z   ✓  13 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (1.4s)
+2026-10-30T03:39:15.1365937Z   ✓  12 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula python-arquivos: ensino, código inicial incompleto e solução executável (10.3s)
+2026-10-30T03:39:16.4185294Z   ✓  14 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (9.3s)
+2026-10-30T03:39:19.2811157Z   ✓  16 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (2.8s)
+2026-10-30T03:39:20.5241575Z   ✓  15 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula frontend-estado: ensino, código inicial incompleto e solução executável (5.4s)
+2026-10-30T03:39:24.6575396Z   ✓  17 [desktop] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (5.4s)
+2026-10-30T03:39:25.7724759Z   ✓  18 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula api-validacao: ensino, código inicial incompleto e solução executável (5.2s)
+2026-10-30T03:39:28.0724922Z   ✓  19 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:29:5 › português brasileiro é padrão e os eventos reais coordenam fala, pausa e encerramento (3.4s)
+2026-10-30T03:39:30.0744333Z   ✓  21 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:42:5 › sem voz brasileira não troca idioma sozinho; inglês é uma escolha explícita no menu do app (2.0s)
+2026-10-30T03:39:31.1855465Z   ✓  20 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula fullstack-sessao: ensino, código inicial incompleto e solução executável (5.4s)
+2026-10-30T03:39:32.0044228Z   ✓  22 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:56:5 › seleção editorial explica sem áudio automático; consulta e humor funcionam por toque e teclado (1.9s)
+2026-10-30T03:39:33.8787892Z   ✓  24 [desktop] › testes/ponta-a-ponta/jarvis-audio.spec.ts:76:5 › reage à ação de estudar sem revelar resposta e menus próprios respeitam teclado e menos movimento (1.9s)
+2026-10-30T03:39:36.0284567Z   ✓  25 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (2.1s)
+2026-10-30T03:39:37.5377115Z   ✓  23 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula projeto-calculadora: ensino, código inicial incompleto e solução executável (6.3s)
+2026-10-30T03:39:38.4571972Z   ✓  26 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (2.4s)
+2026-10-30T03:39:41.9151607Z   ✓  28 [desktop] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (3.4s)
+2026-10-30T03:39:43.8537934Z   ✓  27 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:130:5 › formulário isolado permite foco, checkbox e submit sem navegar ou enviar dados (6.3s)
+2026-10-30T03:39:46.8488144Z   ✓  29 [celular] › testes/ponta-a-ponta/comunidade-admin.spec.ts:28:5 › opinião e leitura chegam ao servidor e à administração; ranking protege dados privados (3.7s)
+2026-10-30T03:39:50.9869713Z   ✓  31 [celular] › testes/ponta-a-ponta/comunidade-admin.spec.ts:39:5 › banimento revoga sessão ativa, informa motivo no login e reativar exige nova sessão (4.1s)
+2026-10-30T03:39:52.8628808Z   ✓  32 [celular] › testes/ponta-a-ponta/comunidade-admin.spec.ts:51:5 › exclusão confirmada remove usuário e invalida acesso; administrador não pode excluir a si mesmo (1.9s)
+2026-10-30T03:39:55.3652858Z   ✓  30 [desktop] › testes/ponta-a-ponta/expansao-curricular.spec.ts:167:5 › arquivos Python executam em WebAssembly após fechar e reabrir sem internet (11.5s)
+2026-10-30T03:39:55.4282914Z   ✓  33 [celular] › testes/ponta-a-ponta/comunidade-admin.spec.ts:57:5 › entrada visual autentica com etapas reais e abre o perfil sem repetir formulário (2.5s)
+2026-10-30T03:39:56.9545320Z   ✓  34 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:47:5 › início recomenda a aula HTML inicial (1.5s)
+2026-10-30T03:40:03.4939744Z   ✓  35 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula fundamentos-algoritmos: ensino, código inicial incompleto e solução executável (7.3s)
+2026-10-30T03:40:10.6217354Z   ✓  37 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula html-tabelas: ensino, código inicial incompleto e solução executável (7.1s)
+2026-10-30T03:40:15.8903459Z   ✓  36 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:53:5 › perfil local edita HTML/CSS/JS reais, aprende e preserva fila offline e progresso (18.9s)
+2026-10-30T03:40:17.3541193Z   ✓  38 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula css-grid: ensino, código inicial incompleto e solução executável (6.7s)
+2026-10-30T03:40:17.5848527Z   ✓  39 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:112:5 › catálogo explicita produção editorial e tema persiste após recarregar (1.7s)
+2026-10-30T03:40:23.7419517Z   ✓  40 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula js-escopo: ensino, código inicial incompleto e solução executável (6.4s)
+2026-10-30T03:40:30.4134335Z   ✓  41 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:123:5 › produção instala cache e reabre aula sem internet (12.8s)
+2026-10-30T03:40:31.4421010Z   ✓  42 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula dom-formularios: ensino, código inicial incompleto e solução executável (7.7s)
+2026-10-30T03:40:33.9835155Z   ✓  43 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:155:5 › conta real entra, sai, recupera sessão e recebe bloqueio administrativo (3.6s)
+2026-10-30T03:40:38.6234314Z   ✓  45 [celular] › testes/ponta-a-ponta/fluxo.spec.ts:190:5 › avaliação trava primeira escolha, retoma e só revela nota e correção ao enviar (4.6s)
+2026-10-30T03:40:42.4915407Z   ✓  46 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:29:5 › português brasileiro é padrão e os eventos reais coordenam fala, pausa e encerramento (3.8s)
+2026-10-30T03:40:44.1138370Z   ✓  47 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:42:5 › sem voz brasileira não troca idioma sozinho; inglês é uma escolha explícita no menu do app (1.6s)
+2026-10-30T03:40:45.0674824Z   ✓  44 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula python-arquivos: ensino, código inicial incompleto e solução executável (13.6s)
+2026-10-30T03:40:45.7848722Z   ✓  48 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:56:5 › seleção editorial explica sem áudio automático; consulta e humor funcionam por toque e teclado (1.7s)
+2026-10-30T03:40:47.6329548Z   ✓  50 [celular] › testes/ponta-a-ponta/jarvis-audio.spec.ts:76:5 › reage à ação de estudar sem revelar resposta e menus próprios respeitam teclado e menos movimento (1.8s)
+2026-10-30T03:40:50.0354187Z   ✓  51 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:5:5 › escolhe desenhos de três estilos, confirma e preserva o avatar ao reabrir (2.4s)
+2026-10-30T03:40:51.7610736Z   ✓  49 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula frontend-estado: ensino, código inicial incompleto e solução executável (6.7s)
+2026-10-30T03:40:51.9724627Z   ✓  52 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:16:5 › foto recortada tem pixels reais, persiste e pode ser substituída sem mudar XP (1.9s)
+2026-10-30T03:40:55.1834263Z   ✓  54 [celular] › testes/ponta-a-ponta/perfil-recompensas.spec.ts:32:5 › novo emblema revela descrição e aquisição; ficha e replay preservam a data (3.2s)
+2026-10-30T03:40:57.3894914Z   ✓  53 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula api-validacao: ensino, código inicial incompleto e solução executável (5.6s)
+2026-10-30T03:41:03.1026839Z   ✓  55 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula fullstack-sessao: ensino, código inicial incompleto e solução executável (5.7s)
+2026-10-30T03:41:08.8604513Z   ✓  56 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:92:7 › aula projeto-calculadora: ensino, código inicial incompleto e solução executável (5.8s)
+2026-10-30T03:41:16.3358603Z   ✓  57 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:130:5 › formulário isolado permite foco, checkbox e submit sem navegar ou enviar dados (7.5s)
+2026-10-30T03:41:28.5763473Z   ✓  58 [celular] › testes/ponta-a-ponta/expansao-curricular.spec.ts:167:5 › arquivos Python executam em WebAssembly após fechar e reabrir sem internet (12.2s)
+2026-10-30T03:41:28.8283532Z 
+2026-10-30T03:41:28.8287651Z   58 passed (2.9m)

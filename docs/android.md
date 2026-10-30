@@ -71,6 +71,10 @@ A versão 0.3 incluiu foto recortável, avatares Cartoon/Pixel/Games e históric
 J.A.R.V.I.S reage a ações e termos e mostra “Falando...” apenas após o início real da síntese. Português brasileiro é o padrão estrito; inglês é alternativa explícita, sem tradução do conteúdo. Controles e seletores têm desenho próprio. Compilação e verificação de assinatura não substituem audição e execução em aparelho. Evidências em `docs/evidencias/jarvis-0.4.0/`.
 
 
+## Atualização 0.5.0
+
+Comunidade/ranking, opiniões de aula e gestão de usuários usam a API pública e exigem conexão/conta. Leituras registradas após20segundos visíveis ficam numa fila offline separada por perfil e são sincronizadas sem XP adicional. A interface verifica restrições a cada20segundos visíveis e ao retomar; o servidor recusa a sessão revogada em cada pedido. Sem rede não há expulsão remota imediata. Nova entrada visual e conquistas Inicial/Rara/Épica/Lendária com movimentos finitos. Evidências em `docs/evidencias/comunidade-0.5.0/`.
+
 ## Atualização 0.6.0
 
-Comunidade/ranking, opiniões de aula e gestão de usuários usam a API pública e exigem conexão/conta. Leituras registradas após20segundos visíveis ficam numa fila offline separada por perfil e são sincronizadas sem XP adicional. A interface verifica restrições a cada20segundos visíveis e ao retomar; o servidor recusa a sessão revogada em cada pedido. Sem rede não há expulsão remota imediata. Nova entrada visual e conquistas Inicial/Rara/Épica/Lendária com movimentos finitos. Evidências em `docs/evidencias/comunidade-0.6.0/`.
+Dez aulas novas ampliam o catálogo para30 aulas/120 atividades, com30 experimentos. O laboratório permite eventos nativos de formulário mantendo bloqueio de envio pela CSP. O APK0.6/code6 tem10.968.351 bytes, assinatura debug preservada e SHA256 `e2fdd6501375b9b5861e96da892c401d36934e61bb952317caeaa5ff276fba51`. Os52 arquivos web foram comparados integralmente, sem diferenças. Build/lint aprovados, zero erros/oito avisos. Evidências em `docs/evidencias/curriculo-0.6.0/`. A execução em Android físico continua pendente.
