@@ -69,35 +69,10 @@ jobs:
           profile: pixel_5
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          script: |
-            adb install -r apk/app-debug.apk
-            adb shell pm clear com.anderflow.flowscan
-            adb shell am start -n com.anderflow.flowscan/.MainActivity
-            sleep 8
-            adb shell pidof com.anderflow.flowscan
-            adb shell uiautomator dump /sdcard/flowscan-ui.xml || true
-            adb pull /sdcard/flowscan-ui.xml tela.xml || true
-            python3 - <<'PY'
-            import re,subprocess,pathlib
-            texto=pathlib.Path("tela.xml").read_text(errors="replace") if pathlib.Path("tela.xml").exists() else ""
-            print("Textos visiveis:", re.findall(r'text="([^"]{3,})"',texto)[:35])
-            itens=re.findall(r'<node[^>]+>',texto)
-            for alvo in ("Importar arquivo ou imagem","Escanear com a câmera"):
-                for el in itens:
-                    if alvo in el and 'bounds="' in el:
-                        m=re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',el)
-                        if m:
-                            x1,y1,x2,y2=map(int,m.groups())
-                            subprocess.run(["adb","shell","input","tap",str((x1+x2)//2),str((y1+y2)//2)],check=True)
-                            print("Botão acionado:",alvo)
-                            break
-                else: print("Botão não encontrado na árvore de acessibilidade:",alvo)
-            PY
-            sleep 5
-            if ! adb shell pidof com.anderflow.flowscan; then
-              echo "ERRO: aplicativo terminou inesperadamente"
-              adb logcat -d -t 1200 | tail -180
-              exit 1
-            fi
-            adb logcat -d -t 4000 | grep -A 16 'FATAL EXCEPTION' | grep -q 'com.anderflow.flowscan' && exit 1 || true
-            echo "SMOKE ANDROID OK: inicializou e nao fechou após acoes."
+          script: bash flow-scan/tests/android_smoke.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Flow-Scan-Evidencias-Android
+          path: evidencias/
+          if-no-files-found: warn
