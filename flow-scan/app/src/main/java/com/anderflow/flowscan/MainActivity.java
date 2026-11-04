@@ -32,6 +32,10 @@ import android.util.Log;
 import android.content.ClipData;
 import android.webkit.WebSettings;
 import android.widget.Toast;
+import android.widget.FrameLayout;
+import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.graphics.Insets;
 
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
@@ -107,7 +111,25 @@ public class MainActivity extends Activity {
             }
         });
         pagina.addJavascriptInterface(new Ponte(), "Android");
-        setContentView(pagina);
+        FrameLayout conteiner=new FrameLayout(this);
+        conteiner.setBackgroundColor(Color.rgb(251,247,241));
+        conteiner.addView(pagina,new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        if(android.os.Build.VERSION.SDK_INT >= 30){
+            // Android 15/16: manter o WebView abaixo da barra de status e acima da navegacao.
+            getWindow().setDecorFitsSystemWindows(false);
+            conteiner.setOnApplyWindowInsetsListener((v,insets)->{
+                Insets seguros=insets.getInsets(WindowInsets.Type.statusBars()|WindowInsets.Type.navigationBars());
+                FrameLayout.LayoutParams lp=(FrameLayout.LayoutParams)pagina.getLayoutParams();
+                if(lp.topMargin!=seguros.top || lp.bottomMargin!=seguros.bottom){
+                    lp.topMargin=seguros.top;
+                    lp.bottomMargin=seguros.bottom;
+                    pagina.setLayoutParams(lp);
+                }
+                return WindowInsets.CONSUMED;
+            });
+        }
+        setContentView(conteiner);
         pagina.loadUrl("file:///android_asset/index.html");
         if (android.os.Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             pagina.postDelayed(() -> { if(!isFinishing() && !isDestroyed()) solicitarCamera(false); }, 1300);
