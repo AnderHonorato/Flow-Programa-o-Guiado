@@ -27,6 +27,8 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
       - name: Validar JavaScript
         run: node --check flow-scan/app/src/main/assets/app.js
+      - name: Verificar botoes e navegacao
+        run: node flow-scan/tests/ui_smoke.mjs
       - name: Compilar APK de instalacao
         working-directory: flow-scan
         run: gradle :app:assembleDebug --no-daemon --stacktrace
@@ -43,3 +45,59 @@ jobs:
           name: Flow-Scan-Codigo
           path: Flow-Scan-codigo.zip
           if-no-files-found: error
+
+  validar-no-emulador:
+    needs: compilar
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Flow-Scan-APK
+          path: apk
+      - name: Habilitar aceleracao KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install -r apk/app-debug.apk
+            adb shell pm clear com.anderflow.flowscan
+            adb shell am start -n com.anderflow.flowscan/.MainActivity
+            sleep 8
+            adb shell pidof com.anderflow.flowscan
+            adb shell uiautomator dump /sdcard/flowscan-ui.xml || true
+            adb pull /sdcard/flowscan-ui.xml tela.xml || true
+            python3 - <<'PY'
+            import re,subprocess,pathlib
+            texto=pathlib.Path("tela.xml").read_text(errors="replace") if pathlib.Path("tela.xml").exists() else ""
+            print("Textos visiveis:", re.findall(r'text="([^"]{3,})"',texto)[:35])
+            itens=re.findall(r'<node[^>]+>',texto)
+            for alvo in ("Importar arquivo ou imagem","Escanear com a câmera"):
+                for el in itens:
+                    if alvo in el and 'bounds="' in el:
+                        m=re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',el)
+                        if m:
+                            x1,y1,x2,y2=map(int,m.groups())
+                            subprocess.run(["adb","shell","input","tap",str((x1+x2)//2),str((y1+y2)//2)],check=True)
+                            print("Botão acionado:",alvo)
+                            break
+                else: print("Botão não encontrado na árvore de acessibilidade:",alvo)
+            PY
+            sleep 5
+            if ! adb shell pidof com.anderflow.flowscan; then
+              echo "ERRO: aplicativo terminou inesperadamente"
+              adb logcat -d -t 1200 | tail -180
+              exit 1
+            fi
+            adb logcat -d -t 4000 | grep -A 16 'FATAL EXCEPTION' | grep -q 'com.anderflow.flowscan' && exit 1 || true
+            echo "SMOKE ANDROID OK: inicializou e nao fechou após acoes."
