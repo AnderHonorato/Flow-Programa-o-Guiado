@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.webkit.JavascriptInterface;
@@ -53,7 +54,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class MainActivity extends Activity {
-    private static final int CAMERA = 40, ARQUIVOS = 41, AUTORIZACAO = 42;
+    private static final int CAMERA = 40, ARQUIVOS = 41, AUTORIZACAO = 42, PASTA = 43;
     private static final String DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
     private WebView pagina;
     private Uri fotoCapturada;
@@ -88,8 +89,11 @@ public class MainActivity extends Activity {
         if (android.os.Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             pagina.postDelayed(() -> requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA), 950);
         }
-        if (getPreferences(MODE_PRIVATE).getBoolean("drive_ativo", false))
+        if (getPreferences(MODE_PRIVATE).getString("pasta_saf",null) != null) {
+            pagina.postDelayed(() -> { script("window.flowScanDestino('Backup em pasta');"); enviarPendentes(); }, 1500);
+        } else if (getPreferences(MODE_PRIVATE).getBoolean("drive_ativo", false)) {
             pagina.postDelayed(() -> autorizarDrive(false), 1750);
+        }
     }
 
     private void script(String texto) {
@@ -106,6 +110,22 @@ public class MainActivity extends Activity {
         String t = s == null ? "" : s.trim().replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "-");
         if (t.length() > 65) t = t.substring(0,65);
         return t.isEmpty() ? "Digitalizacao" : t;
+    }
+    private void escolherDestino() {
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Backup automático")
+            .setMessage("Escolha uma pasta no Google Drive pelo seletor do Android. Se o Drive não aparecer, use a autorização Google (requer OAuth configurado).")
+            .setItems(new String[]{"Escolher uma pasta do Drive", "Autorizar conta Google"}, (dialog, item) -> {
+                if(item==0) {
+                    try {
+                        Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+                            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                        startActivityForResult(i,PASTA);
+                    } catch(Exception e) { mensagem("O seletor de pastas não está disponível."); }
+                } else autorizarDrive(true);
+            }).show();
     }
     private void camera() {
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -141,6 +161,21 @@ public class MainActivity extends Activity {
     }
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
+        if (request == PASTA) {
+            if(result == RESULT_OK && data != null && data.getData() != null) {
+                try {
+                    Uri uri=data.getData();
+                    int flags=data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    getContentResolver().takePersistableUriPermission(uri,flags);
+                    getPreferences(MODE_PRIVATE).edit()
+                        .putString("pasta_saf",uri.toString()).putBoolean("drive_ativo",false).apply();
+                    script("window.flowScanDestino('Backup em pasta');");
+                    aviso("Pasta conectada. Se escolheu o Drive, os arquivos serão enviados automaticamente.");
+                    enviarPendentes();
+                } catch(Exception e) { mensagem("Sem autorização para escrever nessa pasta."); }
+            }
+            return;
+        }
         if (request == AUTORIZACAO) {
             if (result == RESULT_OK && data != null) {
                 try {
@@ -212,7 +247,7 @@ public class MainActivity extends Activity {
     public final class Ponte {
         @JavascriptInterface public void camera() { runOnUiThread(() -> camera()); }
         @JavascriptInterface public void importar() { runOnUiThread(() -> importar()); }
-        @JavascriptInterface public void conectarDrive() { runOnUiThread(() -> autorizarDrive(true)); }
+        @JavascriptInterface public void conectarDrive() { runOnUiThread(() -> escolherDestino()); }
         @JavascriptInterface public void exportarInicio(String f, String n) {
             synchronized(trava) {
                 for(Bitmap b:exportacao) b.recycle();
@@ -297,7 +332,9 @@ public class MainActivity extends Activity {
         if(!pasta.exists() && !pasta.mkdirs()) throw new Exception("Falha ao criar fila de backup");
         File pendente=new File(pasta,nomeArquivo);
         try(FileOutputStream out=new FileOutputStream(pendente)){out.write(bytes);}
-        if(getPreferences(MODE_PRIVATE).getBoolean("drive_ativo",false))
+        if(getPreferences(MODE_PRIVATE).getString("pasta_saf",null)!=null)
+            enviarPendentes();
+        else if(getPreferences(MODE_PRIVATE).getBoolean("drive_ativo",false))
             runOnUiThread(() -> autorizarDrive(false));
         else aviso("Arquivo salvo. Conecte o Drive para ativar o backup automático.");
     }
@@ -326,25 +363,41 @@ public class MainActivity extends Activity {
         enviarPendentes();
     }
     private void enviarPendentes() {
-        if(enviando || tokenTemporario==null) return;
+        final String pastaSaf=getPreferences(MODE_PRIVATE).getString("pasta_saf",null);
+        if(enviando || (pastaSaf==null && tokenTemporario==null)) return;
         enviando=true;
         final String token=tokenTemporario;
         new Thread(() -> {
             try {
                 File pasta=new File(getFilesDir(),"pendentes");
                 File[] arquivos=pasta.listFiles();
-                if(arquivos==null || arquivos.length==0){aviso("Backup do Drive em dia.");return;}
-                String folderId=obterPastaDrive(token);
+                if(arquivos==null || arquivos.length==0){aviso("Backup em dia.");return;}
+                String folderId=pastaSaf==null ? obterPastaDrive(token) : null;
+                Uri destinoSaf=null;
+                if(pastaSaf!=null) {
+                    Uri tree=Uri.parse(pastaSaf);
+                    destinoSaf=DocumentsContract.buildDocumentUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree));
+                }
                 for(File arquivo:arquivos) {
                     String tipo=arquivo.getName().endsWith(".pdf")?"application/pdf":
                         arquivo.getName().endsWith(".png")?"image/png":
                         arquivo.getName().endsWith(".jpg")?"image/jpeg":"application/zip";
-                    enviarArquivoDrive(token,folderId,arquivo,tipo);
+                    if(pastaSaf!=null) {
+                        Uri destino=DocumentsContract.createDocument(getContentResolver(),destinoSaf,tipo,arquivo.getName());
+                        if(destino==null)throw new Exception("A pasta selecionada não aceita novos arquivos.");
+                        try(FileInputStream origem=new FileInputStream(arquivo);
+                            OutputStream saida=getContentResolver().openOutputStream(destino,"w")) {
+                            if(saida==null)throw new Exception("Sem permissão para escrever na pasta.");
+                            origem.transferTo(saida);
+                        }
+                    } else {
+                        enviarArquivoDrive(token,folderId,arquivo,tipo);
+                    }
                     if(!arquivo.delete()) android.util.Log.w("FlowScan","Pendente sincronizado, mas não removido");
-                    aviso("Drive atualizado: "+arquivo.getName());
+                    aviso("Backup atualizado: "+arquivo.getName());
                 }
-                aviso("Tudo sincronizado com o Google Drive.");
-            } catch(Exception e) { aviso("Backup pendente (sem perder o arquivo local): "+e.getMessage()); }
+                aviso("Todos os arquivos foram enviados ao backup.");
+            } catch(Exception e) { aviso("Backup pendente. O arquivo local continua salvo: "+e.getMessage()); }
             finally {enviando=false;}
         },"sincronizador").start();
     }
