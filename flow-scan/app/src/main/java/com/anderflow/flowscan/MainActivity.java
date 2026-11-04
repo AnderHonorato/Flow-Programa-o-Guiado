@@ -26,6 +26,10 @@ import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.ConsoleMessage;
+import android.util.Log;
+import android.content.ClipData;
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
@@ -61,6 +65,8 @@ public class MainActivity extends Activity {
     private final Object trava = new Object();
     private final ArrayList<Bitmap> exportacao = new ArrayList<>();
     private String formato = "pdf", nome = "Digitalizacao";
+    private boolean abrirCameraAposPermissao = false;
+    private final Object catalogoLock = new Object();
     private volatile boolean enviando = false;
     private volatile String tokenTemporario = null;
 
@@ -78,16 +84,33 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
         s.setMediaPlaybackRequiresUserGesture(true);
         pagina.setBackgroundColor(Color.rgb(249,244,237));
+        pagina.setWebChromeClient(new WebChromeClient() {
+            @Override public boolean onConsoleMessage(ConsoleMessage erro) {
+                if(erro.messageLevel()==ConsoleMessage.MessageLevel.ERROR)
+                    Log.e("FlowScanJS", erro.message()+" (linha "+erro.lineNumber()+")");
+                return true;
+            }
+        });
         pagina.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest req) {
                 return !req.getUrl().toString().startsWith("file:///android_asset/");
+            }
+            @Override public void onPageFinished(WebView view,String url) {
+                view.evaluateJavascript("Boolean(window.flowScanReady)", valor -> {
+                    if(!"true".equals(valor)) {
+                        Log.e("FlowScan","A interface nao inicializou: "+valor);
+                        mensagem("Houve uma falha na interface. Atualize ou reinstale o app.");
+                    } else {
+                        script("window.flowScanArquivoSalvo();");
+                    }
+                });
             }
         });
         pagina.addJavascriptInterface(new Ponte(), "Android");
         setContentView(pagina);
         pagina.loadUrl("file:///android_asset/index.html");
         if (android.os.Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            pagina.postDelayed(() -> requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA), 950);
+            pagina.postDelayed(() -> { if(!isFinishing() && !isDestroyed()) solicitarCamera(false); }, 1300);
         }
         if (getPreferences(MODE_PRIVATE).getString("pasta_saf",null) != null) {
             pagina.postDelayed(() -> { script("window.flowScanDestino('Backup em pasta');"); enviarPendentes(); }, 1500);
@@ -127,9 +150,14 @@ public class MainActivity extends Activity {
                 } else autorizarDrive(true);
             }).show();
     }
+    private void solicitarCamera(boolean abrirDepois) {
+        abrirCameraAposPermissao=abrirDepois;
+        try { requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA); }
+        catch(Exception e) { mensagem("Permissão da câmera: "+e.getMessage()); }
+    }
     private void camera() {
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA);
+            solicitarCamera(true);
             return;
         }
         try {
@@ -141,6 +169,7 @@ public class MainActivity extends Activity {
             if (fotoCapturada == null) throw new Exception("Nao foi possivel criar a foto");
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fotoCapturada);
+            intent.setClipData(ClipData.newUri(getContentResolver(),"Flow Scan",fotoCapturada));
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivityForResult(intent, CAMERA);
         } catch (Exception e) { mensagem("Câmera indisponível: " + e.getMessage()); }
@@ -151,13 +180,20 @@ public class MainActivity extends Activity {
         i.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/jpeg","image/png","image/webp","image/heic","image/heif","application/pdf"});
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(i, ARQUIVOS);
+        try { startActivityForResult(i, ARQUIVOS); }
+        catch(Exception e) { mensagem("Não foi possível abrir o seletor de arquivos."); }
     }
     @Override public void onRequestPermissionsResult(int request, String[] perms, int[] results) {
         super.onRequestPermissionsResult(request,perms,results);
-        if(request == CAMERA && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED)
-            aviso("Câmera autorizada. Pronto para digitalizar.");
-        else if(request == CAMERA) aviso("A câmera não foi autorizada. Você ainda pode importar arquivos.");
+        if(request != CAMERA)return;
+        boolean autorizado=results.length>0 && results[0]==PackageManager.PERMISSION_GRANTED;
+        boolean abrir=abrirCameraAposPermissao; abrirCameraAposPermissao=false;
+        if(autorizado) {
+            aviso("Câmera autorizada.");
+            if(abrir) camera();
+        } else {
+            aviso("Sem permissão para câmera. Você pode usar Galeria e arquivos.");
+        }
     }
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
@@ -248,6 +284,12 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void camera() { runOnUiThread(() -> camera()); }
         @JavascriptInterface public void importar() { runOnUiThread(() -> importar()); }
         @JavascriptInterface public void conectarDrive() { runOnUiThread(() -> escolherDestino()); }
+        @JavascriptInterface public void listarDocumentos() { notificarCatalogo(); }
+        @JavascriptInterface public void listarHistorico() { notificarHistorico(); }
+        @JavascriptInterface public void registrarEvento(String tipo,String titulo,String detalhes) { gravarEvento(tipo,titulo,detalhes); }
+        @JavascriptInterface public void abrirDocumento(String id) { runOnUiThread(() -> abrirArquivo(id,false)); }
+        @JavascriptInterface public void compartilharDocumento(String id) { runOnUiThread(() -> abrirArquivo(id,true)); }
+        @JavascriptInterface public void excluirDocumento(String id) { runOnUiThread(() -> excluirArquivo(id)); }
         @JavascriptInterface public void exportarInicio(String f, String n) {
             synchronized(trava) {
                 for(Bitmap b:exportacao) b.recycle();
@@ -326,7 +368,11 @@ public class MainActivity extends Activity {
         valores.put(MediaStore.Downloads.RELATIVE_PATH,Environment.DIRECTORY_DOWNLOADS+"/FlowScan");
         Uri destino=getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI,valores);
         if(destino==null)throw new Exception("Sem acesso à pasta Downloads");
-        try(OutputStream out=getContentResolver().openOutputStream(destino)){out.write(bytes);}
+        try(OutputStream out=getContentResolver().openOutputStream(destino)){
+            if(out==null)throw new Exception("Falha ao gravar documento");
+            out.write(bytes);
+        }
+        gravarDocumento(nomeArquivo,f,paginas.size(),destino);
         aviso("Salvo em Downloads/FlowScan: "+nomeArquivo);
         File pasta=new File(getFilesDir(),"pendentes");
         if(!pasta.exists() && !pasta.mkdirs()) throw new Exception("Falha ao criar fila de backup");
@@ -337,6 +383,96 @@ public class MainActivity extends Activity {
         else if(getPreferences(MODE_PRIVATE).getBoolean("drive_ativo",false))
             runOnUiThread(() -> autorizarDrive(false));
         else aviso("Arquivo salvo. Conecte o Drive para ativar o backup automático.");
+    }
+
+    private JSONArray carregarArray(String chave) {
+        try { return new JSONArray(getPreferences(MODE_PRIVATE).getString(chave,"[]")); }
+        catch(Exception e){return new JSONArray();}
+    }
+    private void emitir(String funcao,JSONArray array){
+        script("window."+funcao+"("+array.toString()+");");
+    }
+    private void notificarCatalogo(){
+        synchronized(catalogoLock){emitir("flowScanArquivos",carregarArray("documentos_v1"));}
+    }
+    private void notificarHistorico(){
+        synchronized(catalogoLock){emitir("flowScanHistorico",carregarArray("eventos_v1"));}
+    }
+    private void gravarEvento(String tipo,String titulo,String detalhes){
+        synchronized(catalogoLock){
+            JSONArray antigos=carregarArray("eventos_v1");
+            JSONArray atualizado=new JSONArray();
+            try{
+                atualizado.put(new JSONObject()
+                    .put("tipo",tipo).put("titulo",titulo).put("detalhes",detalhes)
+                    .put("data",System.currentTimeMillis()));
+                for(int i=0;i<Math.min(199,antigos.length());i++)
+                    atualizado.put(antigos.getJSONObject(i));
+                getPreferences(MODE_PRIVATE).edit().putString("eventos_v1",atualizado.toString()).apply();
+                emitir("flowScanHistorico",atualizado);
+            } catch(Exception e){Log.e("FlowScan","Falha ao registrar historico",e);}
+        }
+    }
+    private void gravarDocumento(String nome,String formato,int paginas,Uri uri){
+        synchronized(catalogoLock){
+            try{
+                JSONArray antigos=carregarArray("documentos_v1");
+                JSONArray novo=new JSONArray();
+                novo.put(new JSONObject()
+                    .put("id",UUID.randomUUID().toString())
+                    .put("nome",nome).put("formato",formato)
+                    .put("paginas",paginas).put("uri",uri.toString())
+                    .put("data",System.currentTimeMillis()));
+                for(int i=0;i<Math.min(299,antigos.length());i++)
+                    novo.put(antigos.getJSONObject(i));
+                getPreferences(MODE_PRIVATE).edit().putString("documentos_v1",novo.toString()).apply();
+                emitir("flowScanArquivos",novo);
+            }catch(Exception e){Log.e("FlowScan","Falha ao gravar indice",e);}
+        }
+        gravarEvento("exportacao","Documento salvo",nome);
+    }
+    private JSONObject arquivoPorId(String id){
+        synchronized(catalogoLock){
+            JSONArray arr=carregarArray("documentos_v1");
+            for(int i=0;i<arr.length();i++){
+                JSONObject a=arr.optJSONObject(i);
+                if(a!=null && id.equals(a.optString("id")))return a;
+            }
+        }
+        return null;
+    }
+    private void abrirArquivo(String id,boolean compartilhar) {
+        JSONObject arquivo=arquivoPorId(id);
+        if(arquivo==null){mensagem("Arquivo não encontrado no histórico.");return;}
+        try{
+            Uri uri=Uri.parse(arquivo.getString("uri"));
+            String tipo=getContentResolver().getType(uri);
+            if(tipo==null)tipo="application/octet-stream";
+            Intent i=new Intent(compartilhar?Intent.ACTION_SEND:Intent.ACTION_VIEW);
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if(compartilhar){i.setType(tipo);i.putExtra(Intent.EXTRA_STREAM,uri);}
+            else i.setDataAndType(uri,tipo);
+            startActivity(Intent.createChooser(i,compartilhar?"Compartilhar documento":"Abrir documento"));
+        } catch(Exception e){mensagem("Não foi possível abrir o arquivo. Ele pode ter sido removido.");}
+    }
+    private void excluirArquivo(String id) {
+        JSONObject alvo=arquivoPorId(id);
+        if(alvo==null)return;
+        try{
+            Uri uri=Uri.parse(alvo.getString("uri"));
+            getContentResolver().delete(uri,null,null);
+            synchronized(catalogoLock){
+                JSONArray antigos=carregarArray("documentos_v1"),novo=new JSONArray();
+                for(int i=0;i<antigos.length();i++){
+                    JSONObject atual=antigos.optJSONObject(i);
+                    if(atual!=null && !id.equals(atual.optString("id")))novo.put(atual);
+                }
+                getPreferences(MODE_PRIVATE).edit().putString("documentos_v1",novo.toString()).apply();
+                emitir("flowScanArquivos",novo);
+            }
+            gravarEvento("exclusao","Documento excluído",alvo.optString("nome"));
+            aviso("Documento excluído do aparelho.");
+        } catch(Exception e) { mensagem("Não foi possível excluir: "+e.getMessage()); }
     }
     private void autorizarDrive(boolean mostrar) {
         AuthorizationRequest req=AuthorizationRequest.builder()
