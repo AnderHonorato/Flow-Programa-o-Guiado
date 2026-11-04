@@ -25,6 +25,8 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
+      - name: Validar JavaScript
+        run: node --check flow-scan/app/src/main/assets/app.js
       - name: Compilar APK de instalacao
         working-directory: flow-scan
         run: gradle :app:assembleDebug --no-daemon --stacktrace
@@ -32,4 +34,12 @@ jobs:
         with:
           name: Flow-Scan-APK
           path: flow-scan/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Empacotar codigo fonte
+        run: zip -qr Flow-Scan-codigo.zip flow-scan .github/workflows/flow-scan-apk.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Flow-Scan-Codigo
+          path: Flow-Scan-codigo.zip
           if-no-files-found: error
