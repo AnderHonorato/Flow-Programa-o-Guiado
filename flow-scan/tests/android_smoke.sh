@@ -41,6 +41,15 @@ if pedidos:
 else: print("Permissões: nenhuma janela aberta na coleta (pode ter sido respondida).")
 PY
 
+# O emulador às vezes exibe ANR do Pixel Launcher sobre a caixa de permissão.
+# Verificamos a solicitação na primeira abertura e depois concedemos via ADB
+# para poder inspecionar e tocar na interface sem o diálogo bloquear a tela.
+adb shell pm grant "$PACOTE" android.permission.CAMERA
+adb shell am force-stop "$PACOTE"
+adb shell am start -n "$PACOTE/.MainActivity"
+sleep 6
+adb shell input keyevent 4 || true
+adb shell am start -n "$PACOTE/.MainActivity" || true
 sleep 3
 adb exec-out screencap -p > evidencias/inicio-apos-permissao.png || true
 adb shell uiautomator dump /sdcard/flowscan-ui2.xml || true
@@ -66,11 +75,12 @@ for chave in ("Importar arquivo ou imagem","Escanear com a câmera"):
     if not achado:
         # Em alguns WebViews o Android não expõe os filhos para o UIAutomator.
         # Pixel 5: a tela tem 1080x2340; estes toques são no centro dos cards.
-        pontos={"Importar arquivo ou imagem":(540,1140),"Escanear com a câmera":(540,930)}
+        pontos={"Importar arquivo ou imagem":(540,1120),"Escanear com a câmera":(540,940)}
         x,y=pontos[chave]
         subprocess.run(["adb","shell","input","tap",str(x),str(y)],check=True)
         print("Toque por coordenadas no WebView:",chave,x,y)
         time.sleep(3)
+        print("Activity after click:",subprocess.getoutput("adb shell dumpsys window | grep -m1 mCurrentFocus")[:180])
         subprocess.run(["adb","shell","input","keyevent","4"],check=True)
         time.sleep(1)
 PY
