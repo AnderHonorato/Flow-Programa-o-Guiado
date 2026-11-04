@@ -1,19 +1,28 @@
 /* Flow Scan — editor poligonal. Tudo em portugues, sem dependencias externas. */
 (function(){
 "use strict";
-const estado={paginas:[],indice:0,selecionado:0,arraste:null,drive:false,exportando:false};
+const estado={paginas:[],indice:0,selecionado:0,arraste:null,drive:false,exportando:false,documentos:[],historico:[]};
 const $=id=>document.getElementById(id);
 const canvas=$("canvasEdicao"),ctx=canvas.getContext("2d",{alpha:false});
 let area={x:0,y:0,w:1,h:1},avisoTemporizador=null;
 const ligar=(id,evento,fn)=>$(id).addEventListener(evento,fn);
 const disponivel=()=>typeof Android!=="undefined";
-const notificar=(texto)=>{ if(disponivel())window.flowScanStatus(texto);else window.flowScanStatus(texto); };
-const chamar=(metodo,...args)=>{if(disponivel()&&typeof Android[metodo]==="function")Android[metodo](...args);else notificar("Abra o aplicativo Android para utilizar "+metodo+".");};
+const notificar=texto=>window.flowScanStatus(String(texto));
+const chamar=(metodo,...args)=>{
+ try { if(disponivel() && typeof Android[metodo]==="function") return Android[metodo](...args);
+    notificar("A função "+metodo+" não está disponível. Reabra o aplicativo atualizado.");
+ } catch(erro) {notificar("Não foi possível executar "+metodo+": "+erro.message);}
+};
 function paginaAtual(){return estado.paginas[estado.indice];}
 function abrirTela(tela){
   document.querySelectorAll(".tela").forEach(el=>el.classList.toggle("aberta",el.id===tela));
+  $("abas").classList.toggle("escondidas",tela==="editor");
+  document.querySelectorAll(".aba").forEach(b=>b.classList.toggle("ativa",b.dataset.tela===tela));
   window.scrollTo({top:0,behavior:"smooth"});
   if(tela==="editor"){miniaturas();requestAnimationFrame(redesenhar);}
+  else if(tela==="arquivos") {renderizarDocumentos();chamar("listarDocumentos");}
+  else if(tela==="historico"){renderizarHistorico();chamar("listarHistorico");}
+  else {renderizarRecentes();chamar("listarDocumentos");}
 }
 function receberImagem(codigo,nome){
  const img=new Image();
@@ -21,6 +30,7 @@ function receberImagem(codigo,nome){
    if(estado.paginas.length>=30){notificar("Limite de 30 páginas por documento.");return;}
    estado.paginas.push({img,nome,vertices:[{x:.06,y:.06},{x:.94,y:.06},{x:.94,y:.94},{x:.06,y:.94}],filtro:"natural"});
    estado.indice=estado.paginas.length-1;estado.selecionado=0;
+   chamar("registrarEvento","importacao",titulo,"Página adicionada ao editor");
    abrirTela("editor");miniaturas();
    $("contadorPaginas").textContent=estado.paginas.length+" "+(estado.paginas.length===1?"página":"páginas");
    notificar("Página adicionada. Ajuste o contorno arrastando os pontos ou as bordas.");
@@ -187,7 +197,69 @@ window.flowScanDrive=ativo=>{
 };
 window.flowScanDestino=nome=>{estado.drive=true;$("botaoDrive").classList.add("ativo");$("driveTexto").textContent=nome||"Backup em pasta";};
 window.flowScanReceberImagem=receberImagem;
-window.flowScanVoltar=()=>{if($("editor").classList.contains("aberta"))abrirTela("inicio");else notificar("Flow Scan está pronto para digitalizar.");};
+
+/* Biblioteca local e linha do tempo — conteúdo sempre escapado via textContent */
+function formatarData(valor) {
+ try {return new Date(Number(valor)||valor).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});}
+ catch(e){return "";}
+}
+function elemento(tag,classe,texto){
+ const e=document.createElement(tag);if(classe)e.className=classe;
+ if(texto!==undefined)e.textContent=String(texto);return e;
+}
+function criarDocumento(arquivo){
+ const card=elemento("article","documento");
+ const emblema=elemento("div","doc-emblema",String(arquivo.formato||"pdf").toUpperCase());card.appendChild(emblema);
+ const corpo=elemento("div","doc-corpo");
+ corpo.appendChild(elemento("div","doc-nome",arquivo.nome||"Documento"));
+ corpo.appendChild(elemento("div","doc-info",formatarData(arquivo.data)+" · "+(arquivo.paginas||1)+" pág."));
+ const botoes=elemento("div","doc-comandos");
+ [["Abrir","abrirDocumento"],["Compartilhar","compartilharDocumento"],["Excluir","excluirDocumento"]].forEach(([titulo,acao])=>{
+  const botao=elemento("button",acao==="excluirDocumento"?"perigo":"",titulo);
+  botao.type="button";
+  botao.addEventListener("click",()=>{if(acao==="excluirDocumento"){
+   if(!confirm("Excluir este documento salvo no aparelho?"))return;
+  }chamar(acao,String(arquivo.id));});
+  botoes.appendChild(botao);
+ });
+ corpo.appendChild(botoes);card.appendChild(corpo);return card;
+}
+function renderizarDocumentos(){
+ const lista=$("listaArquivos");lista.replaceChildren();
+ const busca=$("buscaArquivos").value.trim().toLocaleLowerCase("pt-BR");
+ const itens=estado.documentos.filter(a=>String(a.nome).toLocaleLowerCase("pt-BR").includes(busca));
+ $("totalArquivos").textContent=String(estado.documentos.length);
+ if(!itens.length)lista.appendChild(elemento("div","estado-vazio",busca?"Nenhum documento corresponde à sua busca.":"Você ainda não salvou documentos. Digitalize ou importe para começar."));
+ else itens.forEach(a=>lista.appendChild(criarDocumento(a)));
+}
+function renderizarRecentes(){
+ const lista=$("recentes");lista.replaceChildren();
+ if(!estado.documentos.length)lista.appendChild(elemento("div","estado-vazio mini","Ainda não há arquivos. Sua primeira digitalização aparecerá aqui."));
+ else estado.documentos.slice(0,2).forEach(a=>lista.appendChild(criarDocumento(a)));
+}
+function renderizarHistorico(){
+ const lista=$("listaHistorico");lista.replaceChildren();
+ if(!estado.historico.length){
+   lista.appendChild(elemento("div","estado-vazio","Seu histórico estará disponível depois da primeira digitalização."));
+   return;
+ }
+ estado.historico.slice(0,120).forEach(item=>{
+  const evento=elemento("article","evento");evento.appendChild(elemento("span","evento-ponto",item.tipo==="exportacao"?"✓":item.tipo==="importacao"?"↗":"•"));
+  const corpo=elemento("div","evento-corpo");
+  corpo.appendChild(elemento("strong","",item.titulo||"Atividade"));
+  corpo.appendChild(elemento("span","evento-data",formatarData(item.data)));
+  if(item.detalhes)corpo.appendChild(elemento("p","",item.detalhes));
+  evento.appendChild(corpo);lista.appendChild(evento);
+ });
+}
+window.flowScanArquivos=dados=>{try{estado.documentos=typeof dados==="string"?JSON.parse(dados):dados||[];renderizarDocumentos();renderizarRecentes();}catch(e){notificar("Falha ao ler os arquivos.");}};
+window.flowScanHistorico=dados=>{try{estado.historico=typeof dados==="string"?JSON.parse(dados):dados||[];renderizarHistorico();}catch(e){notificar("Falha ao ler o histórico.");}};
+window.flowScanArquivoSalvo=()=>{chamar("listarDocumentos");chamar("listarHistorico");};
+document.querySelectorAll(".aba").forEach(b=>b.addEventListener("click",()=>abrirTela(b.dataset.tela)));
+ligar("abrirTodos","click",()=>abrirTela("arquivos"));
+ligar("buscaArquivos","input",renderizarDocumentos);
+
+window.flowScanVoltar=()=>{if($("editor").classList.contains("aberta"))abrirTela("inicio");else if(!$("inicio").classList.contains("aberta"))abrirTela("inicio");else notificar("Flow Scan está pronto.");};
 ligar("acaoCamera","click",()=>chamar("camera"));
 ligar("acaoImportar","click",()=>chamar("importar"));
 ligar("adicionar","click",()=>chamar("importar"));
@@ -204,4 +276,7 @@ document.querySelectorAll("[data-filtro]").forEach(b=>b.addEventListener("click"
  $("valorFiltro").textContent=b.textContent;notificar("Filtro aplicado à página atual.");
 }));
 window.addEventListener("resize",()=>{if($("editor").classList.contains("aberta"))redesenhar();});
+window.flowScanReady=true;
+chamar("listarDocumentos");
+chamar("listarHistorico");
 })();
