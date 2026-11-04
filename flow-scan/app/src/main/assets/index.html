@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#F9F4ED">
+  <title>Flow Scan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="decor decor-a"></div><div class="decor decor-b"></div>
+<div class="aplicativo">
+  <header class="topo">
+    <div class="marca"><span class="emblema"><svg viewBox="0 0 40 40" fill="none"><path d="M12 6h12l7 7v19H12z" fill="#fff9ee"/><path d="M24 6v7h7" fill="#f1c4ae"/><path d="M16 19h11M16 24h10" stroke="#bb4c62" stroke-width="2.2" stroke-linecap="round"/><path d="M5 13V8h5M35 27v5h-5" stroke="#ffd38e" stroke-width="2.8" stroke-linecap="round"/></svg></span><span><strong>flow scan</strong><small>seu estúdio de documentos</small></span></div>
+    <button class="nuvem" id="botaoDrive" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 17.5h12a4 4 0 0 0 .4-8 6 6 0 0 0-11.3-1A4.5 4.5 0 0 0 6 17.5Z"/><path d="M12 11v8m-3-3 3 3 3-3"/></svg><span id="driveTexto">Conectar Drive</span></button>
+  </header>
+  <main>
+    <section id="inicio" class="tela aberta">
+      <div class="chamada">
+        <span class="sobretitulo"><span class="ponto"></span> DIGITALIZE COM LIBERDADE</span>
+        <h1>Seu papel,<br><em>mais leve.</em></h1>
+        <p>Fotografe, ajuste cada detalhe e transforme suas páginas em arquivos perfeitos.</p>
+        <div class="ilustra" aria-hidden="true">
+          <div class="cartao flutuante a"><span class="linha"></span><span class="linha curta"></span><span class="linha"></span><span class="carimbo"></span></div>
+          <div class="cartao flutuante b"><span class="falso-logo"></span><span class="linha"></span><span class="linha curta"></span></div>
+          <div class="brilho brilho1">✦</div><div class="brilho brilho2">✳</div>
+          <div class="arco"></div>
+        </div>
+      </div>
+      <h2 class="titulo-sessao">Por onde começamos?</h2>
+      <div class="acoes">
+        <button class="acao destaque" id="acaoCamera"><span class="icone-acao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span><span><strong>Usar câmera</strong><small>Capture uma nova página</small></span><span class="seta">↗</span></button>
+        <button class="acao" id="acaoImportar"><span class="icone-acao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.4"/><path d="m4 17 6-6 4 4 3-3 4 4"/></svg></span><span><strong>Galeria e arquivos</strong><small>Fotos, imagens e PDFs do celular</small></span><span class="seta">↗</span></button>
+      </div>
+      <div class="dica"><span class="dica-icon">✳</span><p><b>Recorte do seu jeito.</b> Mova os pontos e até os lados do contorno. Adicione vértices para acompanhar formatos irregulares.</p></div>
+      <div class="pe">100% cuidado nos detalhes • Seus arquivos ficam com você</div>
+    </section>
+    <section id="editor" class="tela">
+      <div class="editor-cabecalho">
+        <button id="voltar" class="botao-circular" aria-label="Voltar">←</button>
+        <div><span class="sobretitulo">ATELIÊ DE PÁGINAS</span><h1>Seu recorte<span class="pontuacao">.</span></h1></div>
+        <button id="adicionar" class="botao-circular botao-add" aria-label="Adicionar página">+</button>
+      </div>
+      <div class="barra-paginas"><div id="miniaturas" class="miniaturas"></div></div>
+      <div class="quadro-canvas" id="areaCanvas"><canvas id="canvasEdicao" aria-label="Imagem com controles de recorte"></canvas><div class="selo-canvas">ARRASTE OS PONTOS OU AS BORDAS</div></div>
+      <div class="acoes-recorte">
+        <button id="addVertice">+ Vértice</button><button id="tirarVertice">− Vértice</button><button id="resetar">↺ Redefinir</button><button id="girar">⟳ Girar</button>
+      </div>
+      <div class="filtros">
+        <div class="cab-filtros"><b>Acabamento</b><span id="valorFiltro">Natural</span></div>
+        <div class="filtro-opcoes"><button data-filtro="natural" class="ativo">Natural</button><button data-filtro="nitido">Nítido</button><button data-filtro="cinza">Cinza</button><button data-filtro="pb">P&B</button></div>
+      </div>
+      <div class="exportacao">
+        <div class="cab-filtros"><b>Como deseja salvar?</b><span id="contadorPaginas">1 página</span></div>
+        <input id="nomeArquivo" type="text" placeholder="Nome do documento" value="Meu documento" maxlength="65">
+        <div class="formatos">
+          <label><input type="radio" name="formato" value="pdf" checked><span>PDF</span></label>
+          <label><input type="radio" name="formato" value="png"><span>PNG</span></label>
+          <label><input type="radio" name="formato" value="jpg"><span>JPG</span></label>
+        </div>
+        <p class="subformato">PDF aceita várias páginas. Para imagens múltiplas, exportamos um ZIP.</p>
+        <button id="salvar" class="salvar"><span>Salvar documento</span><span>↗</span></button>
+      </div>
+      <div class="pe">Os arquivos também são salvos em Downloads/FlowScan.</div>
+    </section>
+  </main>
+</div>
+<div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
