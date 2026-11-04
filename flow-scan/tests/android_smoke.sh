@@ -76,9 +76,9 @@ for chave in ("Importar arquivo ou imagem","Escanear com a câmera"):
 PY
 
 sleep 3
-adb shell am start -n "$PACOTE/.MainActivity" || true
-sleep 2
+# Não reiniciar o aplicativo aqui: isso poderia esconder uma falha após o clique.
 adb exec-out screencap -p > evidencias/apos-interacoes.png || true
+adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity|Resumed" | tail -12 || true
 pid="$(adb shell pidof "$PACOTE" | tr -d '\r' || true)"
 if [ -z "$pid" ]; then
   echo "ERRO: Flow Scan parou após a interação."
@@ -86,7 +86,7 @@ if [ -z "$pid" ]; then
   exit 1
 fi
 
-adb logcat -d -t 9000 > evidencias/logcat.txt || true
+adb logcat -d -v threadtime > evidencias/logcat.txt || true
 if grep -A 15 'FATAL EXCEPTION' evidencias/logcat.txt | grep -q 'Process: com.anderflow.flowscan'; then
   echo "Erro fatal do Flow Scan no logcat."
   grep -A 25 'FATAL EXCEPTION' evidencias/logcat.txt | tail -180
