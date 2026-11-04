@@ -42,6 +42,7 @@ else: print("Permissões: nenhuma janela aberta na coleta (pode ter sido respond
 PY
 
 sleep 3
+adb exec-out screencap -p > evidencias/inicio-apos-permissao.png || true
 adb shell uiautomator dump /sdcard/flowscan-ui2.xml || true
 adb pull /sdcard/flowscan-ui2.xml evidencias/tela2.xml || true
 
@@ -63,10 +64,21 @@ for chave in ("Importar arquivo ou imagem","Escanear com a câmera"):
         time.sleep(1)
         break
     if not achado:
-        print("Aviso: não foi encontrado o elemento no UIAutomator:",chave)
+        # Em alguns WebViews o Android não expõe os filhos para o UIAutomator.
+        # Pixel 5: a tela tem 1080x2340; estes toques são no centro dos cards.
+        pontos={"Importar arquivo ou imagem":(540,1140),"Escanear com a câmera":(540,930)}
+        x,y=pontos[chave]
+        subprocess.run(["adb","shell","input","tap",str(x),str(y)],check=True)
+        print("Toque por coordenadas no WebView:",chave,x,y)
+        time.sleep(3)
+        subprocess.run(["adb","shell","input","keyevent","4"],check=True)
+        time.sleep(1)
 PY
 
 sleep 3
+adb shell am start -n "$PACOTE/.MainActivity" || true
+sleep 2
+adb exec-out screencap -p > evidencias/apos-interacoes.png || true
 pid="$(adb shell pidof "$PACOTE" | tr -d '\r' || true)"
 if [ -z "$pid" ]; then
   echo "ERRO: Flow Scan parou após a interação."
