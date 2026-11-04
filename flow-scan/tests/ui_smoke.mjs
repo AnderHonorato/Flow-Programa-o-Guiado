@@ -25,6 +25,7 @@ class Elemento {
  getBoundingClientRect(){return {left:0,top:0,width:this.clientWidth,height:this.clientHeight};}
  setAttribute(){}
  getContext(){return contextoCanvas;}
+ toDataURL(){return 'data:image/jpeg;base64,YWJj';}
 }
 const contextoCanvas=new Proxy({}, {get:(t,p)=>{if(p==='canvas')return null;return t[p]??(()=>{});},set:(t,p,v)=>{t[p]=v;return true;}});
 const ids={};const get=id=>ids[id]??=new Elemento();
@@ -65,4 +66,8 @@ assert(get('listaHistorico').children.length===1,'Histórico não renderizou eve
 janela.flowScanReceberImagem('data:image/jpeg;base64,YWJj','Importação de teste');
 assert(telas[3].classList.contains('aberta'),'Editor não abriu após importação');
 assert(chamados.some(x=>x.metodo==='registrarEvento'),'Importação não entrou no histórico');
+for(const id of ['addVertice','tirarVertice','resetar','girar'])get(id).click();
+get('salvar').click();
+for(const metodo of ['exportarInicio','exportarPagina','exportarFim'])
+ assert(chamados.some(x=>x.metodo===metodo),'Fluxo de salvar documento falhou: '+metodo);
 console.log('OK: inicialização, câmera, importação, Drive, abas, arquivos, histórico e editor.');
