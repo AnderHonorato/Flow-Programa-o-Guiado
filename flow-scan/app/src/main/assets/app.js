@@ -30,7 +30,7 @@ function receberImagem(codigo,nome){
    if(estado.paginas.length>=30){notificar("Limite de 30 páginas por documento.");return;}
    estado.paginas.push({img,nome,vertices:[{x:.06,y:.06},{x:.94,y:.06},{x:.94,y:.94},{x:.06,y:.94}],filtro:"natural"});
    estado.indice=estado.paginas.length-1;estado.selecionado=0;
-   chamar("registrarEvento","importacao",titulo,"Página adicionada ao editor");
+   chamar("registrarEvento","importacao",nome,"Página adicionada ao editor");
    abrirTela("editor");miniaturas();
    $("contadorPaginas").textContent=estado.paginas.length+" "+(estado.paginas.length===1?"página":"páginas");
    notificar("Página adicionada. Ajuste o contorno arrastando os pontos ou as bordas.");
