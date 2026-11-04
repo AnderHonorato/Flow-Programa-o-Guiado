@@ -11,6 +11,11 @@ Aplicativo Android 10+ com interface editorial 2D e animações leves.
 - Salvamento local em Downloads/FlowScan e fila de backup privado para o Google Drive.
 - Drive via Google Identity Services com escopo mínimo `drive.file`, renovação de token na próxima abertura e reenvio dos arquivos pendentes.
 
+## Backup pelo seletor Android (recomendado)
+Toque em **Conectar Drive → Escolher uma pasta do Drive**, selecione uma pasta gravável no provedor Google Drive do Android e permita acesso. O app copia cada arquivo novo para essa pasta e reenvia pendências quando o aplicativo for aberto novamente. O seletor depende de o app Google Drive disponibilizar pastas graváveis pelo Android SAF; em alguns aparelhos o Drive não aparece.
+
+A opção **Autorizar conta Google** existe como alternativa, mas requer a configuração OAuth descrita abaixo.
+
 ## Atenção: configuração Google Drive
 Para autorizar uploads via OAuth, o Google exige um projeto no Google Cloud:
 1. Ativar a **Google Drive API** no Google Cloud Console.
