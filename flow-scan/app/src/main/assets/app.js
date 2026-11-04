@@ -185,6 +185,7 @@ window.flowScanDrive=ativo=>{
  estado.drive=!!ativo;$("botaoDrive").classList.toggle("ativo",!!ativo);
  $("driveTexto").textContent=ativo?"Drive conectado":"Conectar Drive";
 };
+window.flowScanDestino=nome=>{estado.drive=true;$("botaoDrive").classList.add("ativo");$("driveTexto").textContent=nome||"Backup em pasta";};
 window.flowScanReceberImagem=receberImagem;
 window.flowScanVoltar=()=>{if($("editor").classList.contains("aberta"))abrirTela("inicio");else notificar("Flow Scan está pronto para digitalizar.");};
 ligar("acaoCamera","click",()=>chamar("camera"));
