@@ -38,3 +38,29 @@ test('somente diagnostico nao chama adb install nem altera aparelho', () => {
 test('argumentos rejeitam serial sem valor', () => {
   assert.throws(() => interpretarArgumentos(['--serial']), /exige/);
 });
+
+test('ADB ausente apresenta bloqueio real em vez de dizer que nao ha aparelho', () => {
+  const retorno = executarDiagnostico({ apk: 'teste.apk', serial: null }, () => ({
+    status: null, error: Object.assign(new Error('spawn adb ENOENT'), { code: 'ENOENT' })
+  }));
+  assert.equal(retorno.codigo, 'ADB_AUSENTE');
+  assert.equal(retorno.etapa, 'conexao');
+});
+test('dispositivo nao autorizado nao tenta instalar', () => {
+  const chamadas = [];
+  const retorno = executarDiagnostico({ apk: 'teste.apk', serial: null }, (_, args) => {
+    chamadas.push(args.join(' '));
+    return { status: 0, stdout: 'List of devices attached\nSM123 unauthorized\n', stderr: '' };
+  });
+  assert.equal(retorno.codigo, 'ADB_NAO_AUTORIZADO');
+  assert.equal(chamadas.length, 1);
+});
+test('serial inexistente e bloqueado antes de consultar ou instalar', () => {
+  const chamadas = [];
+  const retorno = executarDiagnostico({ apk: 'teste.apk', serial: 'OUTRO' }, (_, args) => {
+    chamadas.push(args.join(' '));
+    return { status: 0, stdout: 'List of devices attached\nSM123 device\n', stderr: '' };
+  });
+  assert.equal(retorno.codigo, 'SERIAL_NAO_ENCONTRADO');
+  assert.deepEqual(chamadas, ['devices -l']);
+});

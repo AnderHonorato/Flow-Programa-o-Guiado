@@ -50,6 +50,26 @@ export function executarDiagnostico(opcoes, executar = (binario, args) => spawnS
     return { status: retorno.status, saida: [retorno.stdout, retorno.stderr, retorno.error?.message].filter(Boolean).join('\n').trim() };
   };
   const dispositivos = executar('adb', ['devices', '-l']);
+  if (dispositivos.error || dispositivos.status !== 0) {
+    const detalhe = [dispositivos.stderr, dispositivos.error?.message].filter(Boolean).join(' ');
+    return {
+      ok: false, etapa: 'conexao', codigo: dispositivos.error?.code === 'ENOENT' ? 'ADB_AUSENTE' : 'ADB_INDISPONIVEL',
+      orientacao: 'Instale Android SDK Platform-Tools e verifique o caminho do adb; nenhuma instalacao foi tentada.',
+      detalhe: detalhe.slice(0, 500)
+    };
+  }
+  const linhas = (dispositivos.stdout || '').split(/\r?\n/);
+  const entradas = linhas.map(linha => linha.trim().match(/^(\S+)\s+(device|unauthorized|offline)\b/)).filter(Boolean);
+  const escolhido = opcoes.serial ? entradas.find(item => item[1] === opcoes.serial) : null;
+  if (opcoes.serial && (!escolhido || escolhido[2] !== 'device')) {
+    const codigo = escolhido?.[2] === 'unauthorized' ? 'ADB_NAO_AUTORIZADO' :
+      escolhido?.[2] === 'offline' ? 'DISPOSITIVO_INDISPONIVEL' : 'SERIAL_NAO_ENCONTRADO';
+    return { ok: false, etapa: 'selecao', codigo, orientacao: 'Confira adb devices -l, conecte e autorize o aparelho antes de instalar.' };
+  }
+  if (!opcoes.serial && !entradas.some(item => item[2] === 'device')) {
+    const codigo = entradas.some(item => item[2] === 'unauthorized') ? 'ADB_NAO_AUTORIZADO' : 'DISPOSITIVO_INDISPONIVEL';
+    return { ok: false, etapa: 'selecao', codigo, orientacao: 'Confira adb devices -l e autorize o aparelho; nenhuma instalacao foi tentada.' };
+  }
   const disponiveis = (dispositivos.stdout || '').split(/\r?\n/).filter(l => /^\S+\s+device\b/.test(l));
   if (!opcoes.serial && disponiveis.length !== 1) {
     return { ok: false, etapa: 'selecao', dispositivos: disponiveis.length, ...classificarFalha(disponiveis.length ? 'more than one device/emulator' : 'no devices/emulators found') };
