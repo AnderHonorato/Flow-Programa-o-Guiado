@@ -173,6 +173,9 @@ export default function App() {
       </a>
       <aside
         id="navegacao-flow"
+        role={mobile && menu ? "dialog" : undefined}
+        aria-modal={mobile && menu ? true : undefined}
+        aria-label={mobile && menu ? "Menu de navegação" : undefined}
         inert={conta || (mobile && !menu)}
         className={`barra-lateral ${menu ? "aberta" : ""}`}
       >
@@ -190,6 +193,7 @@ export default function App() {
             flow<span className="marca-ponto">.</span>
           </span>
         </a>
+        {mobile && menu && <button className="fechar-gaveta" type="button" onClick={() => setMenu(false)} aria-label="Fechar menu de navegação"><Icone nome="fechar" tamanho={20}/><span>Fechar menu</span></button>}
         <span className="legenda-marca">PROGRAMAÇÃO GUIADA</span>
         <nav aria-label="Navegação principal">
           {navegacao.map(([id, nome]) => (
@@ -252,7 +256,7 @@ export default function App() {
           onClick={() => setMenu(false)}
         />
       )}
-      <div className="corpo" inert={conta}>
+      <div className="corpo" inert={conta || (mobile && menu)}>
         <header className="barra-superior">
           <button
             className="somente-mobile botao-icone"
