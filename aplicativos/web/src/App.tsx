@@ -64,6 +64,36 @@ export default function App() {
     document.addEventListener("keydown", fechar);
     return () => document.removeEventListener("keydown", fechar);
   }, [menu]);
+  // A gaveta mobile deve reter o foco e impedir rolagem da tela atras dela.
+  useEffect(() => {
+    if (!mobile || !menu || conta) return;
+    const anterior = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const rolagemAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const gaveta = document.getElementById("navegacao-flow");
+    const focaveis = () => Array.from(gaveta?.querySelectorAll<HTMLElement>(
+      'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    ) ?? []).filter((elemento) => elemento.getClientRects().length > 0);
+    focaveis()[0]?.focus();
+    const manterFoco = (evento: KeyboardEvent) => {
+      if (evento.key !== "Tab") return;
+      const elementos = focaveis();
+      if (!elementos.length) { evento.preventDefault(); return; }
+      const primeiro = elementos[0];
+      const ultimo = elementos[elementos.length - 1];
+      if (evento.shiftKey && (document.activeElement === primeiro || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); ultimo.focus();
+      } else if (!evento.shiftKey && (document.activeElement === ultimo || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); primeiro.focus();
+      }
+    };
+    document.addEventListener("keydown", manterFoco);
+    return () => {
+      document.removeEventListener("keydown", manterFoco);
+      document.body.style.overflow = rolagemAnterior;
+      anterior?.focus();
+    };
+  }, [mobile, menu, conta]);
   const [tema, setTema] = useState(
     () => localStorage.getItem("flow-tema") || "escuro",
   );
