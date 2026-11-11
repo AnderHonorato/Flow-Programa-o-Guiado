@@ -64,6 +64,36 @@ export default function App() {
     document.addEventListener("keydown", fechar);
     return () => document.removeEventListener("keydown", fechar);
   }, [menu]);
+  // A gaveta mobile deve reter o foco e impedir rolagem da tela atras dela.
+  useEffect(() => {
+    if (!mobile || !menu || conta) return;
+    const anterior = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const rolagemAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const gaveta = document.getElementById("navegacao-flow");
+    const focaveis = () => Array.from(gaveta?.querySelectorAll<HTMLElement>(
+      'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    ) ?? []).filter((elemento) => elemento.getClientRects().length > 0);
+    focaveis()[0]?.focus();
+    const manterFoco = (evento: KeyboardEvent) => {
+      if (evento.key !== "Tab") return;
+      const elementos = focaveis();
+      if (!elementos.length) { evento.preventDefault(); return; }
+      const primeiro = elementos[0];
+      const ultimo = elementos[elementos.length - 1];
+      if (evento.shiftKey && (document.activeElement === primeiro || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); ultimo.focus();
+      } else if (!evento.shiftKey && (document.activeElement === ultimo || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); primeiro.focus();
+      }
+    };
+    document.addEventListener("keydown", manterFoco);
+    return () => {
+      document.removeEventListener("keydown", manterFoco);
+      document.body.style.overflow = rolagemAnterior;
+      anterior?.focus();
+    };
+  }, [mobile, menu, conta]);
   const [tema, setTema] = useState(
     () => localStorage.getItem("flow-tema") || "escuro",
   );
@@ -80,7 +110,26 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("flow-pagina", pagina);
   }, [pagina]);
+  // Sincroniza telas internas com o botão Voltar do Android e do navegador.
+  useEffect(() => {
+    const estado = window.history.state;
+    if (estado?.flowPagina === undefined) {
+      window.history.replaceState({ ...estado, flowPagina: pagina }, "");
+    }
+    const aoVoltar = (evento: PopStateEvent) => {
+      const destino = evento.state?.flowPagina;
+      if (typeof destino !== "string") return;
+      setPagina(destino);
+      setTransicao((valor) => valor + 1);
+      setMenu(false);
+      setConta(false);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    window.addEventListener("popstate", aoVoltar);
+    return () => window.removeEventListener("popstate", aoVoltar);
+  }, []);
   function navegar(p: string) {
+    if (p !== pagina) window.history.pushState({ ...window.history.state, flowPagina: p }, "");
     setPagina(p);
     setTransicao(t => t + 1);
     setMenu(false);
