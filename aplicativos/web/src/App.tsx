@@ -110,7 +110,26 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("flow-pagina", pagina);
   }, [pagina]);
+  // Sincroniza telas internas com o botão Voltar do Android e do navegador.
+  useEffect(() => {
+    const estado = window.history.state;
+    if (estado?.flowPagina === undefined) {
+      window.history.replaceState({ ...estado, flowPagina: pagina }, "");
+    }
+    const aoVoltar = (evento: PopStateEvent) => {
+      const destino = evento.state?.flowPagina;
+      if (typeof destino !== "string") return;
+      setPagina(destino);
+      setTransicao((valor) => valor + 1);
+      setMenu(false);
+      setConta(false);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    window.addEventListener("popstate", aoVoltar);
+    return () => window.removeEventListener("popstate", aoVoltar);
+  }, []);
   function navegar(p: string) {
+    if (p !== pagina) window.history.pushState({ ...window.history.state, flowPagina: p }, "");
     setPagina(p);
     setTransicao(t => t + 1);
     setMenu(false);
