@@ -35,6 +35,36 @@ describe('laboratório React no Chromium', () => {
     navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'] });
   }, 60000);
   afterAll(async () => { await navegador?.close(); await servidor?.close(); });
+  it('oferece teclas de codigo no toque e preserva selecao, foco e desfazer', async () => {
+    const contexto = await navegador.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const celular = await contexto.newPage();
+    await celular.goto(origem);
+    await celular.evaluate(async dados => {
+      const carregar = new Function('url', 'return import(url)');
+      const [react, dom, modulo] = await Promise.all([
+        carregar('/node_modules/.vite/deps/react.js'),
+        carregar('/node_modules/.vite/deps/react-dom_client.js'),
+        carregar('/src/laboratorios/Laboratorio.tsx')
+      ]);
+      document.body.innerHTML = '<div id="laboratorio-teste"></div>';
+      localStorage.clear();
+      dom.default.createRoot(document.getElementById('laboratorio-teste')).render(
+        react.default.createElement(modulo.default, { aula: dados, perfilId: 'teclado-mobile' })
+      );
+    }, aula);
+    const editor = celular.getByRole('textbox', { name: 'Editor HTML' });
+    await editor.waitFor();
+    await editor.click();
+    await celular.keyboard.press('ControlOrMeta+A');
+    await celular.keyboard.insertText('abc');
+    await celular.getByRole('button', { name: 'Inserir chaves' }).click();
+    await expect.poll(() => editor.innerText()).toContain('abc{}');
+    await celular.getByRole('button', { name: 'Desfazer alteração' }).click();
+    await expect.poll(() => editor.innerText()).toBe('abc');
+    await celular.getByRole('button', { name: 'Inserir dois espaços' }).click();
+    await expect.poll(() => editor.innerText()).toContain('abc  ');
+    await contexto.close();
+  }, 30000);
   it('preserva verificações após executar novamente e invalida ao editar ou restaurar', async () => {
     const pagina = await montar();
     await pagina.getByRole('button', { name: 'Testar código', exact: false }).click();

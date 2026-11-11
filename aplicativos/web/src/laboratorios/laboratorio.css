@@ -6,3 +6,12 @@
 /* Realce legível sobre as superfícies de cada tema. */
 .laboratorio{--lab-code-tag:#246243;--lab-code-palavra:#704080;--lab-code-numero:#274b90;--lab-code-texto:#933d28}.laboratorio button svg,.lab-testes strong svg{vertical-align:middle;flex-shrink:0;margin-right:3px}.lab-icone-refazer{transform:scaleX(-1)}
 :root[data-tema=escuro] .laboratorio{--lab-code-tag:#9ed6b2;--lab-code-palavra:#dab3ec;--lab-code-numero:#adc6ff;--lab-code-texto:#ffbaa3}.lab-log-error{color:var(--erro)}.lab-log-warn,.lab-teste-revisar strong{color:var(--accent)}
+
+/* Teclado auxiliar de programação: somente telas de toque estreitas. */
+.lab-teclas-mobile{display:none}
+@media(max-width:760px) and (pointer:coarse){
+  .lab-teclas-mobile{display:flex;gap:5px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:7px 9px;border-bottom:1px solid var(--line);background:var(--surface-2);-webkit-overflow-scrolling:touch}
+  .laboratorio .lab-teclas-mobile button{flex:0 0 auto;min-width:44px;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font:600 14px ui-monospace,monospace;touch-action:manipulation}
+  .laboratorio .lab-teclas-mobile button:active{background:var(--accent);color:var(--bg)}
+}
+@media(prefers-reduced-motion:reduce){.lab-teclas-mobile button{transition:none!important}}
