@@ -5,10 +5,22 @@
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 export const PACOTE = 'br.com.ander.flow';
+// Busca ferramentas locais sem exigir alteracoes globais no PATH do Windows.
+export function localizarAdb(ambiente = process.env, existe = existsSync) {
+  const candidatos = [
+    ambiente.ANDROID_HOME && join(ambiente.ANDROID_HOME, 'platform-tools', process.platform === 'win32' ? 'adb.exe' : 'adb'),
+    ambiente.ANDROID_SDK_ROOT && join(ambiente.ANDROID_SDK_ROOT, 'platform-tools', process.platform === 'win32' ? 'adb.exe' : 'adb'),
+    ambiente.LOCALAPPDATA && join(ambiente.LOCALAPPDATA, 'AnderFlow', 'android-tools', 'platform-tools', 'adb.exe'),
+    join(homedir(), 'AppData', 'Local', 'Android', 'Sdk', 'platform-tools', 'adb.exe'),
+  ].filter(Boolean);
+  return candidatos.find(caminho => existe(caminho)) || 'adb';
+}
+
 
 export function classificarFalha(saida) {
   const regras = [
@@ -45,11 +57,13 @@ export function interpretarArgumentos(args) {
 }
 
 export function executarDiagnostico(opcoes, executar = (binario, args) => spawnSync(binario, args, { encoding: 'utf8', timeout: 120_000 })) {
+  const adb = localizarAdb();
+  let serialSelecionado = opcoes.serial;
   const comando = (args) => {
-    const retorno = executar('adb', [...(opcoes.serial ? ['-s', opcoes.serial] : []), ...args]);
+    const retorno = executar(adb, [...(serialSelecionado ? ['-s', serialSelecionado] : []), ...args]);
     return { status: retorno.status, saida: [retorno.stdout, retorno.stderr, retorno.error?.message].filter(Boolean).join('\n').trim() };
   };
-  const dispositivos = executar('adb', ['devices', '-l']);
+  const dispositivos = executar(adb, ['devices', '-l']);
   if (dispositivos.error || dispositivos.status !== 0) {
     const detalhe = [dispositivos.stderr, dispositivos.error?.message].filter(Boolean).join(' ');
     return {
@@ -75,6 +89,8 @@ export function executarDiagnostico(opcoes, executar = (binario, args) => spawnS
     return { ok: false, etapa: 'selecao', dispositivos: disponiveis.length, ...classificarFalha(disponiveis.length ? 'more than one device/emulator' : 'no devices/emulators found') };
   }
   const serial = opcoes.serial || disponiveis[0].trim().split(/\s+/)[0];
+  // Fixar o aparelho evita que uma conexao posterior redirecione a instalacao.
+  serialSelecionado = serial;
   const props = comando(['shell', 'getprop', 'ro.product.model']);
   const android = comando(['shell', 'getprop', 'ro.build.version.release']);
   const instalado = comando(['shell', 'pm', 'list', 'packages', '--user', '0', PACOTE]);

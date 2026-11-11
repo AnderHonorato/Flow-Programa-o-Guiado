@@ -64,3 +64,26 @@ test('serial inexistente e bloqueado antes de consultar ou instalar', () => {
   assert.equal(retorno.codigo, 'SERIAL_NAO_ENCONTRADO');
   assert.deepEqual(chamadas, ['devices -l']);
 });
+
+test('fixa o serial do aparelho em todas as consultas ADB', () => {
+  const chamadas = [];
+  const executar = (_, args) => {
+    chamadas.push(args);
+    if (args[0] === 'devices') return { status: 0, stdout: 'List of devices attached\nA35 device model:SM-A356E\n', stderr: '' };
+    if (args.includes('ro.product.model')) return { status: 0, stdout: 'SM-A356E', stderr: '' };
+    if (args.includes('ro.build.version.release')) return { status: 0, stdout: '15', stderr: '' };
+    return { status: 0, stdout: '', stderr: '' };
+  };
+  const resultado = executarDiagnostico({ apk: null, serial: null, somenteDiagnostico: true }, executar);
+  assert.equal(resultado.ok, true);
+  assert.equal(resultado.dispositivo, 'A35');
+  assert.deepEqual(chamadas[0], ['devices', '-l']);
+  for (const chamada of chamadas.slice(1)) assert.deepEqual(chamada.slice(0, 2), ['-s', 'A35']);
+});
+
+test('localiza SDK isolado sem modificar PATH global', async () => {
+  const { localizarAdb } = await import('../scripts/android-diagnosticar-instalacao.mjs');
+  const local = 'C:/Users/AS/AppData/Local/AnderFlow/android-tools/platform-tools/adb.exe';
+  assert.equal(localizarAdb({ LOCALAPPDATA: 'C:/Users/AS/AppData/Local' }, caminho => caminho.replaceAll('\\', '/') === local), local.replaceAll('/', requireSeparador()));
+});
+function requireSeparador() { return process.platform === 'win32' ? '\\' : '/'; }
