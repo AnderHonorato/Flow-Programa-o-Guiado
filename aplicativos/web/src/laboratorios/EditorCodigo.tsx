@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers, highlightActiveLine, drawSelection } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap, indentWithTab, indentSelection, undo, redo } from '@codemirror/commands';
+import { defaultKeymap, history, historyKeymap, indentWithTab, indentSelection, undo, redo, isolateHistory } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle, HighlightStyle, indentOnInput, bracketMatching } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap, autocompletion, completionKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
@@ -36,5 +36,42 @@ export default function EditorCodigo({ codigo, arquivo, aoMudar, linha }: Props)
   }, [arquivo]);
   useEffect(() => { const view = editor.current; if (view && view.state.doc.toString() !== codigo) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: codigo } }); }, [codigo]);
   useEffect(() => { const view = editor.current; if (!view || !linha) return; const alvo = view.state.doc.line(Math.min(Math.max(1, linha), view.state.doc.lines)); view.dispatch({ selection: { anchor: alvo.from, head: alvo.to }, effects: EditorView.scrollIntoView(alvo.from, { y: 'center' }) }); view.focus(); }, [linha]);
-  return <><div className="lab-editor-acoes"><button type="button" onClick={() => editor.current && undo(editor.current)} aria-label="Desfazer alteração"><Icone nome="revisao" tamanho={13} /> Desfazer</button><button type="button" onClick={() => editor.current && redo(editor.current)} aria-label="Refazer alteração"><Icone nome="revisao" tamanho={13} className="lab-icone-refazer" /> Refazer</button><button type="button" onClick={() => { const view = editor.current; if (view) { view.dispatch({ selection: { anchor: 0, head: view.state.doc.length } }); indentSelection(view); } }}>Autoindentar</button></div><div className="lab-codemirror" ref={raiz} /></>;
+  // Insercoes de simbolos para teclado virtual, mantendo selecao e historico do CodeMirror.
+  function inserirSimbolo(abertura: string, fechamento = '') {
+    const view = editor.current;
+    if (!view) return;
+    const { from, to } = view.state.selection.main;
+    const selecionado = view.state.sliceDoc(from, to);
+    const texto = abertura + selecionado + fechamento;
+    const posicao = selecionado ? from + texto.length : from + abertura.length;
+    view.dispatch({
+      changes: { from, to, insert: texto },
+      selection: { anchor: selecionado ? from + abertura.length : posicao, head: selecionado ? from + abertura.length + selecionado.length : posicao },
+      scrollIntoView: true,
+      userEvent: 'input.type', annotations: isolateHistory.of('full')
+    });
+    view.focus();
+  }
+  function moverCursor(direcao: -1 | 1) {
+    const view = editor.current;
+    if (!view) return;
+    const atual = view.state.selection.main.head;
+    view.dispatch({ selection: { anchor: Math.max(0, Math.min(view.state.doc.length, atual + direcao)) }, scrollIntoView: true });
+    view.focus();
+  }
+  const simbolos = [
+    { rotulo: 'Tab', texto: '  ', descricao: 'Inserir dois espaços' },
+    { rotulo: '{ }', texto: '{', fechamento: '}', descricao: 'Inserir chaves' },
+    { rotulo: '( )', texto: '(', fechamento: ')', descricao: 'Inserir parênteses' },
+    { rotulo: '[ ]', texto: '[', fechamento: ']', descricao: 'Inserir colchetes' },
+    { rotulo: '< >', texto: '<', fechamento: '>', descricao: 'Inserir sinais de menor e maior' },
+    { rotulo: '" "', texto: '"', fechamento: '"', descricao: 'Inserir aspas duplas' },
+    { rotulo: '=', texto: '=', descricao: 'Inserir sinal de igual' },
+    { rotulo: '/', texto: '/', descricao: 'Inserir barra' },
+  ];
+  return <><div className="lab-editor-acoes"><button type="button" onClick={() => editor.current && undo(editor.current)} aria-label="Desfazer alteração"><Icone nome="revisao" tamanho={13} /> Desfazer</button><button type="button" onClick={() => editor.current && redo(editor.current)} aria-label="Refazer alteração"><Icone nome="revisao" tamanho={13} className="lab-icone-refazer" /> Refazer</button><button type="button" onClick={() => { const view = editor.current; if (view) { view.dispatch({ selection: { anchor: 0, head: view.state.doc.length } }); indentSelection(view); } }}>Autoindentar</button></div><div className="lab-teclas-mobile" role="toolbar" aria-label="Teclas rápidas para editar código">
+    <button type="button" aria-label="Mover cursor para esquerda" onPointerDown={evento => evento.preventDefault()} onClick={() => moverCursor(-1)}>←</button>
+    {simbolos.map(simbolo => <button key={simbolo.rotulo} type="button" aria-label={simbolo.descricao} onPointerDown={evento => evento.preventDefault()} onClick={() => inserirSimbolo(simbolo.texto, simbolo.fechamento)}>{simbolo.rotulo}</button>)}
+    <button type="button" aria-label="Mover cursor para direita" onPointerDown={evento => evento.preventDefault()} onClick={() => moverCursor(1)}>→</button>
+  </div><div className="lab-codemirror" ref={raiz} /></>;
 }
