@@ -1,4 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
+import { App as AplicativoNativo } from "@capacitor/app";
 import { AvatarEvolucao, ResumoEvolucao, CelebracaoEvolucao } from "./evolucao/Evolucao";
 import { experiencia } from "./evolucao/regras";
 import Icone from "./componentes/Icone";
@@ -64,6 +66,36 @@ export default function App() {
     document.addEventListener("keydown", fechar);
     return () => document.removeEventListener("keydown", fechar);
   }, [menu]);
+  // A gaveta mobile deve reter o foco e impedir rolagem da tela atras dela.
+  useEffect(() => {
+    if (!mobile || !menu || conta) return;
+    const anterior = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const rolagemAnterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const gaveta = document.getElementById("navegacao-flow");
+    const focaveis = () => Array.from(gaveta?.querySelectorAll<HTMLElement>(
+      'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    ) ?? []).filter((elemento) => elemento.getClientRects().length > 0);
+    focaveis()[0]?.focus();
+    const manterFoco = (evento: KeyboardEvent) => {
+      if (evento.key !== "Tab") return;
+      const elementos = focaveis();
+      if (!elementos.length) { evento.preventDefault(); return; }
+      const primeiro = elementos[0];
+      const ultimo = elementos[elementos.length - 1];
+      if (evento.shiftKey && (document.activeElement === primeiro || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); ultimo.focus();
+      } else if (!evento.shiftKey && (document.activeElement === ultimo || !gaveta?.contains(document.activeElement))) {
+        evento.preventDefault(); primeiro.focus();
+      }
+    };
+    document.addEventListener("keydown", manterFoco);
+    return () => {
+      document.removeEventListener("keydown", manterFoco);
+      document.body.style.overflow = rolagemAnterior;
+      anterior?.focus();
+    };
+  }, [mobile, menu, conta]);
   const [tema, setTema] = useState(
     () => localStorage.getItem("flow-tema") || "escuro",
   );
@@ -80,7 +112,47 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("flow-pagina", pagina);
   }, [pagina]);
+  // Sincroniza telas internas com o botão Voltar do Android e do navegador.
+  useEffect(() => {
+    const estado = window.history.state;
+    if (estado?.flowPagina === undefined) {
+      window.history.replaceState({ ...estado, flowPagina: pagina, flowProfundidade: 0 }, "");
+    }
+    const aoVoltar = (evento: PopStateEvent) => {
+      const destino = evento.state?.flowPagina;
+      if (typeof destino !== "string") return;
+      setPagina(destino);
+      setTransicao((valor) => valor + 1);
+      setMenu(false);
+      setConta(false);
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    window.addEventListener("popstate", aoVoltar);
+    return () => window.removeEventListener("popstate", aoVoltar);
+  }, []);
+  // No Android, o botão físico/gesto Voltar deve respeitar a navegação interna.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let ativo = true;
+    let remover: (() => Promise<void>) | undefined;
+    void AplicativoNativo.addListener("backButton", () => {
+      if (conta) { setConta(false); return; }
+      if (menu) { setMenu(false); return; }
+      if ((Number(window.history.state?.flowProfundidade) || 0) > 0) {
+        window.history.back();
+        return;
+      }
+      // Na raiz, encerra apenas o app, sem tentar voltar para páginas externas.
+      void AplicativoNativo.exitApp();
+    }).then(assinatura => {
+      if (ativo) remover = () => assinatura.remove();
+      else void assinatura.remove();
+    });
+    return () => { ativo = false; if (remover) void remover(); };
+  }, [conta, menu]);
+
   function navegar(p: string) {
+    if (p !== pagina) window.history.pushState({ ...window.history.state, flowPagina: p, flowProfundidade: (Number(window.history.state?.flowProfundidade) || 0) + 1 }, "");
     setPagina(p);
     setTransicao(t => t + 1);
     setMenu(false);
@@ -101,6 +173,9 @@ export default function App() {
       </a>
       <aside
         id="navegacao-flow"
+        role={mobile && menu ? "dialog" : undefined}
+        aria-modal={mobile && menu ? true : undefined}
+        aria-label={mobile && menu ? "Menu de navegação" : undefined}
         inert={conta || (mobile && !menu)}
         className={`barra-lateral ${menu ? "aberta" : ""}`}
       >
@@ -118,6 +193,7 @@ export default function App() {
             flow<span className="marca-ponto">.</span>
           </span>
         </a>
+        {mobile && menu && <button className="fechar-gaveta" type="button" onClick={() => setMenu(false)} aria-label="Fechar menu de navegação"><Icone nome="fechar" tamanho={20}/><span>Fechar menu</span></button>}
         <span className="legenda-marca">PROGRAMAÇÃO GUIADA</span>
         <nav aria-label="Navegação principal">
           {navegacao.map(([id, nome]) => (
@@ -180,7 +256,7 @@ export default function App() {
           onClick={() => setMenu(false)}
         />
       )}
-      <div className="corpo" inert={conta}>
+      <div className="corpo" inert={conta || (mobile && menu)}>
         <header className="barra-superior">
           <button
             className="somente-mobile botao-icone"
