@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@capacitor/android": "^7.1.0",
+    "@capacitor/app": "^7.1.2",
     "@capacitor/core": "^7.4.4",
     "@codemirror/autocomplete": "^6.20.0",
     "@codemirror/commands": "^6.10.0",

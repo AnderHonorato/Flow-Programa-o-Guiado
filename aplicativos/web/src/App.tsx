@@ -1,4 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
+import { App as AplicativoNativo } from "@capacitor/app";
 import { AvatarEvolucao, ResumoEvolucao, CelebracaoEvolucao } from "./evolucao/Evolucao";
 import { experiencia } from "./evolucao/regras";
 import Icone from "./componentes/Icone";
@@ -114,7 +116,7 @@ export default function App() {
   useEffect(() => {
     const estado = window.history.state;
     if (estado?.flowPagina === undefined) {
-      window.history.replaceState({ ...estado, flowPagina: pagina }, "");
+      window.history.replaceState({ ...estado, flowPagina: pagina, flowProfundidade: 0 }, "");
     }
     const aoVoltar = (evento: PopStateEvent) => {
       const destino = evento.state?.flowPagina;
@@ -128,8 +130,29 @@ export default function App() {
     window.addEventListener("popstate", aoVoltar);
     return () => window.removeEventListener("popstate", aoVoltar);
   }, []);
+  // No Android, o botão físico/gesto Voltar deve respeitar a navegação interna.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let ativo = true;
+    let remover: (() => Promise<void>) | undefined;
+    void AplicativoNativo.addListener("backButton", () => {
+      if (conta) { setConta(false); return; }
+      if (menu) { setMenu(false); return; }
+      if ((Number(window.history.state?.flowProfundidade) || 0) > 0) {
+        window.history.back();
+        return;
+      }
+      // Na raiz, encerra apenas o app, sem tentar voltar para páginas externas.
+      void AplicativoNativo.exitApp();
+    }).then(assinatura => {
+      if (ativo) remover = () => assinatura.remove();
+      else void assinatura.remove();
+    });
+    return () => { ativo = false; if (remover) void remover(); };
+  }, [conta, menu]);
+
   function navegar(p: string) {
-    if (p !== pagina) window.history.pushState({ ...window.history.state, flowPagina: p }, "");
+    if (p !== pagina) window.history.pushState({ ...window.history.state, flowPagina: p, flowProfundidade: (Number(window.history.state?.flowProfundidade) || 0) + 1 }, "");
     setPagina(p);
     setTransicao(t => t + 1);
     setMenu(false);
