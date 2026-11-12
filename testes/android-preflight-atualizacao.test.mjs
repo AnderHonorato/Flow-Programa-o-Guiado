@@ -100,3 +100,23 @@ test('rejeita segundo certificado truncado, vazio ou sem delimitador', () => {
     assert.equal(interpretarCertificado(valido + '\n' + linha), null, linha);
   }
 });
+
+test('rejeita maxSdkVersion declarado mas malformado antes de liberar APK', () => {
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  for (const invalido of ["maxSdkVersion:'invalido'", "maxSdkVersion:34", "maxSdkVersion:'34'\nmaxSdkVersion:'35'"]) {
+    assert.equal(interpretarBadging(base + invalido + '\n'), null, invalido);
+  }
+});
+test('nao trata declaracao native-code corrompida como APK universal', () => {
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  for (const invalido of ["native-code: arm64-v8a", "native-code: 'arm64-v8a' lixo", "native-code:", "native-code: 'x86'\nnative-code: 'arm64-v8a'"]) {
+    assert.equal(interpretarBadging(base + invalido + '\n'), null, invalido);
+  }
+  assert.deepEqual(interpretarBadging(base).abis, []);
+  assert.deepEqual(interpretarBadging(base + "native-code: 'arm64-v8a' 'armeabi-v7a'\n").abis, ['arm64-v8a', 'armeabi-v7a']);
+});
+test('rejeita linhas de pacote ou SDK duplicadas', () => {
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  assert.equal(interpretarBadging(base + "sdkVersion:'35'\n"), null);
+  assert.equal(interpretarBadging(base + "package: name='br.com.ander.flow' versionCode='8' versionName='0.6.2'\n"), null);
+});
