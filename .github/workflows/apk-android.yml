@@ -60,8 +60,13 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk" > artefatos/android/assinatura.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$apk" > artefatos/android/metadados.txt
           grep -q "package: name='br.com.ander.flow'" artefatos/android/metadados.txt
-          grep -q "versionCode='6'" artefatos/android/metadados.txt
-          grep -q "versionName='0.6.0'" artefatos/android/metadados.txt
+          # A versão é derivada do Gradle, evitando falsos gates após atualização.
+          versao_codigo=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*/\\1/p' aplicativos/android/app/build.gradle | head -1)
+          versao_nome=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]+"([^"]+)".*/\\1/p' aplicativos/android/app/build.gradle | head -1)
+          test -n "$versao_codigo" && test -n "$versao_nome"
+          grep -Fq "versionCode='$versao_codigo'" artefatos/android/metadados.txt
+          grep -Fq "versionName='$versao_nome'" artefatos/android/metadados.txt
+          printf 'versao=%s\\nversionCode=%s\\n' "$versao_nome" "$versao_codigo" > artefatos/android/versao.txt
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --min-sdk-version 23 "$apk"
           (cd artefatos/android && sha256sum Flow-Programacao-Guiada-debug.apk > Flow-Programacao-Guiada-debug.apk.sha256)
           cat artefatos/android/Flow-Programacao-Guiada-debug.apk.sha256
