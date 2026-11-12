@@ -30,7 +30,7 @@ export function interpretarCertificados(texto) {
   // Nunca inferir assinatura única de um APK com múltiplos signatários.
   // Falha fechada: uma linha de certificado malformada não pode desaparecer
   // da contagem, deixando o primeiro signatário aparentemente válido.
-  const declaracoes = texto.split(/\r?\n/).filter(linha => /^\s*Signer\s*#\s*\d+\s+certificate\s+SHA-256\s+digest\s*:/i.test(linha));
+  const declaracoes = texto.split(/\r?\n/).filter(linha => /^\s*Signer\s*#\s*\d+\s+certificate\s+SHA-256\s+digest\b/i.test(linha));
   const linhas = [...texto.matchAll(/^Signer #(\d+) certificate SHA-256 digest:[ \t]*([^\r\n]*?)[ \t]*$/gim)];
   if (!linhas.length || declaracoes.length !== linhas.length) return [];
   const ids = linhas.map(linha => Number(linha[1]));
