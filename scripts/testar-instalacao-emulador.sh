@@ -27,11 +27,27 @@ test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
 adb shell dumpsys package "$pacote" > "$saida/pacote-antes.txt" 2>&1 || true
 adb install -r "$apk" 2>&1 | tee "$saida/instalacao.txt"
 grep -q 'Success' "$saida/instalacao.txt"
+# O APK debug deve permitir run-as; gravar um marcador dentro dos dados privados
+# permite provar que adb install -r preserva dados, nao apenas que retorna Success.
+marcador="flow-preservacao-ci-$(sha256sum "$apk" | cut -c1-16)"
+printf '%s' "$marcador" | adb shell "run-as '$pacote' sh -c 'mkdir -p files && cat > files/flow-ci-preservacao.txt'"
+valor_antes="$(adb shell run-as "$pacote" cat files/flow-ci-preservacao.txt | tr -d '\r')"
+test "$valor_antes" = "$marcador"
 # Reinstalacao sobre o mesmo pacote: exercita o caminho de atualizacao sem apagar dados.
 adb install -r "$apk" 2>&1 | tee "$saida/atualizacao.txt"
 grep -q 'Success' "$saida/atualizacao.txt"
+valor_depois="$(adb shell run-as "$pacote" cat files/flow-ci-preservacao.txt | tr -d '\r')"
+if [[ "$valor_depois" != "$marcador" ]]; then
+  echo 'Falha: reinstalacao perdeu ou alterou os dados privados do aplicativo' >&2
+  exit 1
+fi
+printf 'marcador_sha256=%s\npreservacao=confirmada\n' "$(printf '%s' "$marcador" | sha256sum | cut -d' ' -f1)" > "$saida/preservacao-dados.txt"
+# Nao deixar arquivo de teste nos dados privados do app.
+adb shell run-as "$pacote" rm files/flow-ci-preservacao.txt
+
 adb shell dumpsys package br.com.ander.flow > "$saida/pacote-diagnostico.txt"
-grep -q 'versionCode=' "$saida/pacote-diagnostico.txt"
+grep -q 'versionCode=6' "$saida/pacote-diagnostico.txt"
+grep -q 'versionName=0.6.0' "$saida/pacote-diagnostico.txt"
 adb shell pm path "$pacote" | tee "$saida/pacote.txt"
 grep -q 'package:' "$saida/pacote.txt"
 adb logcat -c
