@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { interpretarBadging, interpretarCertificado, avaliarAtualizacao } from '../scripts/android-preflight-atualizacao.mjs';
 
-const anterior = { pacote: 'br.com.ander.flow', versionCode: 6, versionName: '0.6.0', minSdk: 23, abis: ['arm64-v8a'] };
+const anterior = { pacote: 'br.com.ander.flow', versionCode: 6, versionName: '0.6.0', minSdk: 23, maxSdk: null, abis: ['arm64-v8a'] };
 const novo = { ...anterior, versionCode: 7, versionName: '0.6.1' };
 const cert = 'a'.repeat(64);
 test('extrai metadados reais do aapt e certificado do apksigner', () => {
@@ -52,4 +52,20 @@ test('não aceita digest de assinatura truncado ou malformado', () => {
 test('rejeita lista de arquiteturas inválida sem lançar exceção', () => {
   const resultado = avaliarAtualizacao(anterior, { ...novo, abis: null }, cert, cert);
   assert.ok(resultado.problemas.includes('ABI_NAO_VERIFICADA'));
+});
+
+test('extrai maxSdkVersion e bloqueia Android 15 fora do limite', () => {
+  const badging = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\nmaxSdkVersion:'34'\n";
+  const metadados = interpretarBadging(badging);
+  assert.equal(metadados.maxSdk, 34);
+  const resultado = avaliarAtualizacao(anterior, metadados, cert, cert);
+  assert.ok(resultado.problemas.includes('MAX_SDK_INCOMPATIVEL_A35'));
+  assert.equal(resultado.aprovado, false);
+});
+test('aceita limite maxSdkVersion igual ou superior ao SDK 35', () => {
+  assert.equal(avaliarAtualizacao(anterior, { ...novo, maxSdk: 35 }, cert, cert).aprovado, true);
+  assert.equal(avaliarAtualizacao(anterior, { ...novo, maxSdk: 36 }, cert, cert).aprovado, true);
+});
+test('bloqueia maxSdkVersion malformado', () => {
+  assert.ok(avaliarAtualizacao(anterior, { ...novo, maxSdk: NaN }, cert, cert).problemas.includes('MAX_SDK_INCOMPATIVEL_A35'));
 });

@@ -17,10 +17,12 @@ export const PERFIL_A35 = Object.freeze({ sdk: 35, abi: 'arm64-v8a' });
 export function interpretarBadging(texto) {
   const pacote = texto.match(/^package:\s+name='([^']+)'\s+versionCode='(\d+)'\s+versionName='([^']+)'/m);
   const sdk = texto.match(/^sdkVersion:'(\d+)'/m);
+  const maxSdk = texto.match(/^maxSdkVersion:'(\d+)'/m);
   const abis = texto.match(/^native-code:\s*(.*)$/m);
   return pacote ? {
     pacote: pacote[1], versionCode: Number(pacote[2]), versionName: pacote[3],
     minSdk: sdk ? Number(sdk[1]) : null,
+    maxSdk: maxSdk ? Number(maxSdk[1]) : null,
     abis: abis ? [...abis[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : []
   } : null;
 }
@@ -36,6 +38,8 @@ export function avaliarAtualizacao(anterior, novo, certificadoAnterior, certific
     if (!novo.versionName || novo.versionName === anterior.versionName) problemas.push('VERSION_NAME_NAO_ATUALIZADO');
     if (!Number.isSafeInteger(novo.minSdk) || !Number.isSafeInteger(anterior.minSdk)) problemas.push('SDK_NAO_VERIFICADO');
     else if (novo.minSdk > PERFIL_A35.sdk) problemas.push('SDK_INCOMPATIVEL_A35');
+    // maxSdkVersion presente e inferior ao Android do aparelho impede instalação.
+    if (novo.maxSdk !== null && novo.maxSdk !== undefined && (!Number.isSafeInteger(novo.maxSdk) || novo.maxSdk < PERFIL_A35.sdk)) problemas.push('MAX_SDK_INCOMPATIVEL_A35');
     // APK sem bibliotecas nativas é universal; caso contrário, deve incluir ARM64.
     if (!Array.isArray(novo.abis) || !Array.isArray(anterior.abis)) problemas.push('ABI_NAO_VERIFICADA');
     else if (novo.abis.length > 0 && !novo.abis.includes(PERFIL_A35.abi)) problemas.push('ABI_INCOMPATIVEL_A35');
