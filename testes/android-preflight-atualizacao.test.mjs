@@ -138,4 +138,5 @@ test('rejeita targetSdkVersion duplicado ou malformado no badging', () => {
   for (const linha of ["targetSdkVersion:'invalido'", "targetSdkVersion:35", "targetSdkVersion:'35'\\ntargetSdkVersion:'34'"]) {
     assert.equal(interpretarBadging(base + linha + '\\n'), null);
   }
+  assert.equal(interpretarBadging(base + "targetSdkVersion:'35'\\n").targetSdk, 35);
 });
