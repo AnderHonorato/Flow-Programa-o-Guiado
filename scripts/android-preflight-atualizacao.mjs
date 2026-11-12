@@ -18,13 +18,24 @@ export function interpretarBadging(texto) {
   const pacote = texto.match(/^package:\s+name='([^']+)'\s+versionCode='(\d+)'\s+versionName='([^']+)'/m);
   const sdk = texto.match(/^sdkVersion:'(\d+)'/m);
   const maxSdk = texto.match(/^maxSdkVersion:'(\d+)'/m);
-  const abis = texto.match(/^native-code:\s*(.*)$/m);
-  return pacote ? {
+  const abis = texto.match(/^native-code:[ \\t]*([^\\r\\n]*)$/m);
+  // Falhar fechado quando aapt declara metadados ambíguos ou corrompidos.
+  // A ausência de native-code é válida (APK universal), mas uma linha
+  // native-code presente e inválida nunca deve ser tratada como universal.
+  const linhas = texto.split(/\\r?\\n/);
+  const declaracoes = prefixo => linhas.filter(linha => linha.startsWith(prefixo));
+  if (declaracoes('package:').length !== 1 || declaracoes('sdkVersion:').length !== 1 ||
+      declaracoes('maxSdkVersion:').length > 1 || declaracoes('native-code:').length > 1) return null;
+  if (!pacote || !sdk || (declaracoes('maxSdkVersion:').length && !maxSdk)) return null;
+  if (declaracoes('native-code:').length && !abis) return null;
+  const arquiteturas = abis ? [...abis[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
+  if (abis && (!arquiteturas.length || abis[1].replace(/'[^']+'/g, '').trim() !== '')) return null;
+  return {
     pacote: pacote[1], versionCode: Number(pacote[2]), versionName: pacote[3],
     minSdk: sdk ? Number(sdk[1]) : null,
     maxSdk: maxSdk ? Number(maxSdk[1]) : null,
-    abis: abis ? [...abis[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : []
-  } : null;
+    abis: arquiteturas
+  };
 }
 export function interpretarCertificados(texto) {
   // Nunca inferir assinatura única de um APK com múltiplos signatários.
