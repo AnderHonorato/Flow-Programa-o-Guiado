@@ -6,7 +6,8 @@ on:
     paths:
       - 'aplicativos/android/**'
       - 'aplicativos/web/**'
-      - 'scripts/android-*.sh'
+      - 'scripts/android-*'
+      - 'testes/android-*'
       - 'scripts/testar-instalacao-emulador.sh'
       - 'scripts/provisionar-python.mjs'
       - 'package*.json'
