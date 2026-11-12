@@ -157,6 +157,9 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
     if (codigoAtual.current[arquivoEditado] === codigo) return;
     codigoAtual.current = { ...codigoAtual.current, [arquivoEditado]: codigo };
     invalidarVerificacoes();
+    // A prévia anterior não representa o código recém-editado. Evita anunciar
+    // sucesso enquanto o debounce prepara a nova execução no iframe isolado.
+    setEstado(aula.linguagem === 'python' ? 'Código alterado. Execute Python para conferir.' : automatico ? 'Alterações pendentes. Atualizando prévia…' : 'Código alterado. Clique em Executar para atualizar a prévia.');
     setArquivos(codigoAtual.current);
   }
   function restaurarCodigo(novosArquivos: ArquivosCodigo) {

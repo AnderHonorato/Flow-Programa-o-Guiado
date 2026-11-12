@@ -88,6 +88,18 @@ describe('laboratório React no Chromium', () => {
     expect(salvo?.arquivos.html).toBe('<h1>Salvar depois</h1>');
     await pagina.close();
   }, 30000);
+  it('invalida imediatamente o estado da prévia antiga e confirma a nova execução', async () => {
+    const pagina = await montar();
+    await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Prévia atualizada.');
+    const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
+    await editor.click();
+    await pagina.keyboard.press('ControlOrMeta+A');
+    await pagina.keyboard.insertText('<h1>Prévia nova</h1>');
+    await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Alterações pendentes. Atualizando prévia');
+    await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Prévia atualizada.');
+    await expect.poll(() => pagina.frameLocator('.laboratorio iframe').locator('h1').innerText()).toBe('Prévia nova');
+    await pagina.close();
+  }, 30000);
   it('salva edição imediatamente ao fechar a página, mesmo antes do debounce', async () => {
     const pagina = await montar();
     const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
