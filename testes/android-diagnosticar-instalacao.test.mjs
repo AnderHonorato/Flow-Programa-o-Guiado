@@ -87,3 +87,40 @@ test('localiza SDK isolado sem modificar PATH global', async () => {
   assert.equal(localizarAdb({ LOCALAPPDATA: 'C:/Users/AS/AppData/Local' }, caminho => caminho.replaceAll('\\', '/') === local), local.replaceAll('/', requireSeparador()));
 });
 function requireSeparador() { return process.platform === 'win32' ? '\\' : '/'; }
+
+
+test('consulta SDK, ABIs e versao instalada sem modificar o Android', () => {
+  const chamadas = [];
+  const executar = (_, args) => {
+    chamadas.push(args.join(' '));
+    if (args[0] === 'devices') return { status: 0, stdout: 'List of devices attached\nA35 device model:SM-A356E\n' };
+    const comando = args.join(' ');
+    if (comando.includes('ro.product.model')) return { status: 0, stdout: 'SM-A356E' };
+    if (comando.includes('ro.build.version.release')) return { status: 0, stdout: '15' };
+    if (comando.includes('ro.build.version.sdk')) return { status: 0, stdout: '35' };
+    if (comando.includes('ro.product.cpu.abilist')) return { status: 0, stdout: 'arm64-v8a,armeabi-v7a' };
+    if (comando.includes('pm list packages')) return { status: 0, stdout: 'package:br.com.ander.flow' };
+    if (comando.includes('dumpsys package')) return { status: 0, stdout: 'versionCode=8 minSdk=24 targetSdk=35\nversionName=0.6.2' };
+    return { status: 0, stdout: '' };
+  };
+  const resultado = executarDiagnostico({ apk: null, serial: null, somenteDiagnostico: true }, executar);
+  assert.equal(resultado.ok, true);
+  assert.equal(resultado.sdk, 35);
+  assert.deepEqual(resultado.abis, ['arm64-v8a', 'armeabi-v7a']);
+  assert.deepEqual(resultado.versaoInstalada, { codigo: 8, nome: '0.6.2' });
+  assert.equal(chamadas.some(chamada => / install | uninstall | pm clear /.test(' ' + chamada + ' ')), false);
+});
+
+test('sem pacote instalado nao consulta dumpsys nem inventa versao', () => {
+  const chamadas = [];
+  const executar = (_, args) => {
+    chamadas.push(args.join(' '));
+    if (args[0] === 'devices') return { status: 0, stdout: 'List of devices attached\nA35 device\n' };
+    return { status: 0, stdout: '' };
+  };
+  const resultado = executarDiagnostico({ apk: null, serial: null, somenteDiagnostico: true }, executar);
+  assert.equal(resultado.versaoInstalada, null);
+  assert.equal(resultado.sdk, null);
+  assert.deepEqual(resultado.abis, []);
+  assert.equal(chamadas.some(chamada => chamada.includes('dumpsys')), false);
+});
