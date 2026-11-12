@@ -30,3 +30,26 @@ test('bloqueia APK sem metadados, SDK ou arquitetura compatível', () => {
   assert.ok(avaliarAtualizacao(anterior, { ...novo, minSdk: null }, cert, cert).problemas.includes('SDK_NAO_VERIFICADO'));
   assert.ok(avaliarAtualizacao(anterior, { ...novo, abis: ['x86_64'] }, cert, cert).problemas.includes('ABI_SEM_INTERSECAO'));
 });
+
+
+test('rejeita APK que exige Android superior ao SDK 35 do perfil A35', () => {
+  const resultado = avaliarAtualizacao(anterior, { ...novo, minSdk: 36 }, cert, cert);
+  assert.ok(resultado.problemas.includes('SDK_INCOMPATIVEL_A35'));
+  assert.equal(resultado.aprovado, false);
+});
+test('rejeita APK apenas x86 mesmo se a versão anterior tiver ABI em comum', () => {
+  const antigoX86 = { ...anterior, abis: ['x86_64'] };
+  const resultado = avaliarAtualizacao(antigoX86, { ...novo, abis: ['x86_64'] }, cert, cert);
+  assert.ok(resultado.problemas.includes('ABI_INCOMPATIVEL_A35'));
+});
+test('permite APK universal sem bibliotecas nativas', () => {
+  assert.equal(avaliarAtualizacao({ ...anterior, abis: [] }, { ...novo, abis: [] }, cert, cert).aprovado, true);
+});
+test('não aceita digest de assinatura truncado ou malformado', () => {
+  const resultado = avaliarAtualizacao(anterior, novo, 'abcd', 'abcd');
+  assert.ok(resultado.problemas.includes('ASSINATURA_NAO_VERIFICADA'));
+});
+test('rejeita lista de arquiteturas inválida sem lançar exceção', () => {
+  const resultado = avaliarAtualizacao(anterior, { ...novo, abis: null }, cert, cert);
+  assert.ok(resultado.problemas.includes('ABI_NAO_VERIFICADA'));
+});
