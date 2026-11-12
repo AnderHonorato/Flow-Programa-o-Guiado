@@ -134,8 +134,9 @@ describe('laboratório React no Chromium', () => {
     await pagina.keyboard.press('ControlOrMeta+A');
     await pagina.keyboard.insertText('<p>Sem título</p>');
     await expect.poll(() => ultimoResultado(pagina)).toBe(false);
-    expect(await pagina.locator('.lab-testes .lab-teste-ok').count()).toBe(0);
+    await expect.poll(() => pagina.locator('.lab-testes .lab-teste-ok').count()).toBe(0);
     await pagina.getByRole('button', { name: 'Voltar ao início' }).click();
+    await expect.poll(() => pagina.locator('.lab-testes .lab-teste-ok').count()).toBe(0);
     await pagina.getByRole('button', { name: 'Testar código', exact: false }).click();
     await expect.poll(() => ultimoResultado(pagina)).toBe(true);
     await pagina.getByRole('button', { name: 'Voltar ao início' }).click();
