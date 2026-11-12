@@ -58,10 +58,25 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
     setPythonAtivo(false);
     retornoTeste.current?.({ aprovado: false, mensagens: ['O código foi alterado. Execute as verificações novamente.'] });
   }, [arquivos]);
+  // O debounce reduz gravações, mas sair da aula antes de 250 ms não pode perder código.
+  const pendente = useRef({ arquivos, snapshots });
+  pendente.current = { arquivos, snapshots };
   useEffect(() => {
+    setSalvo(false);
     const tempo = setTimeout(() => setSalvo(salvarProjeto(perfilId, aula.id, arquivos, snapshots)), 250);
     return () => clearTimeout(tempo);
   }, [arquivos, snapshots, perfilId, aula.id]);
+  useEffect(() => {
+    const persistir = () => {
+      const atual = pendente.current;
+      salvarProjeto(perfilId, aula.id, atual.arquivos, atual.snapshots);
+    };
+    window.addEventListener('pagehide', persistir);
+    return () => {
+      window.removeEventListener('pagehide', persistir);
+      persistir();
+    };
+  }, [perfilId, aula.id]);
   useEffect(() => {
     if (aula.linguagem === 'python') return;
     if (!automatico && documento) return;
