@@ -35,8 +35,8 @@ if [[ -n "$apk_anterior" ]]; then
   "$aapt_previo" dump badging "$apk_anterior" > "$saida/apk-anterior-metadados.txt"
   grep -q "package: name='$pacote'" "$saida/apk-anterior-metadados.txt"
   "$aapt_previo" dump badging "$apk" > "$saida/apk-novo-metadados.txt"
-  codigo_anterior="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\\1/p" "$saida/apk-anterior-metadados.txt" | head -1)"
-  codigo_novo="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\\1/p" "$saida/apk-novo-metadados.txt" | head -1)"
+  codigo_anterior="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\1/p" "$saida/apk-anterior-metadados.txt" | head -1)"
+  codigo_novo="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\1/p" "$saida/apk-novo-metadados.txt" | head -1)"
   test -n "$codigo_anterior" && test -n "$codigo_novo"
   if (( codigo_novo <= codigo_anterior )); then
     echo "Falha: versionCode nao cresce ($codigo_anterior -> $codigo_novo)" >&2
@@ -45,8 +45,8 @@ if [[ -n "$apk_anterior" ]]; then
   apksigner="$ANDROID_HOME/build-tools/35.0.0/apksigner"
   "$apksigner" verify --print-certs "$apk_anterior" > "$saida/certificado-anterior.txt"
   "$apksigner" verify --print-certs "$apk" > "$saida/certificado-novo.txt"
-  certificado_anterior="$(sed -nE 's/^Signer #1 certificate SHA-256 digest: (.*)$/\\1/p' "$saida/certificado-anterior.txt" | head -1)"
-  certificado_novo="$(sed -nE 's/^Signer #1 certificate SHA-256 digest: (.*)$/\\1/p' "$saida/certificado-novo.txt" | head -1)"
+  certificado_anterior="$(sed -nE 's/^Signer #1 certificate SHA-256 digest: (.*)$/\1/p' "$saida/certificado-anterior.txt" | head -1)"
+  certificado_novo="$(sed -nE 's/^Signer #1 certificate SHA-256 digest: (.*)$/\1/p' "$saida/certificado-novo.txt" | head -1)"
   test -n "$certificado_anterior" && test "$certificado_anterior" = "$certificado_novo"
   sha256sum "$apk_anterior" > "$saida/apk-anterior.sha256"
   adb install "$apk_anterior" 2>&1 | tee "$saida/instalacao-anterior.txt"
