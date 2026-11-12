@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { interpretarBadging, interpretarCertificado, interpretarCertificados, avaliarAtualizacao } from '../scripts/android-preflight-atualizacao.mjs';
 
-const anterior = { pacote: 'br.com.ander.flow', versionCode: 6, versionName: '0.6.0', minSdk: 23, maxSdk: null, abis: ['arm64-v8a'] };
+const anterior = { pacote: 'br.com.ander.flow', versionCode: 6, versionName: '0.6.0', minSdk: 23, targetSdk: 35, maxSdk: null, abis: ['arm64-v8a'] };
 const novo = { ...anterior, versionCode: 7, versionName: '0.6.1' };
 const cert = 'a'.repeat(64);
 test('extrai metadados reais do aapt e certificado do apksigner', () => {
-  const texto = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\nnative-code: 'arm64-v8a' 'armeabi-v7a'\n";
+  const texto = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\ntargetSdkVersion:'35'\nnative-code: 'arm64-v8a' 'armeabi-v7a'\n";
   assert.deepEqual(interpretarBadging(texto), { ...novo, abis: ['arm64-v8a', 'armeabi-v7a'] });
   assert.equal(interpretarCertificado('Signer #1 certificate SHA-256 digest: ' + cert.toUpperCase()), cert);
 });
@@ -55,7 +55,7 @@ test('rejeita lista de arquiteturas inválida sem lançar exceção', () => {
 });
 
 test('extrai maxSdkVersion e bloqueia Android 15 fora do limite', () => {
-  const badging = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\nmaxSdkVersion:'34'\n";
+  const badging = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\ntargetSdkVersion:'35'\nmaxSdkVersion:'34'\n";
   const metadados = interpretarBadging(badging);
   assert.equal(metadados.maxSdk, 34);
   const resultado = avaliarAtualizacao(anterior, metadados, cert, cert);
@@ -102,13 +102,13 @@ test('rejeita segundo certificado truncado, vazio ou sem delimitador', () => {
 });
 
 test('rejeita maxSdkVersion declarado mas malformado antes de liberar APK', () => {
-  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\ntargetSdkVersion:'35'\n";
   for (const invalido of ["maxSdkVersion:'invalido'", "maxSdkVersion:34", "maxSdkVersion:'34'\nmaxSdkVersion:'35'"]) {
     assert.equal(interpretarBadging(base + invalido + '\n'), null, invalido);
   }
 });
 test('nao trata declaracao native-code corrompida como APK universal', () => {
-  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\ntargetSdkVersion:'35'\n";
   for (const invalido of ["native-code: arm64-v8a", "native-code: 'arm64-v8a' lixo", "native-code:", "native-code: 'x86'\nnative-code: 'arm64-v8a'"]) {
     assert.equal(interpretarBadging(base + invalido + '\n'), null, invalido);
   }
@@ -116,7 +116,27 @@ test('nao trata declaracao native-code corrompida como APK universal', () => {
   assert.deepEqual(interpretarBadging(base + "native-code: 'arm64-v8a' 'armeabi-v7a'\n").abis, ['arm64-v8a', 'armeabi-v7a']);
 });
 test('rejeita linhas de pacote ou SDK duplicadas', () => {
-  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\ntargetSdkVersion:'35'\n";
   assert.equal(interpretarBadging(base + "sdkVersion:'35'\n"), null);
   assert.equal(interpretarBadging(base + "package: name='br.com.ander.flow' versionCode='8' versionName='0.6.2'\n"), null);
+});
+
+// Android 15 rejeita apps que tenham targetSdkVersion inferior a 24.
+test('rejeita APK com targetSdkVersion antigo mesmo quando minSdk é compatível', () => {
+  const resultado = avaliarAtualizacao(anterior, { ...novo, targetSdk: 23 }, cert, cert);
+  assert.ok(resultado.problemas.includes('TARGET_SDK_INCOMPATIVEL_A35'));
+  assert.equal(resultado.aprovado, false);
+});
+test('bloqueia targetSdk ausente, inválido ou inferior ao minSdk', () => {
+  for (const targetSdk of [undefined, null, NaN, 22, 10001]) {
+    assert.ok(avaliarAtualizacao(anterior, { ...novo, targetSdk }, cert, cert).problemas.includes('TARGET_SDK_INCOMPATIVEL_A35'));
+  }
+  assert.ok(avaliarAtualizacao(anterior, { ...novo, minSdk: 35, targetSdk: 34 }, cert, cert).problemas.includes('TARGET_SDK_INCOMPATIVEL_A35'));
+});
+test('rejeita targetSdkVersion duplicado ou malformado no badging', () => {
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\\nsdkVersion:'23'\\n";
+  for (const linha of ["targetSdkVersion:'invalido'", "targetSdkVersion:35", "targetSdkVersion:'35'\\ntargetSdkVersion:'34'"]) {
+    assert.equal(interpretarBadging(base + linha + '\\n'), null);
+  }
+  assert.equal(interpretarBadging(base + "targetSdkVersion:'35'\\n").targetSdk, 35);
 });

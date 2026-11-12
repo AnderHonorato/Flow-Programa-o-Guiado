@@ -16,7 +16,8 @@ export const PACOTE = 'br.com.ander.flow';
 export const PERFIL_A35 = Object.freeze({ sdk: 35, abi: 'arm64-v8a' });
 export function interpretarBadging(texto) {
   const pacote = texto.match(/^package:\s+name='([^']+)'\s+versionCode='(\d+)'\s+versionName='([^']+)'/m);
-  const sdk = texto.match(/^sdkVersion:'(\d+)'/m);
+  const sdk = texto.match(/^sdkVersion:'(\d+)'$/m);
+  const alvo = texto.match(/^targetSdkVersion:'(\d+)'$/m);
   const maxSdk = texto.match(/^maxSdkVersion:'(\d+)'/m);
   const abis = texto.match(/^native-code:[ \t]*([^\r\n]*)$/m);
   // Falhar fechado quando aapt declara metadados ambíguos ou corrompidos.
@@ -25,14 +26,15 @@ export function interpretarBadging(texto) {
   const linhas = texto.split(/\r?\n/);
   const declaracoes = prefixo => linhas.filter(linha => linha.startsWith(prefixo));
   if (declaracoes('package:').length !== 1 || declaracoes('sdkVersion:').length !== 1 ||
-      declaracoes('maxSdkVersion:').length > 1 || declaracoes('native-code:').length > 1) return null;
-  if (!pacote || !sdk || (declaracoes('maxSdkVersion:').length && !maxSdk)) return null;
+      declaracoes('targetSdkVersion:').length !== 1 || declaracoes('maxSdkVersion:').length > 1 || declaracoes('native-code:').length > 1) return null;
+  if (!pacote || !sdk || !alvo || (declaracoes('maxSdkVersion:').length && !maxSdk)) return null;
   if (declaracoes('native-code:').length && !abis) return null;
   const arquiteturas = abis ? [...abis[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : [];
   if (abis && (!arquiteturas.length || abis[1].replace(/'[^']+'/g, '').trim() !== '')) return null;
   return {
     pacote: pacote[1], versionCode: Number(pacote[2]), versionName: pacote[3],
     minSdk: sdk ? Number(sdk[1]) : null,
+    targetSdk: Number(alvo[1]),
     maxSdk: maxSdk ? Number(maxSdk[1]) : null,
     abis: arquiteturas
   };
@@ -62,6 +64,8 @@ export function avaliarAtualizacao(anterior, novo, certificadoAnterior, certific
     if (!novo.versionName || novo.versionName === anterior.versionName) problemas.push('VERSION_NAME_NAO_ATUALIZADO');
     if (!Number.isSafeInteger(novo.minSdk) || !Number.isSafeInteger(anterior.minSdk)) problemas.push('SDK_NAO_VERIFICADO');
     else if (novo.minSdk > PERFIL_A35.sdk) problemas.push('SDK_INCOMPATIVEL_A35');
+    // Android 15 bloqueia instalação de aplicativos cujo targetSdk seja inferior a 24.
+    if (!Number.isSafeInteger(novo.targetSdk) || novo.targetSdk < 24 || novo.targetSdk > 10000 || novo.targetSdk < novo.minSdk) problemas.push('TARGET_SDK_INCOMPATIVEL_A35');
     // maxSdkVersion presente e inferior ao Android do aparelho impede instalação.
     if (novo.maxSdk !== null && novo.maxSdk !== undefined && (!Number.isSafeInteger(novo.maxSdk) || novo.maxSdk < PERFIL_A35.sdk)) problemas.push('MAX_SDK_INCOMPATIVEL_A35');
     // APK sem bibliotecas nativas é universal; caso contrário, deve incluir ARM64.
