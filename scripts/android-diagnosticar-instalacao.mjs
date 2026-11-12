@@ -94,7 +94,19 @@ export function executarDiagnostico(opcoes, executar = (binario, args) => spawnS
   const props = comando(['shell', 'getprop', 'ro.product.model']);
   const android = comando(['shell', 'getprop', 'ro.build.version.release']);
   const instalado = comando(['shell', 'pm', 'list', 'packages', '--user', '0', PACOTE]);
-  const base = { dispositivo: serial, modelo: props.saida, android: android.saida, pacote: PACOTE, instaladoNoUsuarioPrincipal: instalado.saida.split(/\r?\n/).includes('package:' + PACOTE) };
+  const sdk = comando(['shell', 'getprop', 'ro.build.version.sdk']);
+  const abi = comando(['shell', 'getprop', 'ro.product.cpu.abilist']);
+  const presente = instalado.saida.split(/\r?\n/).includes('package:' + PACOTE);
+  const detalhes = presente ? comando(['shell', 'dumpsys', 'package', PACOTE]) : null;
+  const codigoInstalado = detalhes?.saida.match(/\bversionCode=(\d+)\b/)?.[1];
+  const nomeInstalado = detalhes?.saida.match(/\bversionName=([^\s]+)/)?.[1];
+  const base = {
+    dispositivo: serial, modelo: props.saida, android: android.saida,
+    sdk: /^\d+$/.test(sdk.saida) ? Number(sdk.saida) : null,
+    abis: abi.saida ? abi.saida.split(',').map(item => item.trim()).filter(Boolean) : [],
+    pacote: PACOTE, instaladoNoUsuarioPrincipal: presente,
+    versaoInstalada: presente ? { codigo: codigoInstalado ? Number(codigoInstalado) : null, nome: nomeInstalado || null } : null,
+  };
   if (opcoes.somenteDiagnostico) return { ok: true, etapa: 'diagnostico', ...base };
   if (!existsSync(opcoes.apk)) return { ok: false, etapa: 'arquivo', ...base, codigo: 'APK_AUSENTE', orientacao: 'Confira o caminho do APK.' };
   const tentativa = comando(['install', '-r', '-t', opcoes.apk]);
