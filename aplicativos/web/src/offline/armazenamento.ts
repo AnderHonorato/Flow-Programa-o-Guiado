@@ -229,7 +229,7 @@ async function sincronizar(perfilId: string, token: string, api: string) {
       try {
         const { id, aulaId, arquivos, criadaEm } = tentativa;
         const retorno = await requisitar('/tentativas', { method: 'POST', body: JSON.stringify({ id, aulaId, arquivos, criadaEm }) });
-        if (!objeto(retorno) || retorno.id !== id || !['pendente_validacao', 'aprovada', 'revisar'].includes(String(retorno.status))) throw new Error('O servidor não confirmou este envio. Ele continua na fila.');
+        if (!objeto(retorno) || retorno.id !== id || (retorno.aulaId !== undefined && retorno.aulaId !== aulaId) || !['pendente_validacao', 'aprovada', 'revisar'].includes(String(retorno.status))) throw new Error('O servidor não confirmou a identidade deste envio. Ele continua na fila.');
         await (await banco()).put('tentativas', { ...tentativa, perfilId, status: retorno.status as TentativaLocal['status'], feedback: retorno.feedback });
         enviadas++;
       } catch (erro) {
@@ -247,7 +247,13 @@ async function sincronizar(perfilId: string, token: string, api: string) {
       if (!objeto(remota) || typeof remota.id !== 'string' || !['pendente_validacao', 'aprovada', 'revisar'].includes(String(remota.status))) continue;
       const local = await tx.store.get([perfilId, remota.id]);
       if (local) {
-        await tx.store.put({ ...local, status: remota.status as TentativaLocal['status'], feedback: remota.feedback });
+        // Uma resposta atrasada ou com ID reutilizado não pode alterar outro código.
+        // Campos ausentes na resposta antiga não devem apagar o feedback salvo.
+        if (remota.aulaId !== local.aulaId || remota.criadaEm !== local.criadaEm ||
+            !objeto(remota.arquivos) || !mesmaTentativa(local, remota as unknown as TentativaLocal)) continue;
+        const status = local.status === 'aprovada' && remota.status === 'pendente_validacao'
+          ? 'aprovada' : remota.status as TentativaLocal['status'];
+        await tx.store.put({ ...local, status, feedback: remota.feedback === undefined ? local.feedback : remota.feedback });
       } else {
         try { validarTentativa(remota); } catch { continue; }
         await tx.store.put({ ...remota, perfilId } as TentativaLocal & { perfilId: string });
