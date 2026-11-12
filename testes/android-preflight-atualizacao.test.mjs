@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { interpretarBadging, interpretarCertificado, avaliarAtualizacao } from '../scripts/android-preflight-atualizacao.mjs';
+import { interpretarBadging, interpretarCertificado, interpretarCertificados, avaliarAtualizacao } from '../scripts/android-preflight-atualizacao.mjs';
 
 const anterior = { pacote: 'br.com.ander.flow', versionCode: 6, versionName: '0.6.0', minSdk: 23, maxSdk: null, abis: ['arm64-v8a'] };
 const novo = { ...anterior, versionCode: 7, versionName: '0.6.1' };
@@ -68,4 +68,22 @@ test('aceita limite maxSdkVersion igual ou superior ao SDK 35', () => {
 });
 test('bloqueia maxSdkVersion malformado', () => {
   assert.ok(avaliarAtualizacao(anterior, { ...novo, maxSdk: NaN }, cert, cert).problemas.includes('MAX_SDK_INCOMPATIVEL_A35'));
+});
+
+// Regressão: apksigner pode listar múltiplos signatários. Comparar apenas #1 é inseguro.
+test('bloqueia APK com múltiplos signatários mesmo quando o primeiro coincide', () => {
+  const texto = 'Signer #1 certificate SHA-256 digest: ' + cert + '\nSigner #2 certificate SHA-256 digest: ' + 'b'.repeat(64) + '\n';
+  assert.deepEqual(interpretarCertificados(texto), [cert, 'b'.repeat(64)]);
+  assert.equal(interpretarCertificado(texto), null);
+  assert.ok(avaliarAtualizacao(anterior, novo, cert, interpretarCertificado(texto)).problemas.includes('ASSINATURA_NAO_VERIFICADA'));
+});
+test('rejeita certificados duplicados, numerados incorretamente ou truncados', () => {
+  assert.equal(interpretarCertificado('Signer #2 certificate SHA-256 digest: ' + cert), null);
+  assert.equal(interpretarCertificado('Signer #1 certificate SHA-256 digest: ' + cert + '\nSigner #1 certificate SHA-256 digest: ' + cert), null);
+  assert.equal(interpretarCertificado('Signer #1 certificate SHA-256 digest: abcd'), null);
+});
+test('aceita SHA-256 com letras maiúsculas e separadores dois-pontos', () => {
+  const digest = cert.toUpperCase().match(/../g).join(':');
+  assert.equal(interpretarCertificado('Signer #1 certificate SHA-256 digest: ' + digest), cert);
+  assert.equal(avaliarAtualizacao(anterior, novo, cert.toUpperCase(), cert).aprovado, true);
 });

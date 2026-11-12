@@ -26,8 +26,18 @@ export function interpretarBadging(texto) {
     abis: abis ? [...abis[1].matchAll(/'([^']+)'/g)].map(m => m[1]) : []
   } : null;
 }
+export function interpretarCertificados(texto) {
+  // Nunca inferir assinatura única de um APK com múltiplos signatários.
+  const linhas = [...texto.matchAll(/^Signer #(\d+) certificate SHA-256 digest:\s*(\S+)\s*$/gim)];
+  if (!linhas.length) return [];
+  const ids = linhas.map(linha => Number(linha[1]));
+  const digests = linhas.map(linha => linha[2].replaceAll(':', '').toLowerCase());
+  if (new Set(ids).size !== ids.length || ids.some((id, indice) => id !== indice + 1)) return [];
+  return digests.every(digest => /^[0-9a-f]{64}$/.test(digest)) ? digests : [];
+}
 export function interpretarCertificado(texto) {
-  return texto.match(/^Signer #1 certificate SHA-256 digest:\s*([0-9a-f:]+)/im)?.[1]?.replaceAll(':', '').toLowerCase() || null;
+  const certificados = interpretarCertificados(texto);
+  return certificados.length === 1 ? certificados[0] : null;
 }
 export function avaliarAtualizacao(anterior, novo, certificadoAnterior, certificadoNovo) {
   const problemas = [];
@@ -45,8 +55,11 @@ export function avaliarAtualizacao(anterior, novo, certificadoAnterior, certific
     else if (novo.abis.length > 0 && !novo.abis.includes(PERFIL_A35.abi)) problemas.push('ABI_INCOMPATIVEL_A35');
     if (Array.isArray(anterior.abis) && Array.isArray(novo.abis) && anterior.abis.length && novo.abis.length && !anterior.abis.some(abi => novo.abis.includes(abi))) problemas.push('ABI_SEM_INTERSECAO');
   }
-  if (!/^[0-9a-f]{64}$/i.test(certificadoAnterior || '') || !/^[0-9a-f]{64}$/i.test(certificadoNovo || '')) problemas.push('ASSINATURA_NAO_VERIFICADA');
-  else if (certificadoAnterior !== certificadoNovo) problemas.push('ASSINATURA_DIFERENTE');
+  const normalizar = valor => typeof valor === 'string' ? valor.toLowerCase() : null;
+  const antigo = normalizar(certificadoAnterior);
+  const atual = normalizar(certificadoNovo);
+  if (!/^[0-9a-f]{64}$/.test(antigo || '') || !/^[0-9a-f]{64}$/.test(atual || '')) problemas.push('ASSINATURA_NAO_VERIFICADA');
+  else if (antigo !== atual) problemas.push('ASSINATURA_DIFERENTE');
   return { aprovado: problemas.length === 0, problemas, pacoteEsperado: PACOTE };
 }
 export function verificarArquivos(anterior, novo, executar = spawnSync, ambiente = process.env) {
