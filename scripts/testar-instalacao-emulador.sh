@@ -4,11 +4,27 @@ set -euo pipefail
 apk="${1:?Informe o caminho do APK}"
 saida="${2:-artefatos/emulador}"
 mkdir -p "$saida"
+pacote="br.com.ander.flow"
+# Evidencias persistem mesmo se a instalacao falhar antes da abertura.
+coletar_evidencias() {
+  local resultado=$?
+  printf 'codigo_saida=%s\n' "$resultado" > "$saida/resultado.txt"
+  adb shell getprop ro.build.version.sdk > "$saida/sdk-emulador.txt" 2>&1 || true
+  adb shell getprop ro.product.cpu.abilist > "$saida/abis-emulador.txt" 2>&1 || true
+  adb shell dumpsys package "$pacote" > "$saida/pacote-final.txt" 2>&1 || true
+  adb logcat -d -t 1200 -v brief > "$saida/logcat-final.txt" 2>&1 || true
+}
+trap coletar_evidencias EXIT
 test -s "$apk"
+sha256sum "$apk" > "$saida/apk.sha256"
+if [[ -n "${ANDROID_HOME:-}" && -x "$ANDROID_HOME/build-tools/35.0.0/aapt" ]]; then
+  "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$apk" > "$saida/apk-metadados.txt"
+  grep -q "package: name='$pacote'" "$saida/apk-metadados.txt"
+fi
 adb wait-for-device
 test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
 # Capturar estado anterior sem remover aplicativo nem dados.
-adb shell pm list packages -f | grep 'br.com.ander.flow' > "$saida/pacote-antes.txt" || true
+adb shell dumpsys package "$pacote" > "$saida/pacote-antes.txt" 2>&1 || true
 adb install -r "$apk" 2>&1 | tee "$saida/instalacao.txt"
 grep -q 'Success' "$saida/instalacao.txt"
 # Reinstalacao sobre o mesmo pacote: exercita o caminho de atualizacao sem apagar dados.
@@ -16,7 +32,6 @@ adb install -r "$apk" 2>&1 | tee "$saida/atualizacao.txt"
 grep -q 'Success' "$saida/atualizacao.txt"
 adb shell dumpsys package br.com.ander.flow > "$saida/pacote-diagnostico.txt"
 grep -q 'versionCode=' "$saida/pacote-diagnostico.txt"
-pacote="br.com.ander.flow"
 adb shell pm path "$pacote" | tee "$saida/pacote.txt"
 grep -q 'package:' "$saida/pacote.txt"
 adb logcat -c
