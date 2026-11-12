@@ -134,9 +134,9 @@ test('bloqueia targetSdk ausente, inválido ou inferior ao minSdk', () => {
   assert.ok(avaliarAtualizacao(anterior, { ...novo, minSdk: 35, targetSdk: 34 }, cert, cert).problemas.includes('TARGET_SDK_INCOMPATIVEL_A35'));
 });
 test('rejeita targetSdkVersion duplicado ou malformado no badging', () => {
-  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\\nsdkVersion:'23'\\n";
-  for (const linha of ["targetSdkVersion:'invalido'", "targetSdkVersion:35", "targetSdkVersion:'35'\\ntargetSdkVersion:'34'"]) {
-    assert.equal(interpretarBadging(base + linha + '\\n'), null);
+  const base = "package: name='br.com.ander.flow' versionCode='7' versionName='0.6.1'\nsdkVersion:'23'\n";
+  for (const linha of ["targetSdkVersion:'invalido'", "targetSdkVersion:35", "targetSdkVersion:'35'\ntargetSdkVersion:'34'"]) {
+    assert.equal(interpretarBadging(base + linha + '\n'), null);
   }
-  assert.equal(interpretarBadging(base + "targetSdkVersion:'35'\\n").targetSdk, 35);
+  assert.equal(interpretarBadging(base + "targetSdkVersion:'35'\n").targetSdk, 35);
 });
