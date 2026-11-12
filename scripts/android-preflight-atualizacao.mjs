@@ -18,11 +18,11 @@ export function interpretarBadging(texto) {
   const pacote = texto.match(/^package:\s+name='([^']+)'\s+versionCode='(\d+)'\s+versionName='([^']+)'/m);
   const sdk = texto.match(/^sdkVersion:'(\d+)'/m);
   const maxSdk = texto.match(/^maxSdkVersion:'(\d+)'/m);
-  const abis = texto.match(/^native-code:[ \\t]*([^\\r\\n]*)$/m);
+  const abis = texto.match(/^native-code:[ \t]*([^\r\n]*)$/m);
   // Falhar fechado quando aapt declara metadados ambíguos ou corrompidos.
   // A ausência de native-code é válida (APK universal), mas uma linha
   // native-code presente e inválida nunca deve ser tratada como universal.
-  const linhas = texto.split(/\\r?\\n/);
+  const linhas = texto.split(/\r?\n/);
   const declaracoes = prefixo => linhas.filter(linha => linha.startsWith(prefixo));
   if (declaracoes('package:').length !== 1 || declaracoes('sdkVersion:').length !== 1 ||
       declaracoes('maxSdkVersion:').length > 1 || declaracoes('native-code:').length > 1) return null;
