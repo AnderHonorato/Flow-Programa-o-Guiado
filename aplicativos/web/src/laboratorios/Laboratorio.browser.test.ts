@@ -77,7 +77,7 @@ describe('laboratório React no Chromium', () => {
     await pagina.keyboard.press('ControlOrMeta+A');
     await pagina.keyboard.insertText('<h1>Salvar depois</h1>');
     await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Falha ao salvar neste dispositivo');
-    await expect(pagina.getByRole('button', { name: 'Baixar cópia do código' })).toBeVisible();
+    await pagina.getByRole('button', { name: 'Baixar cópia do código' }).waitFor({ state: 'visible' });
     const download = pagina.waitForEvent('download');
     await pagina.getByRole('button', { name: 'Baixar cópia do código' }).click();
     expect((await download).suggestedFilename()).toContain('flow-codigo-regressao-laboratorio.json');
