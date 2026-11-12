@@ -88,6 +88,13 @@ jobs:
           cp aplicativos/android/app/build/outputs/apk/debug/app-debug.apk ../artefatos/android/Flow-Programacao-Guiada-anterior-debug.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs ../artefatos/android/Flow-Programacao-Guiada-anterior-debug.apk > ../artefatos/android/assinatura-anterior.txt
           (cd ../artefatos/android && sha256sum Flow-Programacao-Guiada-anterior-debug.apk > Flow-Programacao-Guiada-anterior-debug.apk.sha256)
+      - name: Validar atualização dos dois APKs antes do emulador
+        run: |
+          node --test testes/android-preflight-atualizacao.test.mjs
+          node scripts/android-preflight-atualizacao.mjs \
+            artefatos/android/Flow-Programacao-Guiada-anterior-debug.apk \
+            artefatos/android/Flow-Programacao-Guiada-debug.apk \
+            artefatos/android/preflight-atualizacao.json
       - name: Disponibilizar APK e evidencias sem publicar producao
         if: always()
         uses: actions/upload-artifact@v4
