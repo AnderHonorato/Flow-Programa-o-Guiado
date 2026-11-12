@@ -12,6 +12,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 export const PACOTE = 'br.com.ander.flow';
+// Perfil de compatibilidade técnica; não substitui teste no aparelho físico.
+export const PERFIL_A35 = Object.freeze({ sdk: 35, abi: 'arm64-v8a' });
 export function interpretarBadging(texto) {
   const pacote = texto.match(/^package:\s+name='([^']+)'\s+versionCode='(\d+)'\s+versionName='([^']+)'/m);
   const sdk = texto.match(/^sdkVersion:'(\d+)'/m);
@@ -32,10 +34,14 @@ export function avaliarAtualizacao(anterior, novo, certificadoAnterior, certific
     if (anterior.pacote !== PACOTE || novo.pacote !== PACOTE) problemas.push('PACOTE_DIFERENTE');
     if (!Number.isSafeInteger(anterior.versionCode) || !Number.isSafeInteger(novo.versionCode) || novo.versionCode <= anterior.versionCode) problemas.push('VERSION_CODE_NAO_CRESCENTE');
     if (!novo.versionName || novo.versionName === anterior.versionName) problemas.push('VERSION_NAME_NAO_ATUALIZADO');
-    if (novo.minSdk === null || anterior.minSdk === null) problemas.push('SDK_NAO_VERIFICADO');
-    if (anterior.abis.length && novo.abis.length && !anterior.abis.some(abi => novo.abis.includes(abi))) problemas.push('ABI_SEM_INTERSECAO');
+    if (!Number.isSafeInteger(novo.minSdk) || !Number.isSafeInteger(anterior.minSdk)) problemas.push('SDK_NAO_VERIFICADO');
+    else if (novo.minSdk > PERFIL_A35.sdk) problemas.push('SDK_INCOMPATIVEL_A35');
+    // APK sem bibliotecas nativas é universal; caso contrário, deve incluir ARM64.
+    if (!Array.isArray(novo.abis) || !Array.isArray(anterior.abis)) problemas.push('ABI_NAO_VERIFICADA');
+    else if (novo.abis.length > 0 && !novo.abis.includes(PERFIL_A35.abi)) problemas.push('ABI_INCOMPATIVEL_A35');
+    if (Array.isArray(anterior.abis) && Array.isArray(novo.abis) && anterior.abis.length && novo.abis.length && !anterior.abis.some(abi => novo.abis.includes(abi))) problemas.push('ABI_SEM_INTERSECAO');
   }
-  if (!certificadoAnterior || !certificadoNovo) problemas.push('ASSINATURA_NAO_VERIFICADA');
+  if (!/^[0-9a-f]{64}$/i.test(certificadoAnterior || '') || !/^[0-9a-f]{64}$/i.test(certificadoNovo || '')) problemas.push('ASSINATURA_NAO_VERIFICADA');
   else if (certificadoAnterior !== certificadoNovo) problemas.push('ASSINATURA_DIFERENTE');
   return { aprovado: problemas.length === 0, problemas, pacoteEsperado: PACOTE };
 }
@@ -58,7 +64,8 @@ export function verificarArquivos(anterior, novo, executar = spawnSync, ambiente
     ...resultado,
     anterior: { ...metadados[0], sha256: createHash('sha256').update(readFileSync(anterior)).digest('hex'), certificadoSha256: certificados[0] },
     novo: { ...metadados[1], sha256: createHash('sha256').update(readFileSync(novo)).digest('hex'), certificadoSha256: certificados[1] },
-    aviso: 'Compara apenas os dois APKs fornecidos; não comprova a assinatura do aplicativo instalado no Galaxy A35.'
+    perfilTecnico: PERFIL_A35,
+    aviso: 'Compara APKs de CI e compatibilidade teórica com Android 15/ARM64; não comprova a assinatura do aplicativo instalado nem instalação no Galaxy A35 físico.'
   };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
