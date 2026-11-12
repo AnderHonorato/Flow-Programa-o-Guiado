@@ -30,7 +30,7 @@ grep -q 'Success' "$saida/instalacao.txt"
 # O APK debug deve permitir run-as; gravar um marcador dentro dos dados privados
 # permite provar que adb install -r preserva dados, nao apenas que retorna Success.
 marcador="flow-preservacao-ci-$(sha256sum "$apk" | cut -c1-16)"
-printf '%s' "$marcador" | adb shell run-as "$pacote" sh -c 'cat > files/flow-ci-preservacao.txt'
+printf '%s' "$marcador" | adb shell "run-as '$pacote' sh -c 'mkdir -p files && cat > files/flow-ci-preservacao.txt'"
 valor_antes="$(adb shell run-as "$pacote" cat files/flow-ci-preservacao.txt | tr -d '\r')"
 test "$valor_antes" = "$marcador"
 # Reinstalacao sobre o mesmo pacote: exercita o caminho de atualizacao sem apagar dados.
