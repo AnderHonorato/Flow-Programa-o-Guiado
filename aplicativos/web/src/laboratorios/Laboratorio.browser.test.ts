@@ -65,6 +65,29 @@ describe('laboratório React no Chromium', () => {
     await expect.poll(() => editor.innerText()).toContain('abc  ');
     await contexto.close();
   }, 30000);
+  it('oferece recuperação do código quando o armazenamento falha e permite tentar novamente', async () => {
+    const pagina = await montar();
+    await pagina.evaluate(() => {
+      const original = Storage.prototype.setItem;
+      (window as unknown as { restaurarGravacao: () => void }).restaurarGravacao = () => { Storage.prototype.setItem = original; };
+      Storage.prototype.setItem = function () { throw new DOMException('Sem espaço', 'QuotaExceededError'); };
+    });
+    const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
+    await editor.click();
+    await pagina.keyboard.press('ControlOrMeta+A');
+    await pagina.keyboard.insertText('<h1>Salvar depois</h1>');
+    await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Falha ao salvar neste dispositivo');
+    await pagina.getByRole('button', { name: 'Baixar cópia do código' }).waitFor({ state: 'visible' });
+    const download = pagina.waitForEvent('download');
+    await pagina.getByRole('button', { name: 'Baixar cópia do código' }).click();
+    expect((await download).suggestedFilename()).toContain('flow-codigo-regressao-laboratorio.json');
+    await pagina.evaluate(() => (window as unknown as { restaurarGravacao: () => void }).restaurarGravacao());
+    await pagina.getByRole('button', { name: 'Tentar salvar novamente' }).click();
+    await expect.poll(() => pagina.locator('.lab-status').innerText()).toContain('Salvo neste dispositivo');
+    const salvo = await pagina.evaluate(() => JSON.parse(localStorage.getItem('flow:laboratorio:v1:teste:regressao-laboratorio') || 'null'));
+    expect(salvo?.arquivos.html).toBe('<h1>Salvar depois</h1>');
+    await pagina.close();
+  }, 30000);
   it('salva edição imediatamente ao fechar a página, mesmo antes do debounce', async () => {
     const pagina = await montar();
     const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
