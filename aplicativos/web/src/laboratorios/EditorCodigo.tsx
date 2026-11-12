@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Transaction } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers, highlightActiveLine, drawSelection } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab, indentSelection, undo, redo, isolateHistory } from '@codemirror/commands';
 import { syntaxHighlighting, defaultHighlightStyle, HighlightStyle, indentOnInput, bracketMatching } from '@codemirror/language';
@@ -17,24 +17,29 @@ interface Props { codigo: string; arquivo: Arquivo; aoMudar: (codigo: string) =>
 export default function EditorCodigo({ codigo, arquivo, aoMudar, linha }: Props) {
   const raiz = useRef<HTMLDivElement>(null);
   const editor = useRef<EditorView | null>(null);
+  const estados = useRef<Partial<Record<Arquivo, EditorState>>>({});
+  const arquivoAtivo = useRef(arquivo);
+  arquivoAtivo.current = arquivo;
   const mudanca = useRef(aoMudar);
   mudanca.current = aoMudar;
   useEffect(() => {
     if (!raiz.current) return;
     const linguagem = arquivo === 'html' ? html() : arquivo === 'css' ? css() : arquivo === 'python' ? python() : javascript();
-    const view = new EditorView({ parent: raiz.current, state: EditorState.create({ doc: codigo, extensions: [
+    const anterior = estados.current[arquivo];
+    const estado = anterior && anterior.doc.toString() === codigo ? anterior : EditorState.create({ doc: codigo, extensions: [
       lineNumbers(), history(), drawSelection(), highlightActiveLine(), indentOnInput(), bracketMatching(), closeBrackets(), autocompletion(), linguagem,
       syntaxHighlighting(realceAcessivel), keymap.of([...defaultKeymap, ...historyKeymap, ...closeBracketsKeymap, ...completionKeymap, indentWithTab]),
       EditorView.lineWrapping, EditorView.contentAttributes.of({ 'aria-label': `Editor ${arquivo.toUpperCase()}`, spellcheck: 'false', autocapitalize: 'off', autocorrect: 'off' }),
-      EditorView.updateListener.of(update => { if (update.docChanged) mudanca.current(update.state.doc.toString()); }),
+      EditorView.updateListener.of(update => { if (update.docChanged && arquivoAtivo.current === arquivo) mudanca.current(update.state.doc.toString()); }),
       EditorView.theme({ '&': { backgroundColor: 'var(--surface)', color: 'var(--text)', height: '100%' }, '.cm-scroller': { fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace', fontSize: '13px', overflow: 'auto', lineHeight: '1.75' }, '.cm-gutters': { backgroundColor: 'var(--surface-2)', color: 'var(--muted)', borderRight: '1px solid var(--line)' }, '.cm-activeLine': { backgroundColor: 'rgba(139,92,246,.08)' }, '.cm-content': { minHeight: '340px', padding: '14px 0' }, '&.cm-focused': { outline: '2px solid var(--accent)', outlineOffset: '-2px' }, '.cm-cursor': { borderLeftColor: 'var(--text)' } }),
-    ] }) });
+    ] });
+    const view = new EditorView({ parent: raiz.current, state: estado });
     editor.current = view;
-    return () => { view.destroy(); editor.current = null; };
-  // Cada aba mantém o documento persistido; a visão recria o histórico ao mudar de arquivo.
+    return () => { estados.current[arquivo] = view.state; view.destroy(); if (editor.current === view) editor.current = null; };
+  // Cada arquivo conserva seleção e histórico de desfazer enquanto o editor estiver montado.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arquivo]);
-  useEffect(() => { const view = editor.current; if (view && view.state.doc.toString() !== codigo) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: codigo } }); }, [codigo]);
+  useEffect(() => { const view = editor.current; if (view && view.state.doc.toString() !== codigo) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: codigo }, annotations: Transaction.addToHistory.of(false) }); }, [codigo]);
   useEffect(() => { const view = editor.current; if (!view || !linha) return; const alvo = view.state.doc.line(Math.min(Math.max(1, linha), view.state.doc.lines)); view.dispatch({ selection: { anchor: alvo.from, head: alvo.to }, effects: EditorView.scrollIntoView(alvo.from, { y: 'center' }) }); view.focus(); }, [linha]);
   // Insercoes de simbolos para teclado virtual, mantendo selecao e historico do CodeMirror.
   function inserirSimbolo(abertura: string, fechamento = '') {
