@@ -97,6 +97,6 @@ test('rejeita segundo certificado truncado, vazio ou sem delimitador', () => {
     'Signer #2 certificate SHA-256 digest ' + 'b'.repeat(64),
     '  Signer #2 certificate SHA-256 digest: ' + 'b'.repeat(64)
   ]) {
-    assert.equal(interpretarCertificado(valido + '\\n' + linha), null, linha);
+    assert.equal(interpretarCertificado(valido + '\n' + linha), null, linha);
   }
 });
