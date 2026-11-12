@@ -35,6 +35,27 @@ describe('laboratório React no Chromium', () => {
     navegador = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox', '--disable-gpu'] });
   }, 60000);
   afterAll(async () => { await navegador?.close(); await servidor?.close(); });
+  it('permite navegar pelas abas de arquivos sem mouse e preserva o editor ativo', async () => {
+    const pagina = await montar();
+    const html = pagina.getByRole('tab', { name: 'index.html' });
+    const css = pagina.getByRole('tab', { name: 'style.css' });
+    const js = pagina.getByRole('tab', { name: 'script.js' });
+    await expect.poll(() => html.getAttribute('tabindex')).toBe('0');
+    await expect.poll(() => css.getAttribute('tabindex')).toBe('-1');
+    await html.focus();
+    await pagina.keyboard.press('ArrowRight');
+    await expect.poll(() => css.getAttribute('aria-selected')).toBe('true');
+    expect(await css.evaluate(el => document.activeElement === el)).toBe(true);
+    expect(await pagina.getByRole('textbox', { name: 'Editor CSS' }).count()).toBe(1);
+    await pagina.keyboard.press('End');
+    await expect.poll(() => js.getAttribute('aria-selected')).toBe('true');
+    await pagina.keyboard.press('ArrowRight');
+    await expect.poll(() => html.getAttribute('aria-selected')).toBe('true');
+    await pagina.keyboard.press('Home');
+    expect(await html.evaluate(el => document.activeElement === el)).toBe(true);
+    expect(await pagina.locator('.lab-arquivos [tabindex="0"]').count()).toBe(1);
+    await pagina.close();
+  }, 30000);
   it('oferece teclas de codigo no toque e preserva selecao, foco e desfazer', async () => {
     const contexto = await navegador.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     const celular = await contexto.newPage();
