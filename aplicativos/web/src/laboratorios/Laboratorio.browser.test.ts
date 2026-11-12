@@ -65,6 +65,19 @@ describe('laboratório React no Chromium', () => {
     await expect.poll(() => editor.innerText()).toContain('abc  ');
     await contexto.close();
   }, 30000);
+  it('salva edição imediatamente ao fechar a página, mesmo antes do debounce', async () => {
+    const pagina = await montar();
+    const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
+    await editor.click();
+    await pagina.keyboard.press('ControlOrMeta+A');
+    await pagina.keyboard.insertText('<h1>Não perder</h1>');
+    await expect.poll(() => editor.innerText()).toContain('Não perder');
+    // pagehide deve gravar sem esperar os 250 ms do salvamento automático.
+    await pagina.evaluate(() => window.dispatchEvent(new Event('pagehide')));
+    const salvo = await pagina.evaluate(() => JSON.parse(localStorage.getItem('flow:laboratorio:v1:teste:regressao-laboratorio') || 'null'));
+    expect(salvo?.arquivos.html).toBe('<h1>Não perder</h1>');
+    await pagina.close();
+  }, 30000);
   it('mantém desfazer separado para HTML e CSS ao alternar arquivos', async () => {
     const pagina = await montar();
     const html = pagina.getByRole('textbox', { name: 'Editor HTML' });
