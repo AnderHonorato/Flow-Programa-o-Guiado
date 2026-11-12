@@ -127,6 +127,27 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Provisionar imagem Android 15 com tentativas controladas
+        shell: bash
+        run: |
+          set -euo pipefail
+          # A rede do runner pode entregar um ZIP incompleto da imagem do sistema.
+          # O emulador só inicia após o SDK estar integralmente instalado.
+          pacote='system-images;android-35;google_apis;x86_64'
+          for tentativa in 1 2 3; do
+            echo "Provisionando imagem Android 15 (tentativa ${tentativa}/3)"
+            if yes | sdkmanager --install "$pacote" --channel=0; then
+              if test -f "$ANDROID_HOME/system-images/android-35/google_apis/x86_64/system.img"; then
+                echo 'Imagem Android 15 instalada e verificada'
+                exit 0
+              fi
+            fi
+            if [ "$tentativa" -lt 3 ]; then
+              sleep $((tentativa * 15))
+            fi
+          done
+          echo 'Falha ao obter imagem Android 15 após três tentativas' >&2
+          exit 1
       - name: Instalar APK e abrir interface em emulador
         uses: reactivecircus/android-emulator-runner@v2.34.0
         with:
