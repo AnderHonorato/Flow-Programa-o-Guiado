@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { ArquivosCodigo, Aula } from '../../../../contratos/tipos';
 import EditorCodigo, { type Arquivo } from './EditorCodigo';
 import { carregarProjeto, salvarProjeto, type Snapshot } from './armazenamento';
@@ -167,7 +167,7 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
     invalidarVerificacoes();
     setArquivos(codigoAtual.current);
   }
-  function navegarAbas(evento: React.KeyboardEvent<HTMLButtonElement>, atual: Arquivo, opcoes: Arquivo[]) {
+  function navegarAbas(evento: KeyboardEvent<HTMLButtonElement>, atual: Arquivo, opcoes: Arquivo[]) {
     const indice = opcoes.indexOf(atual);
     const destino = evento.key === 'ArrowRight' ? (indice + 1) % opcoes.length
       : evento.key === 'ArrowLeft' ? (indice - 1 + opcoes.length) % opcoes.length
