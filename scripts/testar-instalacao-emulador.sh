@@ -46,8 +46,20 @@ printf 'marcador_sha256=%s\npreservacao=confirmada\n' "$(printf '%s' "$marcador"
 adb shell run-as "$pacote" rm files/flow-ci-preservacao.txt
 
 adb shell dumpsys package br.com.ander.flow > "$saida/pacote-diagnostico.txt"
-grep -q 'versionCode=6' "$saida/pacote-diagnostico.txt"
-grep -q 'versionName=0.6.0' "$saida/pacote-diagnostico.txt"
+# Comparar os metadados do pacote instalado com os bytes reais do APK.
+if [[ -z "${ANDROID_HOME:-}" ]]; then
+  echo 'ANDROID_HOME ausente: impossivel conferir versao instalada' >&2
+  exit 1
+fi
+aapt="$ANDROID_HOME/build-tools/35.0.0/aapt"
+test -x "$aapt"
+"$aapt" dump badging "$apk" > "$saida/apk-metadados.txt"
+versao_codigo="$(sed -nE "s/.*versionCode='([0-9]+)'.*/\\1/p" "$saida/apk-metadados.txt" | head -1)"
+versao_nome="$(sed -nE "s/.*versionName='([^']+)'.*/\\1/p" "$saida/apk-metadados.txt" | head -1)"
+test -n "$versao_codigo" && test -n "$versao_nome"
+grep -Fq "versionCode=$versao_codigo" "$saida/pacote-diagnostico.txt"
+grep -Fq "versionName=$versao_nome" "$saida/pacote-diagnostico.txt"
+printf 'versao=%s\\nversionCode=%s\\n' "$versao_nome" "$versao_codigo" > "$saida/versao-instalada.txt"
 adb shell pm path "$pacote" | tee "$saida/pacote.txt"
 grep -q 'package:' "$saida/pacote.txt"
 adb logcat -c
