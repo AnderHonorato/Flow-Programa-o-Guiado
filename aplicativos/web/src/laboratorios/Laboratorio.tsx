@@ -27,7 +27,7 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
   const [consoleItens, setConsoleItens] = useState<EntradaConsole[]>([]);
   const [resultados, setResultados] = useState<Resultado[]>([]);
   const [estado, setEstado] = useState('Pronto para editar.');
-  const [salvo, setSalvo] = useState(true);
+  const [situacaoSalvamento, setSituacaoSalvamento] = useState<'salvo' | 'pendente' | 'erro'>('salvo');
   const [linha, setLinha] = useState<number>();
   const [inspecao, setInspecao] = useState<Inspecao>();
   const [inspecionar, setInspecionar] = useState(false);
@@ -61,15 +61,32 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
   // O debounce reduz gravações, mas sair da aula antes de 250 ms não pode perder código.
   const pendente = useRef({ arquivos, snapshots });
   pendente.current = { arquivos, snapshots };
+  const salvarAgora = useCallback(() => {
+    const atual = pendente.current;
+    const sucesso = salvarProjeto(perfilId, aula.id, atual.arquivos, atual.snapshots);
+    setSituacaoSalvamento(sucesso ? 'salvo' : 'erro');
+    return sucesso;
+  }, [salvarAgora]);
+  const baixarCopia = () => {
+    const atual = pendente.current;
+    const arquivo = new Blob([JSON.stringify({ aulaId: aula.id, arquivos: atual.arquivos, snapshots: atual.snapshots }, null, 2)], { type: 'application/json' });
+    const endereco = URL.createObjectURL(arquivo);
+    const link = document.createElement('a');
+    link.href = endereco;
+    link.download = `flow-codigo-${aula.id.replace(/[^a-z0-9_-]/gi, '-')}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(endereco), 1000);
+  };
   useEffect(() => {
-    setSalvo(false);
-    const tempo = setTimeout(() => setSalvo(salvarProjeto(perfilId, aula.id, arquivos, snapshots)), 250);
+    setSituacaoSalvamento('pendente');
+    const tempo = setTimeout(salvarAgora, 250);
     return () => clearTimeout(tempo);
-  }, [arquivos, snapshots, perfilId, aula.id]);
+  }, [arquivos, snapshots, salvarAgora]);
   useEffect(() => {
     const persistir = () => {
-      const atual = pendente.current;
-      salvarProjeto(perfilId, aula.id, atual.arquivos, atual.snapshots);
+      salvarAgora();
     };
     window.addEventListener('pagehide', persistir);
     return () => {
@@ -135,7 +152,7 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
   return <section className="laboratorio" aria-label={`Laboratório: ${aula.titulo}`}>
     <div className="lab-cabecalho"><div><span className="lab-eyebrow">APRENDER FAZENDO</span><h3>Seu laboratório</h3><p>Edite, observe e descubra o que muda.</p></div><div className="lab-principais"><button type="button" data-jarvis-reacao="surpreso" data-jarvis-mensagem="Código em ação! Vamos observar o resultado antes de tirar conclusões." onClick={() => aula.linguagem === 'python' ? executarPython() : executarPrevia()} disabled={pythonAtivo}><Icone nome="play" tamanho={16} /> Executar</button>{pythonAtivo && <button type="button" onClick={pararPython}><Icone nome="pausa" tamanho={16} /> Parar</button>}<button className="lab-botao-teste" type="button" data-jarvis-reacao="pensando" data-jarvis-mensagem="Testes são pistas: leia o que passou e o que ainda precisa mudar." onClick={testar} disabled={pythonAtivo}><Icone nome="check" tamanho={16} /> Testar código</button>{aoEnviar && <button type="button" onClick={() => aoEnviar({ ...arquivos })}>Enviar desafio</button>}</div></div>
     <div className="lab-desafio"><strong>Seu desafio</strong><p>{aula.desafio}</p></div>
-    <div className="lab-status" role="status"><span>{estado}</span><span>{salvo ? 'Salvo neste dispositivo' : 'Não foi possível salvar. Mantenha esta tela aberta.'}</span></div>
+    <div className="lab-status" role="status"><span>{estado}</span><span>{situacaoSalvamento === 'salvo' ? 'Salvo neste dispositivo' : situacaoSalvamento === 'pendente' ? 'Salvando alterações…' : 'Falha ao salvar neste dispositivo. Faça uma cópia antes de sair.'}</span>{situacaoSalvamento === 'erro' && <><button type="button" onClick={salvarAgora}>Tentar salvar novamente</button><button type="button" onClick={baixarCopia}>Baixar cópia do código</button></>}</div>
     <nav className="lab-mobile-abas" aria-label="Painéis do laboratório">{(['codigo', 'previa', 'console', 'testes'] as Painel[]).map(item => <button type="button" key={item} aria-current={painel === item ? 'page' : undefined} onClick={() => setPainel(item)}>{({ codigo: 'Código', previa: 'Visualização', console: 'Console', testes: 'Testes' })[item]}{item === 'console' && consoleItens.length > 0 ? ` (${consoleItens.length})` : ''}</button>)}</nav>
     <div className="lab-paineis" data-painel={painel}>
       <section className="lab-editor" aria-label="Arquivos de código"><div className="lab-arquivos" role="tablist" aria-label="Arquivo">{(aula.linguagem === 'python' ? ['python'] as Arquivo[] : ['html', 'css', 'js'] as Arquivo[]).map(item => <button type="button" role="tab" aria-selected={arquivo === item} key={item} onClick={() => { setArquivo(item); setLinha(undefined); }}>{item === 'python' ? 'main.py' : item === 'html' ? 'index.html' : item === 'css' ? 'style.css' : 'script.js'}</button>)}</div><EditorCodigo arquivo={arquivo} codigo={arquivos[arquivo] || ''} aoMudar={codigo => setArquivos(atuais => atuais[arquivo] === codigo ? atuais : ({ ...atuais, [arquivo]: codigo }))} linha={linha} /><div className="lab-versoes"><button type="button" data-jarvis-reacao="alegre" data-jarvis-mensagem="Guardar uma versão é como criar um ponto de retorno no jogo. Boa estratégia!" onClick={snapshot}><Icone nome="mais" tamanho={14} /> Salvar versão</button><Seletor rotulo="Restaurar versão salva" valor="" desabilitado={!snapshots.length} opcoes={[{ valor: '', rotulo: snapshots.length ? `${snapshots.length} versões salvas` : 'Nenhuma versão salva', desabilitado: true }, ...snapshots.map((item, indice) => ({ valor: item.id, rotulo: `${indice + 1} · ${new Date(item.data).toLocaleString('pt-BR')}` }))]} aoMudar={valor => { const versao = snapshots.find(item => item.id === valor); if (versao) { setArquivos({ ...versao.arquivos }); setEstado('Versão restaurada.'); } }}/><button type="button" onClick={() => { snapshot(); setArquivos({ ...aula.arquivos }); setEstado('Código inicial restaurado. A edição anterior está nas versões.'); }}>Voltar ao início</button></div></section>
