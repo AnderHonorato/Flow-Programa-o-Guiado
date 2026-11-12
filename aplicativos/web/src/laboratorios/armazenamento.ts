@@ -43,19 +43,42 @@ export function exportarProjetos(perfilId: string): ProjetoExportado[] {
 /** Importa sem apagar edições atuais: conflitos ficam em uma versão recuperada. */
 export function importarProjetos(perfilId: string, entrada: unknown): number {
   validarProjetos(entrada);
-  let quantidade = 0;
-  for (const valor of entrada as ProjetoExportado[]) {
-    const existe = localStorage.getItem(chave(perfilId, valor.aulaId));
+  // Prepara todas as alterações antes de escrever para evitar importações parciais.
+  const alteracoes: { chave: string; anterior: string | null; proximo: string }[] = [];
+  const aulas = new Set<string>();
+  for (const valor of entrada) {
+    if (aulas.has(valor.aulaId)) throw new Error('O backup contém aulas duplicadas.');
+    aulas.add(valor.aulaId);
+    const identificador = chave(perfilId, valor.aulaId);
+    const anterior = localStorage.getItem(identificador);
     const atual = carregarProjeto(perfilId, valor.aulaId, valor.arquivos);
-    const diferentes = existe && JSON.stringify(atual.arquivos) !== JSON.stringify(valor.arquivos);
+    const diferentes = anterior !== null && JSON.stringify(atual.arquivos) !== JSON.stringify(valor.arquivos);
     const jaRecuperado = atual.snapshots.some(item => JSON.stringify(item.arquivos) === JSON.stringify(valor.arquivos));
     const recuperado: Snapshot[] = diferentes && !jaRecuperado ? [{ id: `recuperado-${crypto.randomUUID()}`, data: new Date().toISOString(), arquivos: { ...valor.arquivos } }] : [];
     const versoes = [...recuperado, ...atual.snapshots, ...snapshotsValidos(valor.snapshots)];
     const unicas = versoes.filter((item, indice) => versoes.findIndex(candidato => candidato.id === item.id) === indice).slice(0, 20);
-    if (!salvarProjeto(perfilId, valor.aulaId, diferentes ? atual.arquivos : valor.arquivos, unicas)) throw new Error('Armazenamento cheio ou indisponível durante importação dos projetos.');
-    quantidade++;
+    const proximo = JSON.stringify({ versao: 1, arquivos: diferentes ? atual.arquivos : valor.arquivos, snapshots: unicas });
+    alteracoes.push({ chave: identificador, anterior, proximo });
   }
-  return quantidade;
+  const gravadas: typeof alteracoes = [];
+  try {
+    for (const item of alteracoes) {
+      localStorage.setItem(item.chave, item.proximo);
+      gravadas.push(item);
+    }
+  } catch {
+    let recuperacaoFalhou = false;
+    for (const item of gravadas.reverse()) {
+      try {
+        if (item.anterior === null) localStorage.removeItem(item.chave);
+        else localStorage.setItem(item.chave, item.anterior);
+      } catch { recuperacaoFalhou = true; }
+    }
+    throw new Error(recuperacaoFalhou
+      ? 'Importação interrompida. Não foi possível restaurar todos os dados anteriores; exporte uma cópia antes de continuar.'
+      : 'Importação cancelada: armazenamento cheio ou indisponível. Os projetos anteriores foram preservados.');
+  }
+  return alteracoes.length;
 }
 export function vincularProjetos(perfilOrigem: string, perfilDestino: string): void {
   if (perfilOrigem === perfilDestino) return;
