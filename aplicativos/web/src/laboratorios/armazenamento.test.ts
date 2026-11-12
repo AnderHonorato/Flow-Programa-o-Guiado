@@ -14,7 +14,7 @@ describe('projetos e versões locais', () => {
     const antes = localStorage.getItem('flow:laboratorio:v1:destino:a');
     const original = Storage.prototype.setItem;
     let chamadas = 0;
-    const espiao = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (chave, valor) {
+    const espiao = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, chave, valor) {
       chamadas++;
       if (chamadas === 2) throw new DOMException('Sem espaço', 'QuotaExceededError');
       return original.call(this, chave, valor);
