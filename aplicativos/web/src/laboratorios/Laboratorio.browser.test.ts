@@ -82,7 +82,7 @@ describe('laboratório React no Chromium', () => {
     await pagina.getByRole('tab', { name: 'style.css' }).click();
     await expect.poll(() => pagina.getByRole('textbox', { name: 'Editor CSS' }).innerText()).toContain('body { color: red; }');
     await pagina.getByRole('button', { name: 'Desfazer alteração' }).click();
-    await expect.poll(() => pagina.getByRole('textbox', { name: 'Editor CSS' }).innerText()).toBe('');
+    await expect.poll(() => pagina.getByRole('textbox', { name: 'Editor CSS' }).locator('.cm-line').allTextContents()).toEqual(['']);
     await pagina.close();
   }, 30000);
   it('preserva verificações após executar novamente e invalida ao editar ou restaurar', async () => {
