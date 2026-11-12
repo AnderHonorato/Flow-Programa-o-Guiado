@@ -66,7 +66,7 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
     const sucesso = salvarProjeto(perfilId, aula.id, atual.arquivos, atual.snapshots);
     setSituacaoSalvamento(sucesso ? 'salvo' : 'erro');
     return sucesso;
-  }, [salvarAgora]);
+  }, [perfilId, aula.id]);
   const baixarCopia = () => {
     const atual = pendente.current;
     const arquivo = new Blob([JSON.stringify({ aulaId: aula.id, arquivos: atual.arquivos, snapshots: atual.snapshots }, null, 2)], { type: 'application/json' });
@@ -93,7 +93,7 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
       window.removeEventListener('pagehide', persistir);
       persistir();
     };
-  }, [perfilId, aula.id]);
+  }, [salvarAgora]);
   useEffect(() => {
     if (aula.linguagem === 'python') return;
     if (!automatico && documento) return;
