@@ -126,3 +126,56 @@ describe('fila de sincronização', () => {
     expect((await lerEstado(p)).aulasConcluidas.sort()).toEqual(['css-1', 'html-1']);
   });
 });
+
+
+describe('proteção da identidade das tentativas na sincronização', () => {
+  it('ignora resposta remota com mesmo ID mas código diferente, sem apagar feedback', async () => {
+    const p = perfil();
+    await enfileirarTentativa(p, tentativa('identidade-1'));
+    vi.stubGlobal('fetch', async (url: string, op?: RequestInit) => {
+      if (op?.method === 'POST') return Response.json({ id: 'identidade-1', aulaId: 'html-1', status: 'aprovada' });
+      if (url.endsWith('/tentativas')) return Response.json([{
+        ...tentativa('identidade-1'),
+        arquivos: { html: '<script>outro código</script>', css: '', js: '' },
+        status: 'revisar', feedback: { erro: 'incorreto' }
+      }]);
+      return Response.json({ estado: estado() });
+    });
+    await sincronizarFila(p, 'token');
+    const [salva] = await listarFila(p);
+    expect(salva.arquivos.html).toBe('<h1>Olá</h1>');
+    expect(salva.status).toBe('aprovada');
+    expect(salva.feedback).toBeUndefined();
+  });
+
+  it('rejeita confirmação POST de outra aula e mantém tentativa na fila', async () => {
+    const p = perfil();
+    await enfileirarTentativa(p, tentativa('identidade-2'));
+    vi.stubGlobal('fetch', async (url: string, op?: RequestInit) => {
+      if (op?.method === 'POST') return Response.json({ id: 'identidade-2', aulaId: 'python-1', status: 'aprovada' });
+      if (url.endsWith('/tentativas')) return Response.json([]);
+      return Response.json({ estado: estado() });
+    });
+    await sincronizarFila(p, 'token');
+    expect((await listarFila(p))[0].status).toBe('aguardando_sincronizacao');
+    expect((await lerSincronizacao(p)).estado).toBe('erro');
+  });
+
+  it('preserva aprovação e feedback quando chega resposta pendente atrasada', async () => {
+    const p = perfil();
+    await enfileirarTentativa(p, tentativa('identidade-3'));
+    let rodada = 0;
+    vi.stubGlobal('fetch', async (url: string, op?: RequestInit) => {
+      if (op?.method === 'POST') return Response.json({ id: 'identidade-3', aulaId: 'html-1', status: 'aprovada', feedback: { nota: 10 } });
+      if (url.endsWith('/tentativas')) {
+        rodada++;
+        return Response.json([{ ...tentativa('identidade-3'), status: rodada === 1 ? 'aprovada' : 'pendente_validacao', ...(rodada === 1 ? { feedback: { nota: 10 } } : {}) }]);
+      }
+      return Response.json({ estado: estado() });
+    });
+    await sincronizarFila(p, 'token');
+    await sincronizarFila(p, 'token');
+    expect((await listarFila(p))[0].status).toBe('aprovada');
+    expect((await listarFila(p))[0].feedback).toEqual({ nota: 10 });
+  });
+});
