@@ -51,7 +51,12 @@ jobs:
             fi
             sleep 1
           done
-          curl -fsS http://127.0.0.1:4173/api/saude
+          # Falha com evidências úteis se o preview não encaminhar a API.
+          if ! curl -fsS --max-time 5 http://127.0.0.1:4173/api/saude; then
+            echo 'ERRO: preview não encaminhou /api/saude ao backend' >&2
+            tail -n 100 /tmp/flow-api.log /tmp/flow-preview.log >&2 || true
+            exit 1
+          fi
           npm run test:e2e
       - name: Guardar logs dos servidores de teste
         if: always()
