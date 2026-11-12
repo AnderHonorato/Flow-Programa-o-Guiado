@@ -87,3 +87,16 @@ test('aceita SHA-256 com letras maiúsculas e separadores dois-pontos', () => {
   assert.equal(interpretarCertificado('Signer #1 certificate SHA-256 digest: ' + digest), cert);
   assert.equal(avaliarAtualizacao(anterior, novo, cert.toUpperCase(), cert).aprovado, true);
 });
+
+// O apksigner pode emitir saída parcialmente corrompida; nunca ignorar o segundo certificado.
+test('rejeita segundo certificado truncado, vazio ou sem delimitador', () => {
+  const valido = 'Signer #1 certificate SHA-256 digest: ' + cert;
+  for (const linha of [
+    'Signer #2 certificate SHA-256 digest: abc',
+    'Signer #2 certificate SHA-256 digest:',
+    'Signer #2 certificate SHA-256 digest ' + 'b'.repeat(64),
+    '  Signer #2 certificate SHA-256 digest: ' + 'b'.repeat(64)
+  ]) {
+    assert.equal(interpretarCertificado(valido + '\\n' + linha), null, linha);
+  }
+});
