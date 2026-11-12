@@ -21,6 +21,10 @@ export default defineConfig({
       runtimeCaching: [runtimePacotes]
     }
   })],
-  server: {proxy: {'/api': 'http://127.0.0.1:8000'}},
+  // O preview usado pelo CI e pela validação mobile precisa encaminhar a API
+  // exatamente como o servidor de desenvolvimento. Sem isto, /api/saude
+  // responde 404 no preview mesmo com o backend ativo.
+  server: { proxy: { '/api': 'http://127.0.0.1:8000' } },
+  preview: { proxy: { '/api': 'http://127.0.0.1:8000' } },
   build: {chunkSizeWarningLimit: 800}
 });
