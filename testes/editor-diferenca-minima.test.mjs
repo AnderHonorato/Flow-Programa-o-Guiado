@@ -40,8 +40,8 @@ test('diferença não separa pares substitutos UTF-16 ao substituir emoji', () =
 
 test('inserção ambígua preserva começo de linha e conteúdo Unicode', () => {
   for (const [anterior, proximo] of [
-    ['linha 1\\nlinha 3', 'linha 1\\nlinha 2\\nlinha 3'],
-    ['😀linha\\n😀linha', '😀linha\\n😀nova\\n😀linha'],
+    ['linha 1\nlinha 3', 'linha 1\nlinha 2\nlinha 3'],
+    ['😀linha\n😀linha', '😀linha\n😀nova\n😀linha'],
     ['abc', 'abXc']
   ]) {
     const { from, to, insert } = diferencaMinima(anterior, proximo);
