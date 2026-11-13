@@ -9,6 +9,13 @@ export function moverCursorUnicode(texto: string, posicao: number, direcao: -1 |
   if (direcao < 0 && atual === 0) return 0;
   if (direcao > 0 && atual === texto.length) return texto.length;
 
+  // Windows usa CRLF (\\r\\n): tratar a quebra como um único movimento.
+  // Também recupera o cursor caso uma seleção externa o deixe entre CR e LF.
+  if (direcao > 0 && texto.slice(atual, atual + 2) === '\r\n') return atual + 2;
+  if (direcao < 0 && texto.slice(atual - 2, atual) === '\r\n') return atual - 2;
+  if (direcao > 0 && atual > 0 && texto[atual - 1] === '\r' && texto[atual] === '\n') return atual + 1;
+  if (direcao < 0 && texto[atual - 1] === '\r' && texto[atual] === '\n') return atual - 1;
+
   if (segmentador) {
     // Segmenta apenas a linha atual: documentos grandes não são percorridos a cada toque.
     const inicio = texto.lastIndexOf('\n', Math.max(0, atual - 1)) + 1;
