@@ -23,11 +23,15 @@ if [[ "${1:-}" != "--sem-web" ]]; then
   npm run build
 fi
 test -f aplicativos/web/dist/index.html || { echo 'Build web ausente: execute npm run build.' >&2; exit 1; }
+# A versão do APK deve corresponder à versão nativa efetivamente compilada.
+# Falhar de forma segura se o Gradle não apresentar exatamente um versionName válido.
+versao="$(python3 scripts/android-versao.py aplicativos/android/app/build.gradle)"
 cd aplicativos/web
 npx --no-install cap sync android
 cd ../android
 ./gradlew --no-daemon --console=plain assembleDebug lintDebug 2>&1 | tee "$raiz/artefatos/android-build.log"
-cp app/build/outputs/apk/debug/app-debug.apk "$raiz/artefatos/Flow-Programacao-Guiada-0.6.0-debug.apk"
+destino="$raiz/artefatos/Flow-Programacao-Guiada-v${versao}-debug.apk"
+cp app/build/outputs/apk/debug/app-debug.apk "$destino"
 cd "$raiz/artefatos"
-sha256sum Flow-Programacao-Guiada-0.6.0-debug.apk > Flow-Programacao-Guiada-0.6.0-debug.apk.sha256
-cat Flow-Programacao-Guiada-0.6.0-debug.apk.sha256
+sha256sum "Flow-Programacao-Guiada-v${versao}-debug.apk" > "Flow-Programacao-Guiada-v${versao}-debug.apk.sha256"
+cat "Flow-Programacao-Guiada-v${versao}-debug.apk.sha256"
