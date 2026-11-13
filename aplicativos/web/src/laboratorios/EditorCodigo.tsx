@@ -9,6 +9,7 @@ import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import Icone from '../componentes/Icone';
+import { diferencaMinima } from './diferencaMinima';
 // Preserva as categorias do CodeMirror com cores próprias que acompanham o tema.
 const coresRealce: Record<string, string> = { '#404740': '--muted', '#708': '--lab-code-palavra', '#219': '--lab-code-numero', '#164': '--lab-code-tag', '#a11': '--lab-code-texto', '#e40': '--lab-code-texto', '#00f': '--lab-code-numero', '#30a': '--lab-code-palavra', '#085': '--lab-code-tag', '#167': '--lab-code-tag', '#256': '--lab-code-tag', '#00c': '--lab-code-numero', '#940': '--muted', '#f00': '--erro' };
 const realceAcessivel = HighlightStyle.define(defaultHighlightStyle.specs.map(regra => ({ ...regra, ...(regra.color ? { color: `var(${coresRealce[regra.color] || '--text'})` } : {}) })));
@@ -39,7 +40,16 @@ export default function EditorCodigo({ codigo, arquivo, aoMudar, linha }: Props)
   // Cada arquivo conserva seleção e histórico de desfazer enquanto o editor estiver montado.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arquivo]);
-  useEffect(() => { const view = editor.current; if (view && view.state.doc.toString() !== codigo) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: codigo }, annotations: Transaction.addToHistory.of(false) }); }, [codigo]);
+  useEffect(() => {
+    const view = editor.current;
+    if (!view) return;
+    const anterior = view.state.doc.toString();
+    if (anterior === codigo) return;
+    // Alterações externas (restauração, troca de versão) não devem recriar
+    // todo o documento: o CodeMirror mapeia cursor e seleção pela mudança mínima.
+    const { from, to, insert } = diferencaMinima(anterior, codigo);
+    view.dispatch({ changes: { from, to, insert }, annotations: Transaction.addToHistory.of(false) });
+  }, [codigo]);
   useEffect(() => { const view = editor.current; if (!view || !linha) return; const alvo = view.state.doc.line(Math.min(Math.max(1, linha), view.state.doc.lines)); view.dispatch({ selection: { anchor: alvo.from, head: alvo.to }, effects: EditorView.scrollIntoView(alvo.from, { y: 'center' }) }); view.focus(); }, [linha]);
   // Insercoes de simbolos para teclado virtual, mantendo selecao e historico do CodeMirror.
   function inserirSimbolo(abertura: string, fechamento = '') {
