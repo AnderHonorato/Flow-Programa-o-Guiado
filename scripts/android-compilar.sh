@@ -25,6 +25,7 @@ fi
 test -f aplicativos/web/dist/index.html || { echo 'Build web ausente: execute npm run build.' >&2; exit 1; }
 # A versão do APK deve corresponder à versão nativa efetivamente compilada.
 # Falhar de forma segura se o Gradle não apresentar exatamente um versionName válido.
+python3 -m unittest discover -s scripts -p test_android_versao.py
 versao="$(python3 scripts/android-versao.py aplicativos/android/app/build.gradle)"
 cd aplicativos/web
 npx --no-install cap sync android
