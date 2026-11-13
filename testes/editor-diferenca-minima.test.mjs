@@ -25,5 +25,5 @@ for (const [anterior, proximo] of [
 }
 
 test('inserção no meio não substitui prefixo nem sufixo', () => {
-  assert.deepEqual(diferencaMinima('linha 1\\nlinha 3', 'linha 1\\nlinha 2\\nlinha 3'), { from: 8, to: 8, insert: 'linha 2\\n' });
+  assert.deepEqual(diferencaMinima('linha 1\nlinha 3', 'linha 1\nlinha 2\nlinha 3'), { from: 8, to: 8, insert: 'linha 2\n' });
 });
