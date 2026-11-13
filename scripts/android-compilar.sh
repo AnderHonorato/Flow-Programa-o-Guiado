@@ -36,3 +36,11 @@ cp app/build/outputs/apk/debug/app-debug.apk "$destino"
 cd "$raiz/artefatos"
 sha256sum "Flow-Programacao-Guiada-v${versao}-debug.apk" > "Flow-Programacao-Guiada-v${versao}-debug.apk.sha256"
 cat "Flow-Programacao-Guiada-v${versao}-debug.apk.sha256"
+# Gate obrigatório: validar o conteúdo do APK e a assinatura real, não só o nome do arquivo.
+python3 -m unittest discover -s "$raiz/scripts" -p 'test_android_conferir_apk.py'
+python3 "$raiz/scripts/android-conferir-apk.py" "$destino" \
+  --gradle "$raiz/aplicativos/android/app/build.gradle" \
+  --aapt "$ANDROID_HOME/build-tools/35.0.0/aapt" \
+  --apksigner "$ANDROID_HOME/build-tools/35.0.0/apksigner" \
+  > "$raiz/artefatos/metadados-apk.json"
+cat "$raiz/artefatos/metadados-apk.json"
