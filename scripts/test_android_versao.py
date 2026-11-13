@@ -12,7 +12,7 @@ spec.loader.exec_module(modulo)
 class TestarVersaoAndroid(unittest.TestCase):
     def test_versao_real_do_gradle(self):
         gradle = Path(__file__).resolve().parents[1] / "aplicativos/android/app/build.gradle"
-        self.assertEqual(modulo.extrair(gradle.read_text(encoding="utf-8")), "0.6.2")
+        self.assertRegex(modulo.extrair(gradle.read_text(encoding="utf-8")), r"^\d+\.\d+\.\d+$")
 
     def test_rejeita_versao_duplicada(self):
         with self.assertRaises(ValueError):

@@ -1,6 +1,6 @@
 # Android — Flow Programação Guiada
 
-O APK usa os mesmos arquivos locais compilados da aplicação web, empacotados pelo Capacitor 7. Não carrega uma URL remota como tela inicial. Identificador `br.com.ander.flow`, versão `0.6.0`, código de versão `6`, Android mínimo 6.0/API 23 e alvo API 35. Para a interface e o Python, mantenha o Android System WebView atualizado (Chrome/WebView 107 ou mais recente).
+O APK usa os mesmos arquivos locais compilados da aplicação web, empacotados pelo Capacitor 7. Não carrega uma URL remota como tela inicial. Identificador `br.com.ander.flow`, versão e código definidos em `aplicativos/android/app/build.gradle`, Android mínimo 6.0/API 23 e alvo API 35. Para a interface e o Python, mantenha o Android System WebView atualizado (Chrome/WebView 107 ou mais recente).
 
 ## Compilar um APK de teste
 
@@ -14,8 +14,8 @@ bash scripts/android-compilar.sh
 
 O script provisiona o runtime Python local, compila a web, sincroniza recursos e plugins, executa `assembleDebug` e `lintDebug` e grava:
 
-- `artefatos/Flow-Programacao-Guiada-0.6.0-debug.apk`;
-- `artefatos/Flow-Programacao-Guiada-0.6.0-debug.apk.sha256`;
+- `artefatos/Flow-Programacao-Guiada-vX.Y.Z-debug.apk` (X.Y.Z extraído do Gradle);
+- `artefatos/Flow-Programacao-Guiada-vX.Y.Z-debug.apk.sha256`;
 - `artefatos/android-build.log`.
 
 Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --sem-web`. A CI executa verificação de tipos, testes web, build web, fluxos em navegador com API local e banco temporário, testes da API e build/lint Android, guardando os resultados em um artefato do GitHub Actions. A existência do workflow não significa que ele já foi executado remotamente. Os exemplos de testes gerados pelo template do Capacitor foram removidos: não verificavam o produto e um deles ainda esperava o identificador padrão. A validação nativa automatizada disponível está no script de emulador abaixo.
@@ -23,7 +23,8 @@ Se o build web já estiver atualizado, use `bash scripts/android-compilar.sh --s
 ## Instalar e atualizar
 
 ```bash
-adb install -r artefatos/Flow-Programacao-Guiada-0.6.0-debug.apk
+VERSAO=$(python3 scripts/android-versao.py aplicativos/android/app/build.gradle)
+adb install -r "artefatos/Flow-Programacao-Guiada-v${VERSAO}-debug.apk"
 adb shell am start -n br.com.ander.flow/.MainActivity
 ```
 
@@ -49,6 +50,7 @@ Com um único emulador já inicializado e visível em `adb devices`, execute:
 
 ```bash
 ANDROID_HOME=/caminho/para/android-sdk node scripts/android-verificar.mjs
+# Opcional: informar um APK específico como primeiro argumento
 ```
 
 O teste usa o WebView depurável do APK debug, cria um perfil de teste se necessário e abre a aula inicial. Consulta a disponibilidade real de vozes, toca no editor e digita pelo Android, registra o estado do teclado e gira a tela para conferir a preservação do código. Depois desliga Wi-Fi e dados, fecha o processo e reabre a aula. Confere a persistência de perfil e rascunho e a ausência de rede. Gera capturas, estado do teclado e `verificacao-android.json` em `docs/evidencias/android/`. Uma voz detectada não comprova qualidade ou audibilidade: a audição ainda exige validação humana. O emulador permanece sem rede ao final; reative Wi-Fi/dados manualmente para testar funções online. O teste não deve ser executado em um perfil pessoal: use um emulador destinado à verificação.
