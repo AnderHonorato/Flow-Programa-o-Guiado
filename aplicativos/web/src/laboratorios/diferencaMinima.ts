@@ -22,5 +22,22 @@ export function diferencaMinima(anterior: string, proximo: string): { from: numb
     fimAnterior++;
     fimProximo++;
   }
+  // Inserções com caracteres repetidos podem ter várias posições equivalentes.
+  // Preferir o começo da linha evita deslocar o cursor até o final do trecho
+  // repetido (por exemplo, ao inserir uma nova linha entre duas linhas).
+  if (inicio === fimAnterior && proximo.length > anterior.length) {
+    const tamanhoInsercao = proximo.length - anterior.length;
+    const limiteBusca = Math.max(0, inicio - 512);
+    for (let posicao = inicio - 1; posicao >= limiteBusca; posicao--) {
+      if (posicao !== 0 && anterior[posicao - 1] !== '\\n') continue;
+      const insercao = proximo.slice(posicao, posicao + tamanhoInsercao);
+      if (anterior.slice(0, posicao) + insercao + anterior.slice(posicao) === proximo) {
+        inicio = posicao;
+        fimAnterior = posicao;
+        fimProximo = posicao + tamanhoInsercao;
+        break;
+      }
+    }
+  }
   return { from: inicio, to: fimAnterior, insert: proximo.slice(inicio, fimProximo) };
 }
