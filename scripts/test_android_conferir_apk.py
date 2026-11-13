@@ -19,6 +19,22 @@ class TestarGateAndroid(unittest.TestCase):
         self.assertEqual(dados["versionCode"], 8)
         self.assertEqual(dados["compatibilidadeGalaxyA35"], "não verificada")
 
+    def test_aceita_certificado_esperado_igual(self):
+        dados = modulo.conferir(GRADLE, BADGING, ASSINATURA, "ab" * 32)
+        self.assertTrue(dados["certificadoEsperadoConferido"])
+
+    def test_rejeita_certificado_diferente(self):
+        with self.assertRaisesRegex(ValueError, "certificado diferente"):
+            modulo.conferir(GRADLE, BADGING, ASSINATURA, "cd" * 32)
+
+    def test_rejeita_certificado_esperado_invalido(self):
+        with self.assertRaisesRegex(ValueError, "certificado esperado inválido"):
+            modulo.conferir(GRADLE, BADGING, ASSINATURA, "não é um sha256")
+
+    def test_sem_baseline_nao_alega_comparacao(self):
+        dados = modulo.conferir(GRADLE, BADGING, ASSINATURA)
+        self.assertFalse(dados["certificadoEsperadoConferido"])
+
     def test_rejeita_pacote_diferente(self):
         with self.assertRaises(ValueError):
             modulo.conferir(GRADLE, BADGING.replace("br.com.ander.flow", "outro.app"), ASSINATURA)
