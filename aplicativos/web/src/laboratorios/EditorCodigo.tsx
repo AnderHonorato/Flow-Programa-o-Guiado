@@ -10,6 +10,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import Icone from '../componentes/Icone';
 import { diferencaMinima } from './diferencaMinima';
+import { moverCursorUnicode } from './moverCursorUnicode';
 // Preserva as categorias do CodeMirror com cores próprias que acompanham o tema.
 const coresRealce: Record<string, string> = { '#404740': '--muted', '#708': '--lab-code-palavra', '#219': '--lab-code-numero', '#164': '--lab-code-tag', '#a11': '--lab-code-texto', '#e40': '--lab-code-texto', '#00f': '--lab-code-numero', '#30a': '--lab-code-palavra', '#085': '--lab-code-tag', '#167': '--lab-code-tag', '#256': '--lab-code-tag', '#00c': '--lab-code-numero', '#940': '--muted', '#f00': '--erro' };
 const realceAcessivel = HighlightStyle.define(defaultHighlightStyle.specs.map(regra => ({ ...regra, ...(regra.color ? { color: `var(${coresRealce[regra.color] || '--text'})` } : {}) })));
@@ -71,7 +72,7 @@ export default function EditorCodigo({ codigo, arquivo, aoMudar, linha }: Props)
     const view = editor.current;
     if (!view) return;
     const atual = view.state.selection.main.head;
-    view.dispatch({ selection: { anchor: Math.max(0, Math.min(view.state.doc.length, atual + direcao)) }, scrollIntoView: true });
+    view.dispatch({ selection: { anchor: moverCursorUnicode(view.state.doc.toString(), atual, direcao) }, scrollIntoView: true });
     view.focus();
   }
   const simbolos = [
