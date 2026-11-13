@@ -9,5 +9,18 @@ export function diferencaMinima(anterior: string, proximo: string): { from: numb
     fimAnterior--;
     fimProximo--;
   }
+  // CodeMirror usa offsets UTF-16. Nunca dividir um par substituto (emoji)
+  // ao calcular as bordas: isso evita uma edição intermediária inválida.
+  const substitutoAlto = (valor: number) => valor >= 0xd800 && valor <= 0xdbff;
+  const substitutoBaixo = (valor: number) => valor >= 0xdc00 && valor <= 0xdfff;
+  if (inicio > 0 && inicio < anterior.length &&
+      substitutoAlto(anterior.charCodeAt(inicio - 1)) && substitutoBaixo(anterior.charCodeAt(inicio))) {
+    inicio--;
+  }
+  if (fimAnterior > inicio && fimAnterior < anterior.length &&
+      substitutoAlto(anterior.charCodeAt(fimAnterior - 1)) && substitutoBaixo(anterior.charCodeAt(fimAnterior))) {
+    fimAnterior++;
+    fimProximo++;
+  }
   return { from: inicio, to: fimAnterior, insert: proximo.slice(inicio, fimProximo) };
 }
