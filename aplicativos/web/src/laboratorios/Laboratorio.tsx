@@ -88,9 +88,13 @@ function LaboratorioInterno({ aula, perfilId, aoTestar, aoEnviar }: Props) {
     const persistir = () => {
       salvarAgora();
     };
+    // No Android, trocar de aplicativo pode suspender a WebView sem emitir pagehide.
+    const aoOcultar = () => { if (document.visibilityState === 'hidden') persistir(); };
     window.addEventListener('pagehide', persistir);
+    document.addEventListener('visibilitychange', aoOcultar);
     return () => {
       window.removeEventListener('pagehide', persistir);
+      document.removeEventListener('visibilitychange', aoOcultar);
       persistir();
     };
   }, [salvarAgora]);
