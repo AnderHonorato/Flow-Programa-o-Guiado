@@ -36,3 +36,16 @@ test('diferença não separa pares substitutos UTF-16 ao substituir emoji', () =
   assert.deepEqual({ from, to, insert }, { from: 1, to: 3, insert: '😁' });
   assert.equal(anterior.slice(0, from) + insert + anterior.slice(to), proximo);
 });
+
+
+test('inserção ambígua preserva começo de linha e conteúdo Unicode', () => {
+  for (const [anterior, proximo] of [
+    ['linha 1\\nlinha 3', 'linha 1\\nlinha 2\\nlinha 3'],
+    ['😀linha\\n😀linha', '😀linha\\n😀nova\\n😀linha'],
+    ['abc', 'abXc']
+  ]) {
+    const { from, to, insert } = diferencaMinima(anterior, proximo);
+    assert.equal(anterior.slice(0, from) + insert + anterior.slice(to), proximo);
+    assert.ok(from === 0 || !(/[\\uD800-\\uDBFF]/u.test(anterior[from - 1]) && /[\\uDC00-\\uDFFF]/u.test(anterior[from])));
+  }
+});
