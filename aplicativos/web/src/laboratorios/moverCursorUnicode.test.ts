@@ -49,3 +49,23 @@ describe('navegação por grafemas compostos', () => {
     expect(moverCursorUnicode('abc', Number.NaN, 1)).toBe(1);
   });
 });
+
+describe('navegação em arquivos Windows CRLF', () => {
+  it('atravessa CRLF como uma única quebra nos dois sentidos', () => {
+    const texto = 'ab\\r\\ncd';
+    expect(moverCursorUnicode(texto, 2, 1)).toBe(4);
+    expect(moverCursorUnicode(texto, 4, -1)).toBe(2);
+  });
+  it('recupera cursor colocado entre CR e LF por seleção externa', () => {
+    const texto = 'a\\r\\nb';
+    expect(moverCursorUnicode(texto, 2, 1)).toBe(3);
+    expect(moverCursorUnicode(texto, 2, -1)).toBe(1);
+  });
+  it('preserva quebras LF e emojis próximos de CRLF', () => {
+    const texto = '😀\\r\\nx';
+    expect(moverCursorUnicode(texto, 0, 1)).toBe(2);
+    expect(moverCursorUnicode(texto, 2, 1)).toBe(4);
+    expect(moverCursorUnicode(texto, 4, -1)).toBe(2);
+    expect(moverCursorUnicode('a\\nb', 1, 1)).toBe(2);
+  });
+});
