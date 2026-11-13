@@ -124,6 +124,9 @@ jobs:
           java-version: '21'
       - name: Preparar ferramentas Android no runner do emulador
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - name: Verificar sdkmanager e SDK isolado
         shell: bash
         run: |
