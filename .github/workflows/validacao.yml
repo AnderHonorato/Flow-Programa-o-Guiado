@@ -29,6 +29,8 @@ jobs:
       - run: node scripts/provisionar-python.mjs
       - run: npm run lint
       - run: npm test
+      - name: Testar sincronizacao incremental do editor
+        run: node --test testes/editor-diferenca-minima.test.mjs
       - run: npm run build
       - uses: actions/setup-python@v5
         with:
