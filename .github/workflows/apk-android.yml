@@ -148,7 +148,7 @@ jobs:
           pacote='system-images;android-35;google_apis;x86_64'
           for tentativa in 1 2 3; do
             echo "Provisionando imagem Android 15 (tentativa ${tentativa}/3)"
-            if yes | sdkmanager --install "$pacote" --channel=0; then
+            if sdkmanager --install "$pacote" --channel=0; then
               if test -f "$ANDROID_HOME/system-images/android-35/google_apis/x86_64/system.img"; then
                 echo 'Imagem Android 15 instalada e verificada'
                 exit 0
