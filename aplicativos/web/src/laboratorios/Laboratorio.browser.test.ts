@@ -134,6 +134,20 @@ describe('laboratório React no Chromium', () => {
     expect(salvo?.arquivos.html).toBe('<h1>Não perder</h1>');
     await pagina.close();
   }, 30000);
+  it('salva edição quando a WebView Android passa para segundo plano', async () => {
+    const pagina = await montar();
+    const editor = pagina.getByRole('textbox', { name: 'Editor HTML' });
+    await editor.click();
+    await pagina.keyboard.press('ControlOrMeta+A');
+    await pagina.keyboard.insertText('<h1>Retomar depois</h1>');
+    await pagina.evaluate(() => {
+      Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+    const salvo = await pagina.evaluate(() => JSON.parse(localStorage.getItem('flow:laboratorio:v1:teste:regressao-laboratorio') || 'null'));
+    expect(salvo?.arquivos.html).toBe('<h1>Retomar depois</h1>');
+    await pagina.close();
+  }, 30000);
   it('mantém desfazer separado para HTML e CSS ao alternar arquivos', async () => {
     const pagina = await montar();
     const html = pagina.getByRole('textbox', { name: 'Editor HTML' });
