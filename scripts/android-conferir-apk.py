@@ -18,7 +18,7 @@ def campo_unico(texto, padrao, descricao):
     return valores[0]
 
 
-def conferir(gradle, badging, assinatura):
+def conferir(gradle, badging, assinatura, certificado_esperado=None):
     pacote_gradle = campo_unico(gradle, r'^\s*applicationId\s+["\']([^"\']+)["\']\s*$', "applicationId")
     versao = campo_unico(gradle, r'^\s*versionName\s+["\'](\d+\.\d+\.\d+)["\']\s*$', "versionName")
     codigo = int(campo_unico(gradle, r'^\s*versionCode\s+(\d+)\s*$', "versionCode"))
@@ -36,7 +36,13 @@ def conferir(gradle, badging, assinatura):
     certificado = certificados[0].replace(":", "").lower()
     if not re.fullmatch(r"[0-9a-f]{64}", certificado):
         raise ValueError("SHA-256 do certificado inválido")
-    return {"packageId": PACOTE, "versionName": versao, "versionCode": codigo,
+    if certificado_esperado is not None:
+        esperado = certificado_esperado.strip().replace(":", "").lower()
+        if not re.fullmatch(r"[0-9a-f]{64}", esperado):
+            raise ValueError("certificado esperado inválido: informe SHA-256 com 64 caracteres")
+        if certificado != esperado:
+            raise ValueError("certificado diferente da assinatura esperada; atualização bloqueada")
+    return {"certificadoEsperadoConferido": certificado_esperado is not None, "packageId": PACOTE, "versionName": versao, "versionCode": codigo,
             "certificadoSha256": certificado, "compatibilidadeGalaxyA35": "não verificada"}
 
 
@@ -50,13 +56,14 @@ def main():
     parser.add_argument("--gradle", type=pathlib.Path, default=pathlib.Path("aplicativos/android/app/build.gradle"))
     parser.add_argument("--aapt", default="aapt")
     parser.add_argument("--apksigner", default="apksigner")
+    parser.add_argument("--certificado-esperado", help="SHA-256 da assinatura instalada previamente; se informado, exige igualdade exata")
     args = parser.parse_args()
     if not args.apk.is_file():
         parser.error("APK não encontrado")
     try:
         badging = executar([args.aapt, "dump", "badging", str(args.apk)])
         assinatura = executar([args.apksigner, "verify", "--verbose", "--print-certs", str(args.apk)])
-        dados = conferir(args.gradle.read_text(encoding="utf-8"), badging, assinatura)
+        dados = conferir(args.gradle.read_text(encoding="utf-8"), badging, assinatura, args.certificado_esperado)
         dados["apkSha256"] = hashlib.sha256(args.apk.read_bytes()).hexdigest()
         print(json.dumps(dados, ensure_ascii=False, indent=2))
     except (OSError, ValueError, subprocess.CalledProcessError) as erro:
